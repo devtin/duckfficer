@@ -1,0 +1,32 @@
+{
+  "name": "@devtin/schema-validator",
+  "author": "Martin Rafael <tin@devtin.io>",
+  "version": "1.0.0",
+  "main": "dist/schema-validator.js",
+  "module": "dist/schema-validator.esm.js",
+  "browser": "dist/schema-validator.iife.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build:lib && yarn build:docs && yarn build:readme",
+    "build:lib": "rollup -c",
+    "build:live": "nodemon -w src --exec yarn build",
+    "build:docs": "jsdoc2md --template DOCS.hbs --files dist/schema-validator.js > DOCS.md",
+    "build:readme": "node build/readme.js",
+    "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js",
+    "test": "NODE_ENV=test ava --serial --verbose",
+    "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o"
+  },
+  "devDependencies": {
+    "ava": "^2.4.0",
+    "bluebird": "^3.7.2",
+    "jsdoc-to-markdown": "^5.0.3",
+    "lodash": "^4.17.15",
+    "mustache": "^3.2.0",
+    "nodemon": "^2.0.2",
+    "rollup": "^1.27.14",
+    "rollup-plugin-alias": "^2.2.0",
+    "rollup-plugin-babel-minify": "^9.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0"
+  }
+}
