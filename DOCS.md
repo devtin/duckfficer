@@ -15,12 +15,14 @@
 ## Functions
 
 <dl>
-<dt><a href="#castArray">castArray(v)</a> ⇒ <code>Array</code></dt>
-<dd><p>Makes sure a value is wrapped in an array</p>
-</dd>
-<dt><a href="#forEach">forEach(arr, cb)</a></dt>
-<dd><p>Loops into given array alternatively breaking the look when the callback returns <code>false</code> (explicitly).</p>
-</dd>
+<dt><a href="#Utils..castArray
+Makes sure a value is wrapped in an array">Utils~castArray
+Makes sure a value is wrapped in an array(v)</a> ⇒ <code>Array</code></dt>
+<dd></dd>
+<dt><a href="#Utils..forEach
+Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).">Utils~forEach
+Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).(arr, cb)</a></dt>
+<dd></dd>
 </dl>
 
 <a name="Utils"></a>
@@ -305,22 +307,22 @@ nested objects.
 | --- | --- | --- |
 | theFieldName | <code>SchemaModel</code> | Add as many property schemas as you need in order to build your validation model |
 
-<a name="castArray"></a>
+<a name="Utils..castArray
+Makes sure a value is wrapped in an array"></a>
 
-## castArray(v) ⇒ <code>Array</code>
-Makes sure a value is wrapped in an array
-
+## Utils~castArray
+Makes sure a value is wrapped in an array(v) ⇒ <code>Array</code>
 **Kind**: global function  
 
 | Param |
 | --- |
 | v | 
 
-<a name="forEach"></a>
+<a name="Utils..forEach
+Loops into given array alternatively breaking the look when the callback returns `false` (explicitly)."></a>
 
-## forEach(arr, cb)
-Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).
-
+## Utils~forEach
+Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).(arr, cb)
 **Kind**: global function  
 
 | Param | Type | Description |

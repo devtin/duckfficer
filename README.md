@@ -12,7 +12,7 @@ Zero-dependencies, light-weight library for validating & sanitizing javascript's
 
 ### About
 
-In my beloved JavaScript ecosystem, I'm constantly defining data schemas just to find myself later performing duck-typing
+In my beloved JavaScript ecosystem, I'm constantly defining data schemas just to find myself later performing duck-type
 validation and casting values to ensure data-type consistency prior proceeding with further business logic...
 One day I got tired and found some inspiration on the [mongoose](https://mongoosejs.com)'s validation syntax.
 
@@ -97,7 +97,6 @@ Have a look at [the docs](./DOCS.md)
 ### Schema validator validates value type in a Schema
 
 ```js
-// todo: more different types
 const firstNameValidator = new Schema({
   name: 'firstName',
   type: String
@@ -148,7 +147,7 @@ t.throws(() => firstNameValidator.parse('Tin Rafael'), `Invalid regex`)
 t.notThrows(() => firstNameValidator.parse('Martin'))
 ```
 
-### Default value helper *(only)*
+### Default value helper
 
 ```js
 const quantityValidator = new Schema({

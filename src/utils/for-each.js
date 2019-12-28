@@ -1,4 +1,5 @@
 /**
+ * @method Utils~forEach
  * Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).
  * @param {Array} arr
  * @param {Function} cb - Callback function called per item in the array passing the item and index as arguments.
