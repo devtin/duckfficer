@@ -12,7 +12,7 @@ Zero-dependencies, light-weight library for validating & sanitizing javascript's
 
 ### About
 
-In my beloved JavaScript ecosystem, I'm constantly defining data schemas just to find myself later performing duck-typing
+In my beloved JavaScript ecosystem, I'm constantly defining data schemas just to find myself later performing duck-type
 validation and casting values to ensure data-type consistency prior proceeding with further business logic...
 One day I got tired and found some inspiration on the [mongoose](https://mongoosejs.com)'s validation syntax.
 
