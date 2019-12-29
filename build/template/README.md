@@ -26,7 +26,7 @@ $ yarn add @devtin/schema-validator
 
 ### Usage
 
-Open at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.
+Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.
 
 ```js
 {{{ sandbox }}}
