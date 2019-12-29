@@ -1,11 +1,21 @@
 {
   "name": "@devtin/schema-validator",
   "author": "Martin Rafael <tin@devtin.io>",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "description": "Zero-dependencies, light-weight library for duck-type validating & sanitizing javascript's data schemas.",
+  "keywords": [
+    "duck-type",
+    "duck-typing",
+    "sanitize"
+  ],
   "main": "dist/schema-validator.js",
   "module": "dist/schema-validator.esm.js",
   "browser": "dist/schema-validator.iife.js",
   "license": "MIT",
+  "files": [
+    "dist/*",
+    "DOCS.md"
+  ],
   "scripts": {
     "build": "yarn build:lib && yarn build:docs && yarn build:readme",
     "build:lib": "rollup -c",
