@@ -1,6 +1,6 @@
 /**
  * @method Utils~castArray
- * Makes sure a value is wrapped in an array
+ * @desc Makes sure a value is wrapped in an array
  * @param v
  * @return {Array}
  */

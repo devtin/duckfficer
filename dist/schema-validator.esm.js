@@ -5,7 +5,7 @@
  */
 /**
  * @method Utils~castArray
- * Makes sure a value is wrapped in an array
+ * @desc Makes sure a value is wrapped in an array
  * @param v
  * @return {Array}
  */
@@ -83,7 +83,7 @@ function find (obj, path) {
 
 /**
  * @method Utils~forEach
- * Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).
+ * @desc Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).
  * @param {Array} arr
  * @param {Function} cb - Callback function called per item in the array passing the item and index as arguments.
  */

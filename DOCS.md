@@ -12,19 +12,6 @@
 </dd>
 </dl>
 
-## Functions
-
-<dl>
-<dt><a href="#Utils..castArray
-Makes sure a value is wrapped in an array">Utils~castArray
-Makes sure a value is wrapped in an array(v)</a> ⇒ <code>Array</code></dt>
-<dd></dd>
-<dt><a href="#Utils..forEach
-Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).">Utils~forEach
-Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).(arr, cb)</a></dt>
-<dd></dd>
-</dl>
-
 <a name="Utils"></a>
 
 ## Utils
@@ -33,10 +20,23 @@ Set of utilities
 **Kind**: global class  
 
 * [Utils](#Utils)
+    * [~castArray(v)](#Utils..castArray) ⇒ <code>Array</code>
     * [~obj2dot(obj, [parent], [separator])](#Utils..obj2dot) ⇒ <code>Array.&lt;String&gt;</code>
     * [~find(obj, path)](#Utils..find) ⇒ <code>\*</code>
+    * [~forEach(arr, cb)](#Utils..forEach)
     * [~render(template, obj)](#Utils..render)
     * [~propertiesRestricted(obj, properties, [options])](#Utils..propertiesRestricted)
+
+<a name="Utils..castArray"></a>
+
+### Utils~castArray(v) ⇒ <code>Array</code>
+Makes sure a value is wrapped in an array
+
+**Kind**: inner method of [<code>Utils</code>](#Utils)  
+
+| Param |
+| --- |
+| v | 
 
 <a name="Utils..obj2dot"></a>
 
@@ -89,6 +89,18 @@ const obj = {
 console.log(find(obj, 'prop1.prop2.prop3') // => Martin
 console.log(find(obj, 'prop1.prop2.firstName') // => Sandy
 ```
+<a name="Utils..forEach"></a>
+
+### Utils~forEach(arr, cb)
+Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).
+
+**Kind**: inner method of [<code>Utils</code>](#Utils)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| arr | <code>Array</code> |  |
+| cb | <code>function</code> | Callback function called per item in the array passing the item and index as arguments. |
+
 <a name="Utils..render"></a>
 
 ### Utils~render(template, obj)
@@ -306,29 +318,6 @@ nested objects.
 | Name | Type | Description |
 | --- | --- | --- |
 | theFieldName | <code>SchemaModel</code> | Add as many property schemas as you need in order to build your validation model |
-
-<a name="Utils..castArray
-Makes sure a value is wrapped in an array"></a>
-
-## Utils~castArray
-Makes sure a value is wrapped in an array(v) ⇒ <code>Array</code>
-**Kind**: global function  
-
-| Param |
-| --- |
-| v | 
-
-<a name="Utils..forEach
-Loops into given array alternatively breaking the look when the callback returns `false` (explicitly)."></a>
-
-## Utils~forEach
-Loops into given array alternatively breaking the look when the callback returns `false` (explicitly).(arr, cb)
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| arr | <code>Array</code> |  |
-| cb | <code>function</code> | Callback function called per item in the array passing the item and index as arguments. |
 
 
 * * *
