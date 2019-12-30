@@ -282,10 +282,14 @@ export class Schema {
       v = typeof this.settings.default === 'function' ? this.settings.default(v) : this.settings.default
     }
 
-    const transformer = Transformers[this.type]
+    return this._run(this.type, v)
+  }
+
+  _run (type, v) {
+    const transformer = Transformers[type]
 
     if (!transformer) {
-      throw new Error(`Don't know how to resolve ${ this.type }`)
+      throw new Error(`Don't know how to resolve ${ type }`)
     }
 
     if (v === undefined && !this.settings.required) {
@@ -301,11 +305,8 @@ export class Schema {
 
     if (transformer.loaders) {
       forEach(castArray(transformer.loaders), loader => {
-        const loaderName = Schema.guessType(loader)
-        if (!Transformers[loaderName]) {
-          throw new Error(`Don't know how to resolve ${ loaderName }`)
-        }
-        v = Transformers[loaderName].parse.call(this, v)
+        const type = Schema.guessType(loader)
+        v = this._run(type, v)
       })
     }
 
