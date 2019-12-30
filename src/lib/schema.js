@@ -48,6 +48,38 @@ export const Transformers = {
       return v
     }
   },
+  Boolean: {
+    parse (v) {
+      return !!v
+    }
+  },
+  Object: {
+    parse (v) {
+      if (typeof v !== 'object') {
+        throw new Error(`Invalid object`)
+      }
+      return v
+    }
+  },
+  Array: {
+    parse (v) {
+      if (!Array.isArray(v)) {
+        throw new Error(`Invalid array`)
+      }
+      return v
+    }
+  },
+  Set: {
+    parse (v) {
+      if (Array.isArray(v)) {
+        v = new Set(v)
+      }
+      if (!(v instanceof Set)) {
+        throw new Error(`Invalid set`)
+      }
+      return v
+    }
+  },
   Number: {
     parse (v) {
       v = Number(v)

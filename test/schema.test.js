@@ -11,6 +11,34 @@ test(`Schema validator validates value type in a Schema`, async t => {
   t.throws(() => firstNameValidator.parse({ name: 'Martin' }), 'Invalid string')
   t.throws(() => firstNameValidator.parse(() => 'Martin'), 'Invalid string')
   t.notThrows(() => firstNameValidator.parse('Martin'), 'Martin')
+
+  const AllTypes = new Schema({
+    name: String,
+    category: Set,
+    added: Date,
+    approved: Boolean,
+    quantity: Number
+  })
+
+  let sanitized
+  t.notThrows(() => {
+    sanitized = AllTypes.parse({
+      name: 'Kombucha',
+      category: ['health', 'drinks', 'tea', 'health'],
+      added: '12/29/2019',
+      approved: '1',
+      quantity: '23'
+    })
+  })
+
+  t.is(sanitized.name, 'Kombucha')
+  t.true(sanitized.added instanceof Date)
+  t.true(sanitized.category instanceof Set)
+  t.is(sanitized.category.size, 3)
+  t.true(sanitized.category.has('health'))
+  t.true(typeof sanitized.approved === 'boolean')
+  t.true(Number.isInteger(sanitized.quantity))
+  t.is(sanitized.quantity, 23)
 })
 
 test(`Minlength helper for strings`, async t => {
@@ -236,6 +264,7 @@ test(`Handles custom data-types`, t => {
   Transformers.Email = {
     loaders: [String], // pre-processes the value using this known-registered types
     parse (v) {
+      t.true(this instanceof Schema)
       if (!/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/.test(v)) {
         return this.throwError(`Invalid e-mail address { value } for field { field.name }`, { value: v })
       }
