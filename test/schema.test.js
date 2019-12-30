@@ -91,8 +91,7 @@ test('Default value helper function', t => {
     default: Date.now
   })
 
-  t.notThrows(() => quantityValidator.parse())
-  t.is(Math.round(quantityValidator.parse().getTime() / 100), Math.round(Date.now() / 100))
+  t.true(quantityValidator.parse() instanceof Date)
 })
 
 test(`Custom error messages with optional rendering`, t => {
@@ -197,15 +196,7 @@ test(`Validates full nested schemas`, t => {
       required: true,
       regex: /^[a-z0-9_.]+@[a-z-0-9.]+\.[a-z]{2,}$/
     },
-    birthday: {
-      type: Date,
-      validate ({ value }) {
-        const millenials = new Date('1/1/2000').getTime()
-        if (value.getTime() >= millenials) {
-          throw new Error(`Sorry. No millennials allowed!`)
-        }
-      }
-    },
+    birthday: Date,
     address: {
       city: {
         type: String,
@@ -250,7 +241,8 @@ test(`Handles custom data-types`, t => {
     name: String,
     email: {
       type: 'Email',
-      required: true
+      required: true,
+      onlyGmail: true
     },
   })
 
@@ -258,6 +250,7 @@ test(`Handles custom data-types`, t => {
     name: 'Martin',
     email: 'tin@devtin.io'
   }), `Data is not valid`)
+
   t.is(error.errors[0].message, `Don't know how to resolve Email`)
 
   // Registers a new custom type
@@ -267,6 +260,9 @@ test(`Handles custom data-types`, t => {
       t.true(this instanceof Schema)
       if (!/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/.test(v)) {
         return this.throwError(`Invalid e-mail address { value } for field { field.name }`, { value: v })
+      }
+      if (this.settings.onlyGmail && !/@gmail\.com$/.test(v)) {
+        return this.throwError(`Only gmail accounts`)
       }
       return v
     }
@@ -286,8 +282,15 @@ test(`Handles custom data-types`, t => {
 
   t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-  t.notThrows(() => customType.parse({
+  error = t.throws(() => customType.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
+  }))
+
+  t.is(error.errors[0].message, 'Only gmail accounts')
+
+  t.notThrows(() => customType.parse({
+    name: 'Martin',
+    email: 'marting.dc@gmail.com'
   }))
 })

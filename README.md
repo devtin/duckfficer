@@ -26,7 +26,8 @@ $ yarn add @devtin/schema-validator
 
 ### Usage
 
-Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.
+Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
+Also have a look at [the docs](./DOCS.md)
 
 ```js
 const { Schema } = require('@devtin/schema-validator')
@@ -77,8 +78,6 @@ try {
 
 ```
 
-Have a look at [the docs](./DOCS.md)
-
 ### Features
 
 - [Schema validator validates value type in a Schema](#schema-validator-validates-value-type-in-a-schema)
@@ -106,6 +105,34 @@ t.throws(() => firstNameValidator.parse(1), 'Invalid string')
 t.throws(() => firstNameValidator.parse({ name: 'Martin' }), 'Invalid string')
 t.throws(() => firstNameValidator.parse(() => 'Martin'), 'Invalid string')
 t.notThrows(() => firstNameValidator.parse('Martin'), 'Martin')
+
+const AllTypes = new Schema({
+  name: String,
+  category: Set,
+  added: Date,
+  approved: Boolean,
+  quantity: Number
+})
+
+let sanitized
+t.notThrows(() => {
+  sanitized = AllTypes.parse({
+    name: 'Kombucha',
+    category: ['health', 'drinks', 'tea', 'health'],
+    added: '12/29/2019',
+    approved: '1',
+    quantity: '23'
+  })
+})
+
+t.is(sanitized.name, 'Kombucha')
+t.true(sanitized.added instanceof Date)
+t.true(sanitized.category instanceof Set)
+t.is(sanitized.category.size, 3)
+t.true(sanitized.category.has('health'))
+t.true(typeof sanitized.approved === 'boolean')
+t.true(Number.isInteger(sanitized.quantity))
+t.is(sanitized.quantity, 23)
 ```
 
 ### Minlength helper for strings
@@ -168,8 +195,7 @@ const quantityValidator = new Schema({
   default: Date.now
 })
 
-t.notThrows(() => quantityValidator.parse())
-t.is(Math.round(quantityValidator.parse().getTime() / 100), Math.round(Date.now() / 100))
+t.true(quantityValidator.parse() instanceof Date)
 ```
 
 ### Custom error messages with optional rendering
@@ -339,7 +365,8 @@ const customType = new Schema({
   name: String,
   email: {
     type: 'Email',
-    required: true
+    required: true,
+    onlyGmail: true
   },
 })
 
@@ -347,14 +374,19 @@ let error = t.throws(() => customType.parse({
   name: 'Martin',
   email: 'tin@devtin.io'
 }), `Data is not valid`)
+
 t.is(error.errors[0].message, `Don't know how to resolve Email`)
 
 // Registers a new custom type
 Transformers.Email = {
   loaders: [String], // pre-processes the value using this known-registered types
   parse (v) {
+    t.true(this instanceof Schema)
     if (!/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/.test(v)) {
       return this.throwError(`Invalid e-mail address { value } for field { field.name }`, { value: v })
+    }
+    if (this.settings.onlyGmail && !/@gmail\.com$/.test(v)) {
+      return this.throwError(`Only gmail accounts`)
     }
     return v
   }
@@ -374,9 +406,14 @@ error = t.throws(() => customType.parse({
 
 t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-t.notThrows(() => customType.parse({
+t.throws(() => customType.parse({
   name: 'Martin',
   email: 'tin@devtin.io'
+}), 'Only gmail accounts')
+
+t.notThrows(() => customType.parse({
+  name: 'Martin',
+  email: 'marting.dc@gmail.com'
 }))
 ```
 

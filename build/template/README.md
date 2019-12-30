@@ -26,13 +26,12 @@ $ yarn add @devtin/schema-validator
 
 ### Usage
 
-Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.
+Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
+Also have a look at [the docs](./DOCS.md)
 
 ```js
 {{{ sandbox }}}
 ```
-
-Have a look at [the docs](./DOCS.md)
 
 ### Features
 

@@ -12,6 +12,24 @@
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
+<dd><p>Transformers are functions that performs the type casting logic and validation.</p>
+</dd>
+</dl>
+
+## Typedefs
+
+<dl>
+<dt><a href="#Parser">Parser</a> ⇒ <code>*</code></dt>
+<dd><p>Synchronous function that evaluates &amp; sanitizes given value if possible, or throws a {ValidationError} otherwise.</p>
+</dd>
+<dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
+<dd></dd>
+</dl>
+
 <a name="Utils"></a>
 
 ## Utils
@@ -318,6 +336,45 @@ nested objects.
 | Name | Type | Description |
 | --- | --- | --- |
 | theFieldName | <code>SchemaModel</code> | Add as many property schemas as you need in order to build your validation model |
+
+<a name="Transformers"></a>
+
+## Transformers : <code>Object</code>
+Transformers are functions that performs the type casting logic and validation.
+
+**Kind**: global constant  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| <TransformerName> | [<code>Transformer</code>](#Transformer) | 
+
+<a name="Parser"></a>
+
+## Parser ⇒ <code>\*</code>
+Synchronous function that evaluates & sanitizes given value if possible, or throws a {ValidationError} otherwise.
+
+**Kind**: global typedef  
+**Returns**: <code>\*</code> - values - Resulting value  
+**Throws**:
+
+- ValidationError
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value being treated |
+
+<a name="Transformer"></a>
+
+## Transformer : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| parse | [<code>Parser</code>](#Parser) | Parser function |
+| loaders | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
 
 
 * * *
