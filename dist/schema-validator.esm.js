@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v1.0.1
+ * @devtin/schema-validator v1.1.0
  * (c) 2019 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -223,16 +223,27 @@ class ValidationError extends Error {
   }
 }
 
+/**
+ * @typedef {Function} Parser
+ * @desc Synchronous function that evaluates & sanitizes given value if possible, or throws a {ValidationError} otherwise.
+ * @param {*} value - The value being treated
+ * @return {*} values - Resulting value
+ * @throws ValidationError
+ */
+
+/**
+ * @typedef {Object} Transformer
+ * @property {Parser} parse - Parser function
+ * @property {String[]} loaders - Transformer names to pipe the value through prior handling it with the parser function.
+ */
+
+/**
+ * @type {Object} Transformers
+ * @desc Transformers are functions that performs the type casting logic and validation.
+ * @property {Transformer} <TransformerName>
+ */
 const Transformers = {
-  /**
-   * @return {String}
-   */
   String: {
-    /**
-     * Maybe cast value could be async and there is where the beauty comes!
-     * @return {String}
-     * @throws {Error} when given value can not be casted
-     */
     parse (v) {
       if (typeof v !== 'string') {
         if (!(typeof v === 'object' && v.hasOwnProperty('toString'))) {
@@ -264,6 +275,38 @@ const Transformers = {
         }
       }
 
+      return v
+    }
+  },
+  Boolean: {
+    parse (v) {
+      return !!v
+    }
+  },
+  Object: {
+    parse (v) {
+      if (typeof v !== 'object') {
+        throw new Error(`Invalid object`)
+      }
+      return v
+    }
+  },
+  Array: {
+    parse (v) {
+      if (!Array.isArray(v)) {
+        throw new Error(`Invalid array`)
+      }
+      return v
+    }
+  },
+  Set: {
+    parse (v) {
+      if (Array.isArray(v)) {
+        v = new Set(v);
+      }
+      if (!(v instanceof Set)) {
+        throw new Error(`Invalid set`)
+      }
       return v
     }
   },
@@ -501,10 +544,14 @@ class Schema {
       v = typeof this.settings.default === 'function' ? this.settings.default(v) : this.settings.default;
     }
 
-    const transformer = Transformers[this.type];
+    return this._run(this.type, v)
+  }
+
+  _run (type, v) {
+    const transformer = Transformers[type];
 
     if (!transformer) {
-      throw new Error(`Don't know how to resolve ${ this.type }`)
+      throw new Error(`Don't know how to resolve ${ type }`)
     }
 
     if (v === undefined && !this.settings.required) {
@@ -520,11 +567,8 @@ class Schema {
 
     if (transformer.loaders) {
       forEach(castArray(transformer.loaders), loader => {
-        const loaderName = Schema.guessType(loader);
-        if (!Transformers[loaderName]) {
-          throw new Error(`Don't know how to resolve ${ loaderName }`)
-        }
-        v = Transformers[loaderName].parse.call(this, v);
+        const type = Schema.guessType(loader);
+        v = this._run(type, v);
       });
     }
 
