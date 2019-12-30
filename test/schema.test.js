@@ -291,4 +291,3 @@ test(`Handles custom data-types`, t => {
     email: 'tin@devtin.io'
   }))
 })
-
