@@ -16,6 +16,10 @@
     "dist/*",
     "DOCS.md"
   ],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/devtin/schema-validator"
+  },
   "scripts": {
     "build": "yarn build:lib && yarn build:docs && yarn build:readme",
     "build:lib": "rollup -c",
