@@ -1,6 +1,6 @@
 /*!
- * @devtin/schema-validator v1.1.0
- * (c) 2019 Martin Rafael <tin@devtin.io>
+ * @devtin/schema-validator v1.1.1
+ * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
 /**
@@ -322,7 +322,7 @@ const Transformers = {
   Date: {
     parse (v) {
       v = new Date(Number.isInteger(v) ? v : Date.parse(v));
-      if (!(v instanceof Date)) {
+      if (v.toString() === 'Invalid Date') {
         throw new Error(`Invalid date`)
       }
       return v

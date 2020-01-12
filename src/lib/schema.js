@@ -103,7 +103,7 @@ export const Transformers = {
   Date: {
     parse (v) {
       v = new Date(Number.isInteger(v) ? v : Date.parse(v))
-      if (!(v instanceof Date)) {
+      if (v.toString() === 'Invalid Date') {
         throw new Error(`Invalid date`)
       }
       return v
