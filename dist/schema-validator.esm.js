@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v1.1.2
+ * @devtin/schema-validator v1.2.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -284,56 +284,56 @@ const Transformers = {
     }
   },
   Object: {
-    parse (value) {
-      if (typeof value !== 'object') {
-        this.throwError(`Invalid object`, { value });
+    parse (v) {
+      if (typeof v !== 'object') {
+        throw new Error(`Invalid object`)
       }
       return v
     }
   },
   Array: {
-    parse (value) {
-      if (!Array.isArray(value)) {
-        this.throwError(`Invalid array`, { value });
+    parse (v) {
+      if (!Array.isArray(v)) {
+        throw new Error(`Invalid array`)
       }
-      return value
+      return v
     }
   },
   Set: {
-    parse (value) {
-      if (Array.isArray(value)) {
-        value = new Set(value);
+    parse (v) {
+      if (Array.isArray(v)) {
+        v = new Set(v);
       }
-      if (!(value instanceof Set)) {
-        this.throwError(`Invalid set`, { value });
+      if (!(v instanceof Set)) {
+        throw new Error(`Invalid set`)
       }
-      return value
+      return v
     }
   },
   Number: {
-    parse (value) {
-      value = Number(value);
-      if (isNaN(value)) {
-        this.throwError(`Invalid number`, { value });
+    parse (v) {
+      v = Number(v);
+      if (isNaN(v)) {
+        throw new Error(`Invalid number`)
       }
-      return value
+      return v
     }
   },
   Date: {
-    parse (value) {
-      value = new Date(Number.isInteger(value) ? value : Date.parse(value));
-      if (value.toString() === 'Invalid Date') {
-        this.throwError(`Invalid date`, { value });
+    parse (v) {
+      v = new Date(Number.isInteger(v) ? v : Date.parse(v));
+      if (!(v instanceof Date)) {
+        throw new Error(`Invalid date`)
       }
-      return value
+      return v
     }
   },
   Function: {
-    parse (value) {
-      if (typeof value !== 'function') {
-        this.throwError(`Invalid function`, { value });
+    parse (v) {
+      if (typeof v !== 'function') {
+        throw new Error(`Invalid function`)
       }
-      return value
+      return v
     }
   }
 };
