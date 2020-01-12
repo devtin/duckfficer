@@ -310,15 +310,7 @@ const UserValidator = new Schema({
     required: true,
     regex: /^[a-z0-9_.]+@[a-z-0-9.]+\.[a-z]{2,}$/
   },
-  birthday: {
-    type: Date,
-    validate ({ value }) {
-      const millenials = new Date('1/1/2000').getTime()
-      if (value.getTime() >= millenials) {
-        throw new Error(`Sorry. No millennials allowed!`)
-      }
-    }
-  },
+  birthday: Date,
   address: {
     city: {
       type: String,
@@ -406,10 +398,12 @@ error = t.throws(() => customType.parse({
 
 t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-t.throws(() => customType.parse({
+error = t.throws(() => customType.parse({
   name: 'Martin',
   email: 'tin@devtin.io'
-}), 'Only gmail accounts')
+}))
+
+t.is(error.errors[0].message, 'Only gmail accounts')
 
 t.notThrows(() => customType.parse({
   name: 'Martin',
