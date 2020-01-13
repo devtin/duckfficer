@@ -3,121 +3,7 @@ import { castArray } from 'utils/cast-array'
 import { obj2dot } from 'utils/obj-2-dot'
 import { ValidationError } from './validation-error.js'
 import { forEach } from 'utils/for-each.js'
-
-/**
- * @typedef {Function} Parser
- * @desc Synchronous function that evaluates & sanitizes given value if possible, or throws a {ValidationError} otherwise.
- * @param {*} value - The value being treated
- * @return {*} values - Resulting value
- * @throws ValidationError
- */
-
-/**
- * @typedef {Object} Transformer
- * @property {Parser} parse - Parser function
- * @property {String[]} loaders - Transformer names to pipe the value through prior handling it with the parser function.
- */
-
-/**
- * @type {Object} Transformers
- * @desc Transformers are functions that performs the type casting logic and validation.
- * @property {Transformer} <TransformerName>
- */
-export const Transformers = {
-  String: {
-    parse (v) {
-      if (typeof v !== 'string') {
-        if (!(typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, 'toString'))) {
-          this.throwError(`Invalid string`, { value: v })
-        }
-
-        v = v.toString()
-      }
-
-      if (this.settings.minlength) {
-        const [minlength, error] = Schema.castThrowable(this.settings.minlength, `Invalid minlength`)
-        if (v.length < minlength) {
-          this.throwError(error, { value: v })
-        }
-      }
-
-      if (this.settings.maxlength) {
-        const [maxlength, error] = Schema.castThrowable(this.settings.maxlength, `Invalid maxlength`)
-        if (v.length > maxlength) {
-          this.throwError(error, { value: v })
-        }
-      }
-
-      if (this.settings.regex) {
-        const [regex, error] = Schema.castThrowable(this.settings.regex, `Invalid regex`)
-
-        if (!regex.test(v)) {
-          this.throwError(error, { value: v })
-        }
-      }
-
-      return v
-    }
-  },
-  Boolean: {
-    parse (v) {
-      return !!v
-    }
-  },
-  Object: {
-    parse (value) {
-      if (typeof value !== 'object') {
-        this.throwError(`Invalid object`, { value })
-      }
-      return value
-    }
-  },
-  Array: {
-    parse (value) {
-      if (!Array.isArray(value)) {
-        this.throwError(`Invalid array`, { value })
-      }
-      return value
-    }
-  },
-  Set: {
-    parse (value) {
-      if (Array.isArray(value)) {
-        value = new Set(value)
-      }
-      if (!(value instanceof Set)) {
-        this.throwError(`Invalid set`, { value })
-      }
-      return value
-    }
-  },
-  Number: {
-    parse (value) {
-      value = Number(value)
-      if (isNaN(value)) {
-        this.throwError(`Invalid number`, { value })
-      }
-      return value
-    }
-  },
-  Date: {
-    parse (value) {
-      value = new Date(Number.isInteger(value) ? value : Date.parse(value))
-      if (value.toString() === 'Invalid Date') {
-        this.throwError(`Invalid date`, { value })
-      }
-      return value
-    }
-  },
-  Function: {
-    parse (value) {
-      if (typeof value !== 'function') {
-        this.throwError(`Invalid function`, { value })
-      }
-      return value
-    }
-  }
-}
+import { Transformers } from './transformers.js'
 
 /**
  * @typedef {Object} Schema~SchemaModel
@@ -315,7 +201,7 @@ export class Schema {
     }
 
     // custom manipulators
-    if (this.settings.default && !v) {
+    if (typeof this.settings.default !== 'undefined' && !v) {
       v = typeof this.settings.default === 'function' ? this.settings.default(v) : this.settings.default
     }
 
@@ -347,7 +233,23 @@ export class Schema {
       })
     }
 
-    return transformer.parse.call(this, v)
+    const callTransformer = (method, ...payload) => {
+      return transformer[method].call(this, ...payload)
+    }
+
+    if (this.settings.autoCast && transformer.cast) {
+      v = callTransformer('cast', v)
+    }
+
+    if (transformer.validate) {
+      callTransformer('validate', v)
+    }
+
+    if (transformer.parse) {
+      v = callTransformer('parse', v)
+    }
+
+    return v
   }
 
   _parseNested (obj) {
