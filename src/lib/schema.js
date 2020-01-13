@@ -27,7 +27,7 @@ export const Transformers = {
   String: {
     parse (v) {
       if (typeof v !== 'string') {
-        if (!(typeof v === 'object' && v.hasOwnProperty('toString'))) {
+        if (!(typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, 'toString'))) {
           this.throwError(`Invalid string`, { value: v })
         }
 
@@ -311,13 +311,7 @@ export class Schema {
    */
   parse (v) {
     if (this.children) {
-      let res
-      try {
-        res = this._parseNested(v)
-      } catch (err) {
-        throw err
-      }
-      return res
+      return this._parseNested(v)
     }
 
     // custom manipulators
