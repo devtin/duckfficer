@@ -284,56 +284,64 @@ const Transformers = {
     }
   },
   Object: {
-    parse (v) {
-      if (typeof v !== 'object') {
-        throw new Error(`Invalid object`)
+    parse (value) {
+      if (typeof value !== 'object') {
+        this.throwError(`Invalid object`, { value });
       }
       return v
     }
   },
   Array: {
-    parse (v) {
-      if (!Array.isArray(v)) {
-        throw new Error(`Invalid array`)
+    parse (value) {
+      if (!Array.isArray(value)) {
+        this.throwError(`Invalid array`, { value });
       }
-      return v
+      if (this.settings.items) {
+        value = value.map((value, name) => {
+          return (new Schema(this.settings.items, Object.assign({}, this.settings.items, {
+            name,
+            parent: this
+          }))).parse(value)
+        });
+      }
+      return value
     }
   },
   Set: {
-    parse (v) {
-      if (Array.isArray(v)) {
-        v = new Set(v);
+    parse (value) {
+      if (Array.isArray(value)) {
+        value = new Set(value);
       }
-      if (!(v instanceof Set)) {
-        throw new Error(`Invalid set`)
+      if (!(value instanceof Set)) {
+        this.throwError(`Invalid set`, { value });
       }
-      return v
+      return value
     }
   },
   Number: {
-    parse (v) {
-      v = Number(v);
-      if (isNaN(v)) {
-        throw new Error(`Invalid number`)
+    parse (value) {
+      value = Number(value);
+      if (isNaN(value)) {
+        this.throwError(`Invalid number`, { value });
       }
-      return v
+      return value
     }
   },
   Date: {
-    parse (v) {
-      v = new Date(Number.isInteger(v) ? v : Date.parse(v));
-      if (v.toString() === 'Invalid Date') {
-        throw new Error(`Invalid date`)
+    parse (value) {
+      value = new Date(Number.isInteger(value) ? value : Date.parse(value));
+      if (value.toString() === 'Invalid Date') {
+        this.throwError(`Invalid date`, { value });
       }
-      return v
+      return value
     }
   },
   Function: {
-    parse (v) {
-      if (typeof v !== 'function') {
-        throw new Error(`Invalid function`)
+    parse (value) {
+      if (typeof value !== 'function') {
+        this.throwError(`Invalid function`, { value });
       }
-      return v
+      return value
     }
   }
 };
