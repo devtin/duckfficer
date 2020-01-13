@@ -69,7 +69,7 @@ export const Transformers = {
       if (typeof value !== 'object') {
         this.throwError(`Invalid object`, { value })
       }
-      return v
+      return value
     }
   },
   Array: {

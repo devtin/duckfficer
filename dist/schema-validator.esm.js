@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v1.1.2
+ * @devtin/schema-validator v1.1.3
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -288,7 +288,7 @@ const Transformers = {
       if (typeof value !== 'object') {
         this.throwError(`Invalid object`, { value });
       }
-      return v
+      return value
     }
   },
   Array: {
