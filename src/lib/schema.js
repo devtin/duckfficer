@@ -323,7 +323,7 @@ export class Schema {
     }
 
     // custom manipulators
-    if (this.settings.default && !v) {
+    if (typeof this.settings.default !== 'undefined' && !v) {
       v = typeof this.settings.default === 'function' ? this.settings.default(v) : this.settings.default
     }
 
