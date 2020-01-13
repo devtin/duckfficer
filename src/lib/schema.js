@@ -77,6 +77,14 @@ export const Transformers = {
       if (!Array.isArray(value)) {
         this.throwError(`Invalid array`, { value })
       }
+      if (this.settings.items) {
+        value = value.map((value, name) => {
+          return (new Schema(this.settings.items, Object.assign({}, this.settings.items, {
+            name,
+            parent: this
+          }))).parse(value)
+        })
+      }
       return value
     }
   },
