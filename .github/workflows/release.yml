@@ -1,0 +1,27 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: release
+      run: |
+        npm ci
+        npm publish --access public
+      env:
+        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
