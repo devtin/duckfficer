@@ -2,7 +2,7 @@
 [![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
 ![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)
 
-Zero-dependencies, light-weight library for validating & sanitizing javascript's data schemas.  
+Zero-dependencies, light-weight library for validating & sanitizing JavaScript data schemas.  
 
 - [About](#about)
 - [Installation](#installation)
