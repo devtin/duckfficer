@@ -417,4 +417,4 @@ t.notThrows(() => customType.parse({
 
 [MIT](https://opensource.org/licenses/MIT)
 
-&copy; 2019 Martin Rafael <tin@devtin.io>
+&copy; 2019-2020 Martin Rafael <tin@devtin.io>
