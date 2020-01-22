@@ -1,6 +1,7 @@
 # Requirements
 
-- Yarn
+- node.js >= 10
+- yarn
 
 # Build
 
