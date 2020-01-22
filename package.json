@@ -29,8 +29,9 @@
     "test": "NODE_ENV=test ava --serial --verbose",
     "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/types/*.test.js",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
-    "prepublishOnly": "rm package-lock.json yarn.lock && npm ci && yarn && yarn lint && yarn build && yarn test:all && ./scripts/git-clean-tree.sh && echo 'Looks good for a release!'",
-    "postpublish": "git tag $(node scripts/version.js) && git push --tags"
+    "prepublishOnly": "yarn lint && yarn build && yarn test:all && ./scripts/git-clean-tree.sh && echo 'Looks good for a release!'",
+    "release": "standard-version",
+    "postpublish": "git push --tags"
   },
   "devDependencies": {
     "@pleasure-js/docs": "^1.0.0-beta",
@@ -46,7 +47,8 @@
     "rollup-plugin-alias": "^2.2.0",
     "rollup-plugin-babel-minify": "^9.1.1",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-json": "^4.0.0"
+    "rollup-plugin-json": "^4.0.0",
+    "standard-version": "^7.1.0"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
