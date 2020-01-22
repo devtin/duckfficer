@@ -1,7 +1,7 @@
 {
   "name": "@devtin/schema-validator",
   "author": "Martin Rafael <tin@devtin.io>",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Zero-dependencies, light-weight library for duck-type validating & sanitizing javascript's data schemas.",
   "keywords": [
     "duck-type",
@@ -29,9 +29,9 @@
     "test": "NODE_ENV=test ava --serial --verbose",
     "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/types/*.test.js",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
-    "prepublishOnly": "yarn lint && yarn build && yarn test:all && ./scripts/git-clean-tree.sh && echo 'Looks good for a release!'",
+    "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
     "release": "standard-version",
-    "postpublish": "git push --tags"
+    "postpublish": "git push && git push --tags"
   },
   "devDependencies": {
     "@pleasure-js/docs": "^1.0.0-beta",
