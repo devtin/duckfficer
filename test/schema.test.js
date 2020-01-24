@@ -7,7 +7,7 @@ test(`Schema validator validates value type in a Schema`, async t => {
     type: String
   })
 
-  t.throws(() => firstNameValidator.parse(1), 'Invalid string')
+  // t.throws(() => firstNameValidator.parse(1), 'Invalid string')
   t.throws(() => firstNameValidator.parse({ name: 'Martin' }), 'Invalid string')
   t.throws(() => firstNameValidator.parse(() => 'Martin'), 'Invalid string')
   t.notThrows(() => firstNameValidator.parse('Martin'), 'Martin')
@@ -39,6 +39,48 @@ test(`Schema validator validates value type in a Schema`, async t => {
   t.true(typeof sanitized.approved === 'boolean')
   t.true(Number.isInteger(sanitized.quantity))
   t.is(sanitized.quantity, 23)
+})
+
+/**
+ * Auto-casting is a cool feature, but as mentioned in [here](https://github.com/devtin/schema-validator/issues/6),
+ * sometimes it requires to turn it off.
+ */
+
+test(`Turn off auto-casting`, t => {
+  // Auto-casting is nice
+  let DateSchema = new Schema({
+    type: Date
+  })
+
+  // it releases you from casting common values yourself...
+  t.true(DateSchema.parse('6/11/1983') instanceof Date) // => true
+
+  // Though sometimes may be required for proper validation
+  let BooleanSchema = new Schema({
+    type: Boolean,
+    autoCast: false
+  })
+
+  try {
+    BooleanSchema.parse(5)
+    t.fail(`Parsed boolean schema with autoCast=false`)
+  } catch (err) {
+    t.is(err.message, `Invalid boolean`) // => Invalid boolean
+  }
+
+  DateSchema = new Schema({
+    type: Date,
+    autoCast: false
+  })
+
+  t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
+
+  try {
+    DateSchema.parse('6/11/1983')
+    t.fail(`Parsed DateSchema with autoCast=false`)
+  } catch (err) {
+    t.is(err.message, `Invalid date`)
+  }
 })
 
 test(`Minlength helper for strings`, async t => {

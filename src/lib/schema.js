@@ -29,7 +29,9 @@ export class Schema {
     /**
      * @property {Object} settings - Additional settings for schema
      */
-    this.settings = {}
+    this.settings = {
+      autoCast: true
+    }
 
     this.schema = schema
 
@@ -55,7 +57,7 @@ export class Schema {
     } else {
       // primitive
       this.type = Schema.guessType(schema)
-      this.settings = typeof schema === 'object' ? Object.assign({}, schema) : {}
+      this.settings = typeof schema === 'object' ? Object.assign({}, this.settings, schema) : this.settings
       delete this.settings.type
     }
   }

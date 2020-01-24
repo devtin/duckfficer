@@ -16,15 +16,23 @@
 
 <dl>
 <dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
-<dd><p>Transformers are functions that performs the type casting logic and validation.</p>
+<dd><p>Transformers are functions that perform type casting logic, validation and parsing.</p>
 </dd>
 </dl>
 
 ## Typedefs
 
 <dl>
+<dt><a href="#Validator">Validator</a> ⇒ <code>void</code></dt>
+<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a {ValidationError} when not.</p>
+</dd>
 <dt><a href="#Parser">Parser</a> ⇒ <code>*</code></dt>
-<dd><p>Synchronous function that evaluates &amp; sanitizes given value if possible, or throws a {ValidationError} otherwise.</p>
+<dd><p>Synchronous function that performs custom logic possibly customized via settings that could transform given
+value, throwing a {ValidationError} when error.</p>
+</dd>
+<dt><a href="#ValueCaster">ValueCaster</a> ⇒ <code>*</code></dt>
+<dd><p>Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
+original value in case it could not be guessed.</p>
 </dd>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
 <dd></dd>
@@ -340,7 +348,7 @@ nested objects.
 <a name="Transformers"></a>
 
 ## Transformers : <code>Object</code>
-Transformers are functions that performs the type casting logic and validation.
+Transformers are functions that perform type casting logic, validation and parsing.
 
 **Kind**: global constant  
 **Properties**
@@ -349,13 +357,12 @@ Transformers are functions that performs the type casting logic and validation.
 | --- | --- |
 | <TransformerName> | [<code>Transformer</code>](#Transformer) | 
 
-<a name="Parser"></a>
+<a name="Validator"></a>
 
-## Parser ⇒ <code>\*</code>
-Synchronous function that evaluates & sanitizes given value if possible, or throws a {ValidationError} otherwise.
+## Validator ⇒ <code>void</code>
+Synchronous function that validates that given value is of the expected kind. Throws a {ValidationError} when not.
 
 **Kind**: global typedef  
-**Returns**: <code>\*</code> - values - Resulting value  
 **Throws**:
 
 - ValidationError
@@ -363,7 +370,37 @@ Synchronous function that evaluates & sanitizes given value if possible, or thro
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>\*</code> | The value being treated |
+| value | <code>\*</code> | The value being validated |
+
+<a name="Parser"></a>
+
+## Parser ⇒ <code>\*</code>
+Synchronous function that performs custom logic possibly customized via settings that could transform given
+value, throwing a {ValidationError} when error.
+
+**Kind**: global typedef  
+**Returns**: <code>\*</code> - Resulting value  
+**Throws**:
+
+- ValidationError
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value being validated |
+
+<a name="ValueCaster"></a>
+
+## ValueCaster ⇒ <code>\*</code>
+Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
+original value in case it could not be guessed.
+
+**Kind**: global typedef  
+**Returns**: <code>\*</code> - Resulting value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value being casted |
 
 <a name="Transformer"></a>
 
@@ -373,8 +410,10 @@ Synchronous function that evaluates & sanitizes given value if possible, or thro
 
 | Name | Type | Description |
 | --- | --- | --- |
-| parse | [<code>Parser</code>](#Parser) | Parser function |
-| loaders | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
+| [cast] | [<code>ValueCaster</code>](#ValueCaster) | Cast function |
+| [parse] | [<code>Parser</code>](#Parser) | Parser function |
+| [validate] | [<code>ValueCaster</code>](#ValueCaster) | Cast function |
+| [loaders] | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
 
 
 * * *
