@@ -217,8 +217,6 @@ export class Schema {
       required && this.throwError(error, { value: v })
     }
 
-    // console.log({ transformer })
-
     if (transformer.loaders) {
       forEach(castArray(transformer.loaders), loader => {
         const type = Schema.guessType(loader)

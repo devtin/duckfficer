@@ -20,7 +20,7 @@ import { find } from './find.js'
  * ```
  */
 
-export function render (template, obj) {
+export function render (template = '', obj) {
   const objProps = obj2dot(obj)
   objProps.forEach(prop => {
     template = template.replace(new RegExp(`{[\\s]*${ prop }[\\s]*}`, 'g'), find(obj, prop))
