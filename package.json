@@ -30,7 +30,7 @@
     "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/types/*.test.js",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
-    "release": "standard-version",
+    "release": "standard-version --branch next",
     "postpublish": "git push && git push --tags"
   },
   "devDependencies": {
