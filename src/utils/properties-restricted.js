@@ -51,7 +51,7 @@ export function  propertiesRestricted (obj, properties, { strict = false } = {})
   if (valid) {
     forEach(Object.keys(obj), property => {
       if (typeof obj[property] === 'object' && !Array.isArray(obj[property])) {
-        const propMatch = new RegExp(`^${ property }.(.+)$`)
+        const propMatch = new RegExp(`^${ property }\\.(.+)$`)
         let defaultApproved = properties.indexOf(property) >= 0
         const childProps = properties
           .filter((v) => {
