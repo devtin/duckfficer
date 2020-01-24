@@ -3,6 +3,7 @@ import { castArray } from 'utils/cast-array'
 import { obj2dot } from 'utils/obj-2-dot'
 import { ValidationError } from './validation-error.js'
 import { forEach } from 'utils/for-each.js'
+import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
 
 /**
@@ -57,14 +58,6 @@ export class Schema {
       this.settings = typeof schema === 'object' ? Object.assign({}, schema) : {}
       delete this.settings.type
     }
-  }
-
-  static castThrowable (value, error) {
-    if (Array.isArray(value) && value.length === 2) {
-      return value
-    }
-
-    return [value, error]
   }
 
   _parseSchema (obj) {
@@ -220,7 +213,7 @@ export class Schema {
     }
 
     if (!v && this.settings.required) {
-      const [required, error] = Schema.castThrowable(this.settings.required, `Field ${ this.fullPath } is required`)
+      const [required, error] = castThrowable(this.settings.required, `Field ${ this.fullPath } is required`)
       required && this.throwError(error, { value: v })
     }
 
