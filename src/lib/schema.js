@@ -226,7 +226,23 @@ export class Schema {
       })
     }
 
-    return transformer.parse.call(this, v)
+    const callTransformer = (method, ...payload) => {
+      return transformer[method].call(this, ...payload)
+    }
+
+    if (this.settings.autoCast && transformer.cast) {
+      v = callTransformer('cast', v)
+    }
+
+    if (transformer.validate) {
+      callTransformer('validate', v)
+    }
+
+    if (transformer.parse) {
+      v = callTransformer('parse', v)
+    }
+
+    return v
   }
 
   _parseNested (obj) {
