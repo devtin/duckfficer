@@ -26,23 +26,28 @@ import { castThrowable } from 'utils/cast-throwable.js'
 
 /**
  * @typedef {Object} Transformer
+ * @desc A transformer holds the logic of instantiating a data type (casting, validation and parsing).
  * @property {ValueCaster} [cast] - Cast function
  * @property {Parser} [parse] - Parser function
- * @property {ValueCaster} [validate] - Cast function
+ * @property {Validator} [validate] - Validator function
  * @property {String[]} [loaders] - Transformer names to pipe the value through prior handling it with the parser function.
  */
 
 /**
- * @type {Object} Transformers
- * @desc Transformers are functions that perform type casting logic, validation and parsing.
- * @property {Transformer} <TransformerName>
+ * @typedef {Object} Transformers
+ * @desc key map object that holds the available Transformer's (types) that can be validated.
+ * @property {Transformer} TransformerName - The transformer name
  */
 
 export const Transformers = {
   String: {
+    settings: {
+      typeError: `Invalid string`,
+      autoCast: false
+    },
     invalidError: 'Invalid string',
     cast (v) {
-      if (Object.hasOwnProperty.call(v, 'toString') && typeof v.toString === 'function' && v.toString() !== '[object Object]') {
+      if (v && Object.hasOwnProperty.call(v, 'toString') && typeof v.toString === 'function' && v.toString() !== '[object Object]') {
         v = v.toString()
       }
       return v
@@ -82,6 +87,10 @@ export const Transformers = {
   },
   Boolean: {
     invalidError: 'Invalid boolean',
+    settings: {
+      typeError: `Invalid boolean`,
+      autoCast: true
+    },
     cast (value) {
       return !!value
     },
@@ -93,6 +102,9 @@ export const Transformers = {
   },
   Object: {
     invalidError: 'Invalid object',
+    settings: {
+      typeError: `Invalid object`
+    },
     validate (value) {
       if (typeof value !== 'object') {
         this.throwError(Transformers.Object.invalidError, { value })
@@ -101,6 +113,9 @@ export const Transformers = {
   },
   Array: {
     invalidError: `Invalid array`,
+    settings: {
+      typeError: `Invalid array`
+    },
     parse (value) {
       if (this.settings.items) {
         value = value.map((value, name) => {
@@ -120,6 +135,10 @@ export const Transformers = {
   },
   Set: {
     invalidError: `Invalid set`,
+    settings: {
+      typeError: `Invalid set`,
+      autoCast: true
+    },
     cast (value) {
       if (Array.isArray(value)) {
         value = new Set(value)
@@ -135,17 +154,25 @@ export const Transformers = {
   },
   Number: {
     invalidError: `Invalid number`,
+    settings: {
+      typeError: `Invalid number`,
+      autoCast: false
+    },
     cast (value) {
       return Number(value)
     },
     validate (value) {
-      if (isNaN(value)) {
+      if (typeof value !== 'number' || isNaN(value)) {
         this.throwError(Transformers.Number.invalidError, { value })
       }
     }
   },
   Date: {
     invalidError: `Invalid date`,
+    settings: {
+      typeError: `Invalid date`,
+      autoCast: true
+    },
     cast (value) {
       if (value instanceof Date) {
         return value
@@ -166,6 +193,9 @@ export const Transformers = {
   },
   Function: {
     invalidError: `Invalid function`,
+    settings: {
+      typeError: `Invalid function`
+    },
     validate (value) {
       if (typeof value !== 'function') {
         this.throwError(Transformers.Function.invalidError, { value })

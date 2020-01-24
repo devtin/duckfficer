@@ -28,7 +28,7 @@ import { forEach } from './for-each'
  * ```
  */
 
-export function  propertiesRestricted (obj, properties, { strict = false } = {}) {
+export function propertiesRestricted (obj, properties, { strict = false } = {}) {
   if (typeof obj !== 'object') {
     return false
   }
@@ -59,7 +59,7 @@ export function  propertiesRestricted (obj, properties, { strict = false } = {})
           })
           .map((v) => {
             defaultApproved = false
-            return v.replace(propMatch, '$1')
+            return (v || '').replace(propMatch, '$1')
           })
 
         return valid = defaultApproved || propertiesRestricted(obj[property], childProps)
