@@ -27,7 +27,7 @@
 export function obj2dot (obj, { parent = '', separator = '.' } = {}) {
   const paths = []
   Object.keys(obj).forEach(prop => {
-    if (typeof obj[prop] === 'object' && !Array.isArray(obj[prop])) {
+    if (obj[prop] && typeof obj[prop] === 'object' && !Array.isArray(obj[prop])) {
       return paths.push(...obj2dot(obj[prop], { parent: `${ parent }${ prop }${ separator }`, separator }))
     }
     paths.push(`${ parent }${ prop }`)
