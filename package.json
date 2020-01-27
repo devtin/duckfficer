@@ -23,7 +23,7 @@
     "build": "yarn build:lib && yarn build:docs && yarn build:readme",
     "build:docs": "jsdoc2md --template DOCS.hbs --files dist/schema-validator.js > DOCS.md",
     "build:lib": "rollup -c",
-    "build:live": "nodemon -w src --exec yarn build",
+    "build:live": "nodemon -w src -w test --exec yarn build",
     "build:readme": "node build/readme.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava --serial --verbose",
