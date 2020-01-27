@@ -60,6 +60,10 @@ export class Schema {
       this.settings = typeof schema === 'object' ? Object.assign({}, this.settings, schema) : this.settings
       delete this.settings.type
     }
+
+    if (this.settings.default !== undefined && this.settings.required) {
+      throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
+    }
   }
 
   _parseSchema (obj) {
