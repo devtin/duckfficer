@@ -15,6 +15,17 @@ import { Transformers } from './transformers.js'
  */
 
 /**
+ * @typedef {Object} Schema~SchemaSettings
+ * @desc This object describes the settings of a schema.
+ * @property {String} type - Name of the transformer to use to parse the property.
+ * @property {Boolean} autoCast=true - Runs the `autoCast` feature of the Transformer.
+ * @property {Boolean} required=true - Whether the property is or not required.
+ * @property {Function|*} [default] - Default value when non-passed. Mind this will treat properties as `required=false`.
+ * When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument.
+ * Must return the desired default value.
+ */
+
+/**
  * @classdesc Orchestrates the validation of a data schema
  */
 export class Schema {
@@ -30,7 +41,9 @@ export class Schema {
      * @property {Object} settings - Additional settings for schema
      */
     this.settings = {
-      autoCast: true
+      autoCast: true,
+      required: true,
+      default: undefined
     }
 
     this.schema = schema
