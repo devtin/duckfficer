@@ -156,21 +156,18 @@ test(`Validates and sanitizes schemas`, t => {
       type: String,
       required: [true, 'A post requires a title']
     },
-    body: {
-      type: String,
-      required: true
-    },
+    body: String,
     published: {
       type: Date,
       default: Date.now
     }
   })
 
-  t.throws(() => PostValidator.parse({
+  const error = t.throws(() => PostValidator.parse({
     title: 'Beware while selling your stuffs online',
     body: 'Do never share your phone number',
     category: 'shopping'
-  }), `Invalid object schema`) // since there is no `category` field in the schema
+  }), `Data is not valid`) // since there is no `category` field in the schema
 
   let post
   t.notThrows(() => {
@@ -192,30 +189,23 @@ test(`Validates and sanitizes schemas`, t => {
 test(`Validates full nested schemas`, t => {
   // console.log(`AddressValidator.paths`, AddressValidator.paths)
   const UserValidator = new Schema({
-    name: {
-      type: String,
-      required: true
-    },
+    name: String,
     email: {
       type: String,
-      required: true,
       regex: /^[a-z0-9_.]+@[a-z-0-9.]+\.[a-z]{2,}$/
     },
-    birthday: Date,
+    birthday: {
+      type: Date,
+      required: false
+    },
     address: {
-      city: {
+      city: String,
+      zip: Number,
+      line1: String,
+      line2: {
         type: String,
-        required: true
-      },
-      zip: {
-        type: Number,
-        required: true
-      },
-      line1: {
-        type: String,
-        required: true
-      },
-      line2: String
+        required: false
+      }
     }
   })
 
@@ -241,12 +231,14 @@ test(`Validates full nested schemas`, t => {
   }))
 })
 
-test(`Handles custom data-types`, t => {
+test.only(`Handles custom data-types`, t => {
   const customType = new Schema({
-    name: String,
+    name: {
+      type: String,
+      required: false
+    },
     email: {
       type: 'Email',
-      required: true,
       onlyGmail: true
     },
   })
