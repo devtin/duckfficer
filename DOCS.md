@@ -12,14 +12,6 @@
 </dd>
 </dl>
 
-## Constants
-
-<dl>
-<dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
-<dd><p>Transformers are functions that perform type casting logic, validation and parsing.</p>
-</dd>
-</dl>
-
 ## Typedefs
 
 <dl>
@@ -35,7 +27,11 @@ value, throwing a {ValidationError} when error.</p>
 original value in case it could not be guessed.</p>
 </dd>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
-<dd></dd>
+<dd><p>A transformer holds the logic of instantiating a data type (casting, validation and parsing).</p>
+</dd>
+<dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
+<dd><p>key map object that holds the available Transformer&#39;s (types) that can be validated.</p>
+</dd>
 </dl>
 
 <a name="Utils"></a>
@@ -216,6 +212,7 @@ Orchestrates the validation of a data schema
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
         * [~SchemaModel](#Schema..SchemaModel) : <code>Object</code>
+        * [~SchemaSettings](#Schema..SchemaSettings) : <code>Object</code>
 
 <a name="new_Schema_new"></a>
 
@@ -345,17 +342,20 @@ nested objects.
 | --- | --- | --- |
 | theFieldName | <code>SchemaModel</code> | Add as many property schemas as you need in order to build your validation model |
 
-<a name="Transformers"></a>
+<a name="Schema..SchemaSettings"></a>
 
-## Transformers : <code>Object</code>
-Transformers are functions that perform type casting logic, validation and parsing.
+### Schema~SchemaSettings : <code>Object</code>
+This object describes the settings of a schema.
 
-**Kind**: global constant  
+**Kind**: inner typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
-| Name | Type |
-| --- | --- |
-| <TransformerName> | [<code>Transformer</code>](#Transformer) | 
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| type | <code>String</code> |  | Name of the transformer to use to parse the property. |
+| autoCast | <code>Boolean</code> | <code>true</code> | Runs the `autoCast` feature of the Transformer. |
+| required | <code>Boolean</code> | <code>true</code> | Whether the property is or not required. |
+| [default] | <code>function</code> \| <code>\*</code> |  | Default value when non-passed. Mind this will treat properties as `required=false`. When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument. Must return the desired default value. |
 
 <a name="Validator"></a>
 
@@ -405,6 +405,8 @@ original value in case it could not be guessed.
 <a name="Transformer"></a>
 
 ## Transformer : <code>Object</code>
+A transformer holds the logic of instantiating a data type (casting, validation and parsing).
+
 **Kind**: global typedef  
 **Properties**
 
@@ -412,8 +414,20 @@ original value in case it could not be guessed.
 | --- | --- | --- |
 | [cast] | [<code>ValueCaster</code>](#ValueCaster) | Cast function |
 | [parse] | [<code>Parser</code>](#Parser) | Parser function |
-| [validate] | [<code>ValueCaster</code>](#ValueCaster) | Cast function |
+| [validate] | [<code>Validator</code>](#Validator) | Validator function |
 | [loaders] | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
+
+<a name="Transformers"></a>
+
+## Transformers : <code>Object</code>
+key map object that holds the available Transformer's (types) that can be validated.
+
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| TransformerName | [<code>Transformer</code>](#Transformer) | The transformer name |
 
 
 * * *

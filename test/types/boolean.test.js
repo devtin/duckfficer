@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../'
 
-test(`Parses booleans`, t => {
+test(`Parse Boolean`, t => {
   const ProductType = new Schema({
     user: String,
     active: {

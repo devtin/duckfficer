@@ -1,8 +1,9 @@
 # schema-validator
-[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
+![](https://img.shields.io/badge/coverage-95%25-green)
 ![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)
+[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
 
-Zero-dependencies, light-weight library for validating & sanitizing javascript's data schemas.  
+Zero-dependencies, light-weight library for validating & sanitizing JavaScript data schemas.  
 
 - [About](#about)
 - [Installation](#installation)
@@ -26,24 +27,16 @@ $ yarn add @devtin/schema-validator
 
 ### Usage
 
-Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
-Also have a look at [the docs](./DOCS.md)
-
 ```js
 const { Schema } = require('@devtin/schema-validator')
 
 // defining the schema
 const User = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
+  name: String,
   email: {
     type: String,
-    required: [true, 'An e-mail must be entered'],
-    regex: [/^[a-z0-9._+]+@[a-z0-9-]+\.[a-z]{2,}$/, 'Please enter a valid e-mail']
+    regex: [/^[a-z0-9.]+@[a-z0-9.]+\.[a-z]{2,}$/, `Invalid e-mail address`]
   },
-  birthday: Date,
   created: {
     type: Date,
     default: Date.now
@@ -52,406 +45,335 @@ const User = new Schema({
 
 const Martin = User.parse({
   name: 'Martin',
-  email: 'tin@devtin.io',
-  birthday: '6/11/1983'
+  email: 'tin@devtin.io'
 })
 
 console.log(Martin.hasOwnProperty('name')) // => true
 console.log(Martin.hasOwnProperty('email')) // => true
-console.log(Martin.birthday instanceof Date) // => true
 console.log(Martin.hasOwnProperty('created')) // => true
+console.log(Martin.name) // => Martin
+console.log(Martin.email) // => tin@devtin.io
 console.log(Martin.created instanceof Date) // => true
 
 try {
   User.parse({
-    name: 'Olivia',
-    birthday: '8/31/2019'
+    name: 'Martin Rafael Gonzalez',
+    email: 'none'
   })
 } catch (err) {
   console.log(err instanceof Error) // => true
   console.log(err.message) // => Data is not valid
   console.log(err.errors.length) // => 1
   console.log(err.errors[0] instanceof Error) // => true
-  console.log(err.errors[0].message) // => An e-mail must be entered
+  console.log(err.errors[0].message) // => Invalid e-mail address
   console.log(err.errors[0].field.name) // => email
 }
 
 ```
 
-### Features
+Have a look at [the docs](./DOCS.md)  
+Also have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
 
-- [Schema validator validates value type in a Schema](#schema-validator-validates-value-type-in-a-schema)
-- [Turn off auto-casting](#turn-off-auto-casting)
-- [Minlength helper for strings](#minlength-helper-for-strings)
-- [Maxlength helper for strings](#maxlength-helper-for-strings)
-- [Regex helper for strings](#regex-helper-for-strings)
-- [Default value helper](#default-value-helper)
-- [Default value helper function](#default-value-helper-function)
-- [Custom error messages with optional rendering](#custom-error-messages-with-optional-rendering)
-- [Type casting](#type-casting)
-- [Validates an object schema in terms of contained properties](#validates-an-object-schema-in-terms-of-contained-properties)
-- [Validates and sanitizes schemas](#validates-and-sanitizes-schemas)
-- [Validates full nested schemas](#validates-full-nested-schemas)
-- [Handles custom data-types](#handles-custom-data-types)
+### Guide
 
-### Schema validator validates value type in a Schema
+All features showcased above in this guide are taken straight from the [test/features](test/features) directory.
+Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the syntax is
+pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at the
+<a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
+
+**Index**  
+- [Creating a schema](#creating-a-schema)
+- [Validating arbitrary objects](#validating-arbitrary-objects)
+- [Required properties](#required-properties)
+- [Optional properties](#optional-properties)
+- [Default values](#default-values)
+- [Auto-casting](#auto-casting)
+
+### Creating a schema
+
+
+
+In order to check the data integrity of an object, I'm gonna create a schema defining the expected
+structure of my desired object.
 
 ```js
-const firstNameValidator = new Schema({
-  name: 'firstName',
-  type: String
-})
-
-// t.throws(() => firstNameValidator.parse(1), 'Invalid string')
-t.throws(() => firstNameValidator.parse({ name: 'Martin' }), 'Invalid string')
-t.throws(() => firstNameValidator.parse(() => 'Martin'), 'Invalid string')
-t.notThrows(() => firstNameValidator.parse('Martin'), 'Martin')
-
-const AllTypes = new Schema({
+const UserSchema = new Schema({
   name: String,
-  category: Set,
-  added: Date,
-  approved: Boolean,
-  quantity: Number
+  birthday: Date,
+  description: Array
 })
+```
 
-let sanitized
+My created schema is ready to parse arbitrary objects.
+
+```js
+const arbitraryObject = {
+  name: `Martin Rafael Gonzalez`,
+  birthday: '6/11/1983',
+  description: ['monkey', 'developer', 'arepa lover']
+}
+
+const Martin = UserSchema.parse(arbitraryObject)
+```
+
+I can now use the returned sanitized-object carelessly since I just ensured it will match my expected schema.
+
+```js
+t.is(Martin.name, `Martin Rafael Gonzalez`)
+t.true(Martin.birthday instanceof Date)
+t.is(Martin.birthday.getFullYear(), 1983)
+t.is(Martin.description.length, 3)
+```
+
+### Validating arbitrary objects
+
+
+
+I'll continue using the `UserSchema` example to validate arbitrary objects.
+
+```js
+const UserSchema = new Schema({
+  name: String,
+  birthday: Date,
+  description: Array
+})
+```
+
+Think of an *arbitrary object* as one that could have been inputted and send through an HTML form,
+retrieved from a POST request; or maybe inputted from a terminal application. An error will be thrown given an
+arbitrary object not matching the defined schema.
+
+```js
+const arbitraryObject = {
+  firstName: 'Martin',
+  middleName: 'Rafael',
+  lastName: 'Gonzalez',
+  birthday: `6/11/1983`,
+  description: ['monkey', 'developer', 'arepa lover']
+}
+```
+
+Given object contains fields that does not exists in our schema (`firstName`, `middleName` and `lastName`),
+following validation will result in an error since the arbitrary object contains 3 unknown properties, plus the
+property `name` (expected by the schema) is also missing.
+
+```js
+const error = t.throws(() => UserSchema.parse(arbitraryObject))
+
+t.true(error instanceof ValidationError)
+t.true(error instanceof Error)
+t.is(error.message, `Data is not valid`)
+t.is(error.errors.length, 4)
+t.is(error.errors[0].message, `Unknown property firstName`)
+t.is(error.errors[1].message, `Unknown property middleName`)
+t.is(error.errors[2].message, `Unknown property lastName`)
+t.is(error.errors[3].message, `Property name is required`)
+```
+
+### Required properties
+
+
+
+A schema defines the structure and data-type expected by an arbitrary object.
+All properties are required by default.
+
+```js
+const ProductSchema = new Schema({
+  name: String,
+  stock: Number,
+  category: Array
+})
+```
+
+Whenever a required property is missing, an error will be thrown.
+
+```js
+let error = t.throws(() => ProductSchema.parse({
+  name: 'Kombucha',
+  stock: 11
+}))
+
+t.is(error.message, 'Data is not valid')
+t.is(error.errors.length, 1)
+t.is(error.errors[0].message, `Property category is required`)
+```
+
+### Optional properties
+
+
+
+In the example below I'm gonna create a schema with an optional property called `age`.
+In order to do so I'm gonna set the property setting `required` to `false`.
+
+```js
+const ContactSchema = new Schema({
+  name: String,
+  email: String,
+  age: {
+    type: Number,
+    required: false // property `age` is optional
+  }
+})
+```
+
+I can now validate arbitrary objects missing the property `age` as long as they match other required properties.
+
+```js
+let contact
 t.notThrows(() => {
-  sanitized = AllTypes.parse({
-    name: 'Kombucha',
-    category: ['health', 'drinks', 'tea', 'health'],
-    added: '12/29/2019',
-    approved: '1',
-    quantity: '23'
+  contact = ContactSchema.parse({
+    name: 'Martin',
+    email: 'tin@devtin.io'
+  })
+})
+```
+
+Whenever `age` is present, the validation will ensure it is a `Number`.
+
+```js
+let contact2
+const error = t.throws(() => {
+  contact2 = ContactSchema.parse({
+    name: 'Papo',
+    email: 'sandy@papo.com',
+    age: `I don't know.`
   })
 })
 
-t.is(sanitized.name, 'Kombucha')
-t.true(sanitized.added instanceof Date)
-t.true(sanitized.category instanceof Set)
-t.is(sanitized.category.size, 3)
-t.true(sanitized.category.has('health'))
-t.true(typeof sanitized.approved === 'boolean')
-t.true(Number.isInteger(sanitized.quantity))
-t.is(sanitized.quantity, 23)
+t.is(error.message, `Data is not valid`)
+t.is(error.errors.length, 1)
+t.is(error.errors[0].message, `Invalid number`)
+t.is(error.errors[0].field.fullPath, `age`)
+
+t.notThrows(() => {
+  contact2 = ContactSchema.parse({
+    name: 'Papo',
+    email: 'sandy@papo.com',
+    age: 36
+  })
+})
+
+t.deepEqual(contact2, {
+  name: 'Papo',
+  email: 'sandy@papo.com',
+  age: 36
+})
 ```
 
-### Turn off auto-casting
+### Default values
 
-Auto-casting is a cool feature, but as mentioned in [here](https://github.com/devtin/schema-validator/issues/6),
-sometimes it requires to turn it off.
 
-```js
-// Auto-casting is nice
-let DateSchema = new Schema({
-  type: Date
-})
 
-// it releases you from casting common values yourself...
-t.true(DateSchema.parse('6/11/1983') instanceof Date) // => true
-
-// Though sometimes may be required for proper validation
-let BooleanSchema = new Schema({
-  type: Boolean,
-  autoCast: false
-})
-
-try {
-  BooleanSchema.parse(5)
-  t.fail(`Parsed boolean schema with autoCast=false`)
-} catch (err) {
-  t.is(err.message, `Invalid boolean`) // => Invalid boolean
-}
-
-DateSchema = new Schema({
-  type: Date,
-  autoCast: false
-})
-
-t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
-
-try {
-  DateSchema.parse('6/11/1983')
-  t.fail(`Parsed DateSchema with autoCast=false`)
-} catch (err) {
-  t.is(err.message, `Invalid date`)
-}
-```
-
-### Minlength helper for strings
+Default values are meant to be assigned to a property when absent.
 
 ```js
-const firstNameValidator = new Schema({
-  name: 'firstName',
-  type: String,
-  minlength: 6
-})
-
-t.throws(() => firstNameValidator.parse('Tin'), `Invalid minlength`)
-t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
-```
-
-### Maxlength helper for strings
-
-```js
-const firstNameValidator = new Schema({
-  name: 'firstName',
-  type: String,
-  maxlength: 13
-})
-
-t.throws(() => firstNameValidator.parse('Schwarzenegger'), `Invalid maxlength`)
-t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
-```
-
-### Regex helper for strings
-
-```js
-const firstNameValidator = new Schema({
-  name: 'firstName',
-  type: String,
-  regex: /^[a-z]+$/i
-})
-
-t.throws(() => firstNameValidator.parse('Tin Rafael'), `Invalid regex`)
-t.notThrows(() => firstNameValidator.parse('Martin'))
-```
-
-### Default value helper
-
-```js
-const quantityValidator = new Schema({
-  name: 'quantity',
-  type: Number,
-  default: 1
-})
-
-t.is(quantityValidator.parse(), 1)
-```
-
-### Default value helper function
-
-```js
-const quantityValidator = new Schema({
-  name: 'date',
-  type: Date,
-  default: Date.now
-})
-
-t.true(quantityValidator.parse() instanceof Date)
-```
-
-### Custom error messages with optional rendering
-
-```js
-const Title = new Schema({
-  name: 'title',
-  type: String,
-  required: [true, 'A post requires a title']
-})
-
-t.throws(() => Title.parse(), 'A post requires a title')
-
-const Email = new Schema({
-  name: 'title',
-  type: String,
-  regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
-})
-
-t.throws(() => Email.parse('martin'), 'martin is not a valid e-mail address')
-```
-
-### Type casting
-
-```js
-const DOB = new Schema({
-  name: 'title',
-  type: Date
-})
-
-t.true(DOB.parse('6/11/1983') instanceof Date)
-
-const qtty = new Schema({
-  name: 'quantity',
-  type: Number
-})
-
-t.true(Number.isInteger(qtty.parse('20')))
-```
-
-### Validates an object schema in terms of contained properties
-
-```js
-const user = {
-  name: 'Martin Rafael',
-  email: 'tin@devtin.io',
-  address: {
-    city: 'Miami, Fl',
-    zip: 33129,
-    line1: 'Brickell Ave'
+const ContactSchema = new Schema({
+  name: String,
+  country: {
+    type: String,
+    default: 'United States'
   }
-}
-
-t.false(Utils.propertiesRestricted(user, ['name'])) // => false
-t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address'])) // => true
-t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'])) // => true
-t.false(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'], { strict: true })) // => false
+})
 ```
 
-### Validates and sanitizes schemas
+When a property is assigned with a default value, it will be treated as `{ required: false }`.
 
 ```js
-const PostValidator = new Schema({
-  title: {
-    type: String,
-    required: [true, 'A post requires a title']
-  },
-  body: {
-    type: String,
-    required: true
-  },
-  published: {
+let sanitized
+t.notThrows(() => {
+  sanitized = ContactSchema.parse({
+    name: 'Martin'
+  })
+})
+
+t.deepEqual(sanitized, {
+  name: 'Martin',
+  country: 'United States'
+})
+```
+
+A default value could also be a function. Refer to the [docs](DOCS.md) for more information.
+
+```js
+const UserSchema = new Schema({
+  name: String,
+  registered: {
     type: Date,
     default: Date.now
   }
 })
 
-t.throws(() => PostValidator.parse({
-  title: 'Beware while selling your stuffs online',
-  body: 'Do never share your phone number',
-  category: 'shopping'
-}), `Invalid object schema`) // since there is no `category` field in the schema
-
-let post
+let Martin
 t.notThrows(() => {
-  post = PostValidator.parse({
-    title: 'Beware while selling your stuffs online',
-    body: 'Do never share your phone number'
+  Martin = UserSchema.parse({
+    name: 'Martin'
   })
 })
 
-t.truthy(post)
-t.true(post.hasOwnProperty('title'))
-t.true(post.hasOwnProperty('body'))
-t.true(post.hasOwnProperty('published'))
-t.true(typeof post.title === 'string')
-t.true(typeof post.body === 'string')
-t.true(post.published instanceof Date)
+t.deepEqual(Object.keys(Martin), ['name', 'registered'])
+t.true(Martin.registered instanceof Date)
 ```
 
-### Validates full nested schemas
+### Auto-casting
+
+
+
+Most transformers provide an option for auto-casting. When `autoCast=true` (depending on the transformer) it may
+try to resolve given arbitrary value into the expected one.
+ *
+For example, the `Date` transformer will try to auto-cast `String`'s into a proper `Date`, if possible.
+The `Number` transformer as well: will try to resolve those `String`'s that look like a number and convert them into
+a proper `Number.
 
 ```js
-// console.log(`AddressValidator.paths`, AddressValidator.paths)
-const UserValidator = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    regex: /^[a-z0-9_.]+@[a-z-0-9.]+\.[a-z]{2,}$/
-  },
-  birthday: Date,
-  address: {
-    city: {
-      type: String,
-      required: true
-    },
-    zip: {
-      type: Number,
-      required: true
-    },
-    line1: {
-      type: String,
-      required: true
-    },
-    line2: String
-  }
-})
-
-const err = t.throws(() => UserValidator.parse({
-  name: 'Martin',
-  email: 'marting.dc@gmail.com',
-}), 'Data is not valid')
-
-t.is(err.errors.length, 3)
-t.is(err.errors[0].message, 'Field address.city is required')
-t.is(err.errors[1].message, 'Field address.zip is required')
-t.is(err.errors[2].message, 'Field address.line1 is required')
-
-t.notThrows(() => UserValidator.parse({
-  name: 'Martin',
-  email: 'marting.dc@gmail.com',
-  birthday: '6/11/1983',
-  address: {
-    city: 'Miami',
-    zip: 33129,
-    line1: '2451 Brickell Ave'
-  }
-}))
-```
-
-### Handles custom data-types
-
-```js
-const customType = new Schema({
+const UserSchema = new Schema({
   name: String,
-  email: {
-    type: 'Email',
-    required: true,
-    onlyGmail: true
-  },
+  birthday: Date,
+  kids: Number
 })
 
-let error = t.throws(() => customType.parse({
-  name: 'Martin',
-  email: 'tin@devtin.io'
-}), `Data is not valid`)
+let Olivia
 
-t.is(error.errors[0].message, `Don't know how to resolve Email`)
+t.notThrows(() => {
+  Olivia = UserSchema.parse({
+    name: 'Olivia',
+    birthday: '8/31/2019',
+    kids: '0'
+  })
+})
 
-// Registers a new custom type
-Transformers.Email = {
-  loaders: [String], // pre-processes the value using this known-registered types
-  parse (v) {
-    t.true(this instanceof Schema)
-    if (!/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/.test(v)) {
-      return this.throwError(`Invalid e-mail address { value } for field { field.name }`, { value: v })
-    }
-    if (this.settings.onlyGmail && !/@gmail\.com$/.test(v)) {
-      return this.throwError(`Only gmail accounts`)
-    }
-    return v
+t.true(Olivia.birthday instanceof Date)
+t.is(typeof Olivia.kids, 'number')
+```
+
+Now, depending on how strictly we need to perform our validations, sometimes we may require to turn this
+feature off.
+
+```js
+const StrictUserSchema = new Schema({
+  name: String,
+  birthday: {
+    type: Date,
+    autoCast: false
+  },
+  kids: {
+    type: Number,
+    autoCast: false
   }
-}
+})
 
-error = t.throws(() => customType.parse({
+const error = t.throws(() => StrictUserSchema.parse({
   name: 'Martin',
-  email: 123
-}), 'Data is not valid')
-
-t.is(error.errors[0].message, 'Invalid string')
-
-error = t.throws(() => customType.parse({
-  name: 'Martin',
-  email: 'martin'
-}), 'Data is not valid')
-
-t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
-
-error = t.throws(() => customType.parse({
-  name: 'Martin',
-  email: 'tin@devtin.io'
+  birthday: '6/11/1983',
+  kids: '1'
 }))
 
-t.is(error.errors[0].message, 'Only gmail accounts')
-
-t.notThrows(() => customType.parse({
-  name: 'Martin',
-  email: 'marting.dc@gmail.com'
-}))
+t.is(error.message, 'Data is not valid')
+t.is(error.errors.length, 2)
+t.is(error.errors[0].message, `Invalid date`)
+t.is(error.errors[0].field.fullPath, `birthday`)
+t.is(error.errors[1].message, `Invalid number`)
+t.is(error.errors[1].field.fullPath, `kids`)
 ```
 
 * * *
@@ -460,4 +382,4 @@ t.notThrows(() => customType.parse({
 
 [MIT](https://opensource.org/licenses/MIT)
 
-&copy; 2019 Martin Rafael <tin@devtin.io>
+&copy; 2019-2020 Martin Rafael <tin@devtin.io>

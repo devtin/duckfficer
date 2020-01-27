@@ -1,119 +1,43 @@
 import test from 'ava'
-import { Schema, Utils, Transformers } from '../'
-
-test(`Schema validator validates value type in a Schema`, async t => {
-  const firstNameValidator = new Schema({
-    name: 'firstName',
-    type: String
-  })
-
-  // t.throws(() => firstNameValidator.parse(1), 'Invalid string')
-  t.throws(() => firstNameValidator.parse({ name: 'Martin' }), 'Invalid string')
-  t.throws(() => firstNameValidator.parse(() => 'Martin'), 'Invalid string')
-  t.notThrows(() => firstNameValidator.parse('Martin'), 'Martin')
-
-  const AllTypes = new Schema({
-    name: String,
-    category: Set,
-    added: Date,
-    approved: Boolean,
-    quantity: Number
-  })
-
-  let sanitized
-  t.notThrows(() => {
-    sanitized = AllTypes.parse({
-      name: 'Kombucha',
-      category: ['health', 'drinks', 'tea', 'health'],
-      added: '12/29/2019',
-      approved: '1',
-      quantity: '23'
-    })
-  })
-
-  t.is(sanitized.name, 'Kombucha')
-  t.true(sanitized.added instanceof Date)
-  t.true(sanitized.category instanceof Set)
-  t.is(sanitized.category.size, 3)
-  t.true(sanitized.category.has('health'))
-  t.true(typeof sanitized.approved === 'boolean')
-  t.true(Number.isInteger(sanitized.quantity))
-  t.is(sanitized.quantity, 23)
-})
+import { Schema, Utils, Transformers, ValidationError } from '../'
 
 /**
- * Auto-casting is a cool feature, but as mentioned in [here](https://github.com/devtin/schema-validator/issues/6),
- * sometimes it requires to turn it off.
+ * Checks the integrity of an object by ensuring it contains only the expected properties and that
+ * these properties are of the expected type. To do so, we need to create a schema:
  */
 
-test(`Turn off auto-casting`, t => {
-  // Auto-casting is nice
-  let DateSchema = new Schema({
-    type: Date
+test(`Validates schemas`, async t => {
+  const UserSchema = new Schema({
+    name: String,
+    birthday: Date,
+    description: Array
   })
 
-  // it releases you from casting common values yourself...
-  t.true(DateSchema.parse('6/11/1983') instanceof Date) // => true
-
-  // Though sometimes may be required for proper validation
-  let BooleanSchema = new Schema({
-    type: Boolean,
-    autoCast: false
+  const Martin = UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    birthday: new Date('6/11/1983'),
+    description: ['monkey', 'developer', 'arepa lover']
   })
 
-  try {
-    BooleanSchema.parse(5)
-    t.fail(`Parsed boolean schema with autoCast=false`)
-  } catch (err) {
-    t.is(err.message, `Invalid boolean`) // => Invalid boolean
-  }
+  t.is(Martin.name, `Martin Rafael Gonzalez`)
+  t.is(Martin.birthday.getFullYear(), 1983)
+  t.is(Martin.description.length, 3)
 
-  DateSchema = new Schema({
-    type: Date,
-    autoCast: false
-  })
+  const error = t.throws(() => UserSchema.parse({
+    name: 123,
+    birthday: `Don't know...`,
+    description: 'I like bananas'
+  }))
 
-  t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
-
-  try {
-    DateSchema.parse('6/11/1983')
-    t.fail(`Parsed DateSchema with autoCast=false`)
-  } catch (err) {
-    t.is(err.message, `Invalid date`)
-  }
-})
-
-test(`Minlength helper for strings`, async t => {
-  const firstNameValidator = new Schema({
-    name: 'firstName',
-    type: String,
-    minlength: 6
-  })
-
-  t.throws(() => firstNameValidator.parse('Tin'), `Invalid minlength`)
-  t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
-})
-
-test(`Maxlength helper for strings`, async t => {
-  const firstNameValidator = new Schema({
-    name: 'firstName',
-    type: String,
-    maxlength: 13
-  })
-
-  t.throws(() => firstNameValidator.parse('Schwarzenegger'), `Invalid maxlength`)
-  t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
-})
-
-test('Regex helper for strings', async t => {
-  const firstNameValidator = new Schema({
-    name: 'firstName',
-    type: String,
-    regex: /^[a-z]+$/i
-  })
-
-  t.throws(() => firstNameValidator.parse('Tin Rafael'), `Invalid regex`)
-  t.notThrows(() => firstNameValidator.parse('Martin'))
+  t.true(error instanceof ValidationError)
+  t.is(error.message, `Data is not valid`)
+  t.is(error.errors.length, 3)
+  t.is(error.errors[0].message, `Invalid string`)
+  t.is(error.errors[0].field.fullPath, `name`)
+  t.is(error.errors[1].message, `Invalid date`)
+  t.is(error.errors[1].field.fullPath, `birthday`)
+  t.is(error.errors[2].message, `Invalid array`)
+  t.is(error.errors[2].field.fullPath, `description`)
 })
 
 test('Default value helper', async t => {
@@ -126,7 +50,7 @@ test('Default value helper', async t => {
   t.is(quantityValidator.parse(), 1)
 })
 
-test('Default value helper function', t => {
+test('Default value helper (function)', t => {
   const quantityValidator = new Schema({
     name: 'date',
     type: Date,
@@ -135,6 +59,10 @@ test('Default value helper function', t => {
 
   t.true(quantityValidator.parse() instanceof Date)
 })
+
+/**
+ * Each transformer provides its own custom message
+ */
 
 test(`Custom error messages with optional rendering`, t => {
   const Title = new Schema({
@@ -154,7 +82,11 @@ test(`Custom error messages with optional rendering`, t => {
   t.throws(() => Email.parse('martin'), 'martin is not a valid e-mail address')
 })
 
-test(`Type casting`, t => {
+/**
+ * `autoCasting` is a cool feature to have since it prevents you from doing extra casting.
+ */
+
+test(`autoCasting`, t => {
   const DOB = new Schema({
     name: 'title',
     type: Date
@@ -167,7 +99,38 @@ test(`Type casting`, t => {
     type: Number
   })
 
+  // Auto-casting is nice
   t.true(Number.isInteger(qtty.parse('20')))
+
+  // Though sometimes may be required for proper validation
+  // as mentioned [here](https://github.com/devtin/schema-validator/issues/6)
+
+  let BooleanSchema = new Schema({
+    type: Boolean,
+    autoCast: false
+  })
+
+  try {
+    BooleanSchema.parse(5)
+    t.fail(`Parsed boolean schema with autoCast=false`)
+  } catch (err) {
+    t.is(err.message, `Invalid boolean`) // => Invalid boolean
+  }
+
+  const DateSchema = new Schema({
+    type: Date,
+    autoCast: false
+  })
+
+  t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
+
+  try {
+    DateSchema.parse('6/11/1983')
+    t.fail(`Parsed DateSchema with autoCast=false`)
+  } catch (err) {
+    t.is(err.message, `Invalid date`)
+  }
+
 })
 
 test(`Validates an object schema in terms of contained properties`, t => {
@@ -262,9 +225,9 @@ test(`Validates full nested schemas`, t => {
   }), 'Data is not valid')
 
   t.is(err.errors.length, 3)
-  t.is(err.errors[0].message, 'Field address.city is required')
-  t.is(err.errors[1].message, 'Field address.zip is required')
-  t.is(err.errors[2].message, 'Field address.line1 is required')
+  t.is(err.errors[0].message, 'Property address.city is required')
+  t.is(err.errors[1].message, 'Property address.zip is required')
+  t.is(err.errors[2].message, 'Property address.line1 is required')
 
   t.notThrows(() => UserValidator.parse({
     name: 'Martin',

@@ -6,7 +6,7 @@ const _ = require('lodash')
 
 const mdOptions = { headingLevel: 3 }
 
-parseAvaFile(path.join(__dirname, '../test/schema.test.js'))
+parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
   .then(async tests => {
     const index = []
 
@@ -29,5 +29,5 @@ parseAvaFile(path.join(__dirname, '../test/schema.test.js'))
       sandbox: fs.readFileSync(path.join(__dirname, '../sandbox.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       index: index.join(`\n`)
     }))
-    console.log(`Done!`)
+    console.log(`Readme created!`)
   })
