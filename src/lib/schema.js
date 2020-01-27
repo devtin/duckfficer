@@ -263,32 +263,41 @@ export class Schema {
   }
 
   _parseNested (obj) {
-    this.structureValidation(obj)
     const resultingObject = {}
     const errors = []
-
-    this.ownPaths.forEach(pathName => {
-      const schema = this.schemaAtPath(pathName)
-
+    const sandbox = (fn) => {
       try {
-        const val = schema.parse(typeof obj === 'object' ? obj[schema.name] : undefined)
-        if (val !== undefined) {
-          Object.assign(resultingObject, { [schema.name]: val })
-        }
+        fn()
       } catch (err) {
-        if (err instanceof ValidationError && err.errors.length > 0) {
-          errors.push(...err.errors)
+        if (err instanceof ValidationError) {
+          if (err instanceof ValidationError && err.errors.length > 0) {
+            errors.push(...err.errors)
+          } else {
+            errors.push(err)
+          }
         } else {
           errors.push(err)
         }
       }
+    }
+
+    sandbox(() => this.structureValidation(obj))
+
+    this.ownPaths.forEach(pathName => {
+      const schema = this.schemaAtPath(pathName)
+      sandbox(() => {
+        const val = schema.parse(typeof obj === 'object' ? obj[schema.name] : undefined)
+        if (val !== undefined) {
+          Object.assign(resultingObject, { [schema.name]: val })
+        }
+      })
     })
 
     if (errors.length > 0) {
       throw new ValidationError(`Data is not valid`, { errors })
     }
 
-    return Object.keys(resultingObject).length > 0 ? resultingObject : undefined
+    return resultingObject
   }
 
   throwError (message, { errors, value } = {}) {
