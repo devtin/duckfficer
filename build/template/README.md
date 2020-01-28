@@ -27,18 +27,19 @@ $ yarn add @devtin/schema-validator
 
 ### Usage
 
-Have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
-Also have a look at [the docs](./DOCS.md)
-
 ```js
 {{{ sandbox }}}
 ```
 
+Have a look at [the docs](./DOCS.md)  
+Also have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
+
 ### Guide
 
-All features showcased above in this guide are actually brought here straight from the [test/features](test/features) directory.
-Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the syntax is pretty self-explanatory but in case you find yourself
-lost reading the examples below, maybe having a look at the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
+All features showcased above in this guide are taken straight from the [test/features](test/features) directory.
+Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the syntax is
+pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at the
+<a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
 
 **Index**  
 {{{ index }}}

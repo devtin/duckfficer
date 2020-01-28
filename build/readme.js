@@ -3,6 +3,7 @@ const path = require('path')
 const mustache = require('mustache')
 const fs = require('fs')
 const _ = require('lodash')
+const CoverageShield = require('./lib/coverage-shield.js')
 
 const mdOptions = { headingLevel: 3 }
 
@@ -26,6 +27,11 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
 
     fs.writeFileSync(path.join(__dirname, '../README.md'), mustache.render(template, {
       schema,
+      shields: [
+        CoverageShield.getShield(), // test coverage
+        '![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)',
+        '[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)', // MIT
+      ],
       sandbox: fs.readFileSync(path.join(__dirname, '../sandbox.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       index: index.join(`\n`)
     }))
