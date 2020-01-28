@@ -3,7 +3,7 @@ function validateUser (possibleUser) {
   if (typeof possibleUser !== 'object') {
     throw new Error(`Given user is not valid.`)
   }
-  
+
   // duck-typing validation
   // https://en.wikipedia.org/wiki/Duck_typing
   if (
@@ -19,7 +19,7 @@ function validateUser (possibleUser) {
   ) {
     throw new Error(`Given user does not seem a valid user.`)
   }
-  
+
   // schema validation...
   if (
     typeof possibleUser.firstName !== 'string'
@@ -28,7 +28,7 @@ function validateUser (possibleUser) {
   ) {
     throw new Error(`Invalid firstName`)
   }
-  
+
   if (
     typeof possibleUser.lastName !== 'string'
     || possibleUser.lastName.length < 4
@@ -36,7 +36,7 @@ function validateUser (possibleUser) {
   ) {
     throw new Error(`Invalid lastName`)
   }
-  
+
   if (
     possibleUser.birthday
     && !(possibleUser.birthday instanceof Date)
@@ -46,59 +46,61 @@ function validateUser (possibleUser) {
     }
     possibleUser.birthday = new Date(possibleUser.birthday)
   }
-  
+
   if (
     possibleUser.birthday
     || !couldBeALivingHuman(possibleUser.birthday)
-    ) {
+  ) {
     throw new Error(`Does not seem a living human`)
   }
-  
+
   if (typeof possibleUser.email !== 'string') {
     throw new Error(`email is not a string`)
   }
-  
+
   if (!/[a-z.-+]+@[a-z0-9-.]\.[a-z]{2,}/.test(possibleUser.email)) {
     throw new Error(`email is not a valid e-mail`)
   }
-  
+
   if (typeof possibleUser.address.city !== 'string') {
     throw new Error(`Invalid city`)
   }
-  
+
   if (
     typeof possibleUser.address.state !== 'string'
     || /^(Florida|New York|California)$/.test(possibleUser.address.state)
-    ) {
+  ) {
     throw new Error(`Invalid state`)
   }
-  
+
   if (typeof possibleUser.address.zip !== 'number') {
     if (isNaN(Number(possibleUser.address.zip))) {
       throw new Error(`Invalid zip`)
     }
     possibleUser.address.zip = Number(possibleUser.address.zip)
   }
-  
+
   // until here seems like 'possibleUser' could be a valid user & now its data is sanitized...
   // seems safe to proceed with further business logic...
 }
+
 /**
-* Validates that a given date of birth could belong to a living human
-* @param {Date} dob
-* @return {Boolean}
-*/
+ * Validates that a given date of birth could belong to a living human
+ * @param {Date} dob
+ * @return {Boolean}
+ */
 function couldBeALivingHuman (dob) {
   // I know no humans living more than 100 years
   // but according to wikipedia, people do...
   // https://en.wikipedia.org/wiki/List_of_the_verified_oldest_people
   const from = new Date(`1/1/${ new Date().getFullYear() - 110 }`)
-  
+
   // I also know zero humans from the future (yet)
   // wikipedia also agrees: https://en.wikipedia.org/wiki/Time_travel_claims_and_urban_legends
   const until = new Date()
   return from.getTime() <= dob.getTime() && until.getTime() > dob.getTime()
 }
+
 const { Schema } = require('/Users/tin/projects/schema-validator/')
 
 const requiredStringWithRange = {
@@ -114,9 +116,9 @@ const User = new Schema({
   lastName: requiredStringWithRange,
   birthday: Date,
   email: {
-   type: String,
-   regex: /^[a-z0-9_.+]+@[a-z0-9.-]+\.[a-z]{2,}$/,
-   required: true
+    type: String,
+    regex: /^[a-z0-9_.+]+@[a-z0-9.-]+\.[a-z]{2,}$/,
+    required: true
   },
   address: {
     city: {
@@ -168,16 +170,15 @@ try {
     email: 'olivia',
     birthday: new Date('8/31/2019')
   })
-}
-catch (err) {
+} catch (err) {
   console.log(err instanceof Error) // => true
   console.log(err.message) // => Data is not valid
   console.log(Array.isArray(err.errors)) // => true
   console.log(err.errors.length) // => 5
   console.log(err.errors[0] instanceof Error) // => true
   console.log(err.errors[0].message) // => Value olivia does not match required regex pattern
-  console.log(err.errors[1].message) // => Field address.city is required
-  console.log(err.errors[2].message) // => Field address.state is required
-  console.log(err.errors[3].message) // => Field address.zip is required
-  console.log(err.errors[4].message) // => Field address.line1 is required
+  console.log(err.errors[1].message) // => Property address.city is required
+  console.log(err.errors[2].message) // => Property address.state is required
+  console.log(err.errors[3].message) // => Property address.zip is required
+  console.log(err.errors[4].message) // => Property address.line1 is required
 }
