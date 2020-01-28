@@ -21,7 +21,9 @@ test(`minlength`, async t => {
     minlength: 6
   })
 
-  t.throws(() => firstNameValidator.parse('Tin'), `Invalid minlength`)
+  const error = t.throws(() => firstNameValidator.parse('Tin'))
+  t.is(error.message, `Invalid minlength`)
+
   t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
 })
 
@@ -32,7 +34,9 @@ test(`maxlength`, async t => {
     maxlength: 13
   })
 
-  t.throws(() => firstNameValidator.parse('Schwarzenegger'), `Invalid maxlength`)
+  const error = t.throws(() => firstNameValidator.parse('Schwarzenegger'))
+  t.is(error.message, `Invalid maxlength`)
+
   t.notThrows(() => firstNameValidator.parse('Martin'), `Martin`)
 })
 
@@ -43,6 +47,8 @@ test('regex', async t => {
     regex: /^[a-z]+$/i
   })
 
-  t.throws(() => firstNameValidator.parse('Tin Rafael'), `Invalid regex`)
+  const error = t.throws(() => firstNameValidator.parse('Tin Rafael'))
+  t.is(error.message, `Invalid regex`)
+
   t.notThrows(() => firstNameValidator.parse('Martin'))
 })

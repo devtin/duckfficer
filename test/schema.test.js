@@ -71,7 +71,8 @@ test(`Custom error messages with optional rendering`, t => {
     required: [true, 'A post requires a title']
   })
 
-  t.throws(() => Title.parse(), 'A post requires a title')
+  let error = t.throws(() => Title.parse())
+  t.is(error.message, 'A post requires a title')
 
   const Email = new Schema({
     name: 'title',
@@ -79,7 +80,8 @@ test(`Custom error messages with optional rendering`, t => {
     regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
   })
 
-  t.throws(() => Email.parse('martin'), 'martin is not a valid e-mail address')
+  error = t.throws(() => Email.parse('martin'))
+  t.is(error.message, 'martin is not a valid e-mail address')
 })
 
 /**
@@ -167,7 +169,9 @@ test(`Validates and sanitizes schemas`, t => {
     title: 'Beware while selling your stuffs online',
     body: 'Do never share your phone number',
     category: 'shopping'
-  }), `Data is not valid`) // since there is no `category` field in the schema
+  })) // since there is no `category` field in the schema
+
+  t.is(error.message, `Data is not valid`)
 
   let post
   t.notThrows(() => {
@@ -212,8 +216,9 @@ test(`Validates full nested schemas`, t => {
   const err = t.throws(() => UserValidator.parse({
     name: 'Martin',
     email: 'marting.dc@gmail.com',
-  }), 'Data is not valid')
+  }))
 
+  t.is(err.message, 'Data is not valid')
   t.is(err.errors.length, 3)
   t.is(err.errors[0].message, 'Property address.city is required')
   t.is(err.errors[1].message, 'Property address.zip is required')
@@ -231,7 +236,7 @@ test(`Validates full nested schemas`, t => {
   }))
 })
 
-test.only(`Handles custom data-types`, t => {
+test(`Handles custom data-types`, t => {
   const customType = new Schema({
     name: {
       type: String,
@@ -246,8 +251,9 @@ test.only(`Handles custom data-types`, t => {
   let error = t.throws(() => customType.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
-  }), `Data is not valid`)
+  }))
 
+  t.is(error.message, `Data is not valid`)
   t.is(error.errors[0].message, `Don't know how to resolve Email`)
 
   // Registers a new custom type
@@ -268,15 +274,17 @@ test.only(`Handles custom data-types`, t => {
   error = t.throws(() => customType.parse({
     name: 'Martin',
     email: 123
-  }), 'Data is not valid')
+  }))
 
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid string')
 
   error = t.throws(() => customType.parse({
     name: 'Martin',
     email: 'martin'
-  }), 'Data is not valid')
+  }))
 
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
   error = t.throws(() => customType.parse({
@@ -284,6 +292,7 @@ test.only(`Handles custom data-types`, t => {
     email: 'tin@devtin.io'
   }))
 
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Only gmail accounts')
 
   t.notThrows(() => customType.parse({
