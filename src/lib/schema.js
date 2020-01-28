@@ -223,7 +223,7 @@ export class Schema {
       return
     }
 
-    if (!v && this.settings.required) {
+    if (v === undefined && this.settings.required) {
       const [required, error] = castThrowable(this.settings.required, `Property ${ this.fullPath } is required`)
       required && this.throwError(error, { value: v })
     }
