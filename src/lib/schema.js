@@ -27,6 +27,9 @@ import { Transformers } from './transformers.js'
 
 /**
  * @classdesc Orchestrates the validation of a data schema
+ * @property {Schema} [parent] - Nested objects will have a {@link Schema} in this property
+ * @property {String} name - Nested objects will have the name of it's containing property
+ * @property {Schema~SchemaSettings} schema - The schema
  */
 export class Schema {
   /**
@@ -37,9 +40,6 @@ export class Schema {
    * @param {Schema} [options.parent]
    */
   constructor (schema, { name, parent } = {}) {
-    /**
-     * @property {Object} settings - Additional settings for schema
-     */
     this.settings = {
       autoCast: true,
       required: true,
@@ -47,15 +47,7 @@ export class Schema {
     }
 
     this.schema = schema
-
-    /**
-     * @property {Schema} [parent] - Nested objects will have a {@link Schema} in this property
-     */
     this.parent = parent
-
-    /**
-     * @property {String} name - Nested objects will have the name of it's containing property
-     */
     this.name = name || ''
 
     /**
@@ -203,9 +195,9 @@ export class Schema {
 
   /**
    * Validates schema structure and synchronous hooks of every field in the schema
-   * @param {Object} v - The object to evaluate
+   * @param {Object} [v] - The object to evaluate
    * @return {Object} The sanitized object
-   * @throws {ValidationError}
+   * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v) {
     if (this.children) {

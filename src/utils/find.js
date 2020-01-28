@@ -11,14 +11,14 @@
  * const obj = {
  *   prop1: {
  *     prop2: {
- *       prop3: 'Martin
+ *       prop3: 'Martin'
  *     },
  *     firstName: 'Sandy'
  *   }
  * }
  *
  * console.log(find(obj, 'prop1.prop2.prop3') // => Martin
- * console.log(find(obj, 'prop1.prop2.firstName') // => Sandy
+ * console.log(find(obj, 'prop1 .firstName') // => Sandy
  * ```
  */
 export function find (obj, path) {

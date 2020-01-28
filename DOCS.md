@@ -102,14 +102,14 @@ Deeply finds given dot-notation path of an objects
 const obj = {
   prop1: {
     prop2: {
-      prop3: 'Martin
+      prop3: 'Martin'
     },
     firstName: 'Sandy'
   }
 }
 
 console.log(find(obj, 'prop1.prop2.prop3') // => Martin
-console.log(find(obj, 'prop1.prop2.firstName') // => Sandy
+console.log(find(obj, 'prop1 .firstName') // => Sandy
 ```
 <a name="Utils..forEach"></a>
 
@@ -196,18 +196,23 @@ Thrown by [Schema](#Schema)
 Orchestrates the validation of a data schema
 
 **Kind**: global class  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [parent] | [<code>Schema</code>](#Schema) | Nested objects will have a [Schema](#Schema) in this property |
+| name | <code>String</code> | Nested objects will have the name of it's containing property |
+| schema | [<code>SchemaSettings</code>](#Schema..SchemaSettings) | The schema |
+
 
 * [Schema](#Schema)
     * [new Schema(schema, [options])](#new_Schema_new)
     * _instance_
-        * [.settings](#Schema+settings)
-        * [.parent](#Schema+parent)
-        * [.name](#Schema+name)
         * [.ownPaths](#Schema+ownPaths)
         * [.paths](#Schema+paths)
         * [.hasField(fieldName)](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
-        * [.parse(v)](#Schema+parse) ⇒ <code>Object</code>
+        * [.parse([v])](#Schema+parse) ⇒ <code>Object</code>
     * _static_
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
@@ -224,36 +229,6 @@ Orchestrates the validation of a data schema
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
-
-<a name="Schema+settings"></a>
-
-### schema.settings
-**Kind**: instance property of [<code>Schema</code>](#Schema)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| settings | <code>Object</code> | Additional settings for schema |
-
-<a name="Schema+parent"></a>
-
-### schema.parent
-**Kind**: instance property of [<code>Schema</code>](#Schema)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [parent] | [<code>Schema</code>](#Schema) | Nested objects will have a [Schema](#Schema) in this property |
-
-<a name="Schema+name"></a>
-
-### schema.name
-**Kind**: instance property of [<code>Schema</code>](#Schema)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | Nested objects will have the name of it's containing property |
 
 <a name="Schema+ownPaths"></a>
 
@@ -303,19 +278,19 @@ Validates if the given object have a structure valid for the schema in subject
 
 <a name="Schema+parse"></a>
 
-### schema.parse(v) ⇒ <code>Object</code>
+### schema.parse([v]) ⇒ <code>Object</code>
 Validates schema structure and synchronous hooks of every field in the schema
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 **Returns**: <code>Object</code> - The sanitized object  
 **Throws**:
 
-- [<code>ValidationError</code>](#ValidationError) 
+- [<code>ValidationError</code>](#ValidationError) when given object does not meet the schema
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| v | <code>Object</code> | The object to evaluate |
+| [v] | <code>Object</code> | The object to evaluate |
 
 <a name="Schema.isNested"></a>
 

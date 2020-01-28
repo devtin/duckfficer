@@ -2,7 +2,7 @@
 [![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
 ![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)
 
-Zero-dependencies, light-weight library for validating & sanitizing javascript's data schemas.  
+Zero-dependencies, light-weight library for validating & sanitizing JavaScript data schemas.  
 
 - [About](#about)
 - [Installation](#installation)
@@ -33,8 +33,13 @@ Also have a look at [the docs](./DOCS.md)
 {{{ sandbox }}}
 ```
 
-### Features
+### Guide
 
+All features showcased above in this guide are actually brought here straight from the [test/features](test/features) directory.
+Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the syntax is pretty self-explanatory but in case you find yourself
+lost reading the examples below, maybe having a look at the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
+
+**Index**  
 {{{ index }}}
 
 {{{ schema }}}
@@ -45,4 +50,4 @@ Also have a look at [the docs](./DOCS.md)
 
 [MIT](https://opensource.org/licenses/MIT)
 
-&copy; 2019 Martin Rafael <tin@devtin.io>
+&copy; 2019-2020 Martin Rafael <tin@devtin.io>
