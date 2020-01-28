@@ -214,7 +214,7 @@ export class Schema {
 
     // custom manipulators
     if (typeof this.settings.default !== 'undefined' && !v) {
-      v = typeof this.settings.default === 'function' ? this.settings.default(v) : this.settings.default
+      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, v) : this.settings.default
     }
 
     return this._run(this.type, v)
