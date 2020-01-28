@@ -232,7 +232,7 @@ export class Schema {
     }
 
     if (!v && this.settings.required) {
-      const [required, error] = castThrowable(this.settings.required, `Field ${ this.fullPath } is required`)
+      const [required, error] = castThrowable(this.settings.required, `Property ${ this.fullPath } is required`)
       required && this.throwError(error, { value: v })
     }
 
