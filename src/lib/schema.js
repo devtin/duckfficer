@@ -70,7 +70,7 @@ export class Schema {
     } else {
       // primitive
       this.type = Schema.guessType(schema)
-      this.settings = typeof schema === 'object' ? Object.assign({}, this.settings, schema) : this.settings
+      this.settings = typeof schema === 'object' ? Object.assign({}, this.settings, { required: schema.default === undefined }, schema) : this.settings
       delete this.settings.type
     }
 
