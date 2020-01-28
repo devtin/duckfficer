@@ -25,6 +25,7 @@
   },
   "scripts": {
     "build": "yarn build:lib && yarn build:docs && yarn build:readme",
+    "build:wcoverage": "yarn build:lib && yarn coverage && yarn build:docs && yarn build:readme",
     "build:docs": "jsdoc2md --template DOCS.hbs --files dist/schema-validator.js > DOCS.md",
     "build:lib": "rollup -c",
     "build:live": "nodemon -w src -w test --exec yarn build",
@@ -35,7 +36,8 @@
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
     "release": "standard-version --branch next",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push && git push --tags",
+    "coverage": "nyc --reporter=json-summary yarn test:all"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.0",

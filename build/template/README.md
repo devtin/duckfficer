@@ -1,6 +1,7 @@
 # schema-validator
-[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
-![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)
+{{#shields}}
+{{{ . }}}
+{{/shields}}
 
 Zero-dependencies, light-weight library for validating & sanitizing JavaScript data schemas.  
 
