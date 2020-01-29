@@ -1,9 +1,9 @@
-name: release
+name: release @next
 
 on:
   push:
     branches:
-      - master
+      - next
 
 jobs:
   release:
@@ -20,13 +20,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: 'https://registry.npmjs.org'
-    - name: release
+    - name: release @next
       run: |
         git config --global user.email "tin@devtin.io"
         git config --global user.name "Martin Rafael Gonzalez"
+        git fetch origin next
+        git checkout next
         npm ci
-        yarn build && yarn test:all && yarn release
-    - name: publish
-      run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        yarn build:wcoverage && yarn test:all && yarn release
+        git push --follow-tags
