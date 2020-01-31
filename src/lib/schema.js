@@ -234,28 +234,42 @@ export class Schema {
       required && this.throwError(error, { value: v })
     }
 
-    if (transformer.loaders) {
-      forEach(castArray(transformer.loaders), loader => {
+    const processLoaders = (loaders, runLoaders = false) => {
+      forEach(castArray(loaders), loader => {
         const type = Schema.guessType(loader)
-        v = this._run(type, v)
+        const clone = Object.assign(Object.create(this), this)
+        if (type !== 'Schema' && typeof loader === 'object') {
+          clone._settings = Object.assign({}, clone._settings, loader, { loaders: undefined })
+        }
+        v = clone._run(type, v, runLoaders)
       })
     }
 
-    const callTransformer = (method, ...payload) => {
-      return transformer[method].call(this, ...payload)
+    // todo: check settings loaders
+    if (runLoaders && this.settings.loaders) {
+      processLoaders(this.settings.loaders, true)
     }
 
-    if (this.settings.autoCast && transformer.cast) {
-      v = callTransformer('cast', v)
+    if (transformer.loaders) {
+      processLoaders(transformer.loaders, true)
     }
 
-    if (transformer.validate) {
-      callTransformer('validate', v)
+    const callTransformer = (method, transform, payload) => {
+      if (this.settings[method] && typeof this.settings[method] === 'function') {
+        const newPayload = this.settings[method].call(this, payload)
+        if (transform) {
+          payload = newPayload
+        }
+      }
+      return transformer[method] ? transformer[method].call(this, payload) : payload
     }
 
-    if (transformer.parse) {
-      v = callTransformer('parse', v)
+    if (this.settings.autoCast) {
+      v = callTransformer('cast', true, v)
     }
+
+    callTransformer('validate', false, v)
+    v = callTransformer('parse', true, v)
 
     return v
   }
