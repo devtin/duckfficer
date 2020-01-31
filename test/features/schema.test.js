@@ -3,8 +3,8 @@ import { Schema, ValidationError } from '../../'
 
 test(`Creating a schema`, async t => {
   /**
-   * In order to check the data integrity of an object, I'm gonna create a schema defining the expected
-   * structure of my desired object.
+   * In order to check the data integrity of an object, a schema is created defining the expected
+   * structure of the desired object.
    */
 
   const UserSchema = new Schema({
@@ -14,30 +14,41 @@ test(`Creating a schema`, async t => {
   })
 
   /**
-   * My created schema is ready to parse arbitrary objects.
+   * The created schema has a method called `parse`. This method is used to (optionally) cast, validate and parse
+   * arbitrary objects, returning a newly created schema-compliant object.
    */
+
+  t.true(typeof UserSchema.parse === 'function')
 
   const arbitraryObject = {
     name: `Martin Rafael Gonzalez`,
-    birthday: '6/11/1983',
+    birthday: new Date('6/11/1983'),
     description: ['monkey', 'developer', 'arepa lover']
   }
 
-  const Martin = UserSchema.parse(arbitraryObject)
+  let safeObject
+  t.notThrows(() => {
+    safeObject = UserSchema.parse(arbitraryObject)
+  })
+
+  t.truthy(safeObject)
+  t.deepEqual(safeObject, arbitraryObject)
+  t.true(safeObject !== arbitraryObject)
 
   /**
-   * I can now use the returned sanitized-object carelessly since I just ensured it will match my expected schema.
+   * The returned object can be used fearlessly since it was validated to be schema-compliant.
    */
 
-  t.is(Martin.name, `Martin Rafael Gonzalez`)
-  t.true(Martin.birthday instanceof Date)
-  t.is(Martin.birthday.getFullYear(), 1983)
-  t.is(Martin.description.length, 3)
+  t.truthy(safeObject)
+  t.is(safeObject.name, `Martin Rafael Gonzalez`)
+  t.true(safeObject.birthday instanceof Date)
+  t.is(safeObject.birthday.getFullYear(), 1983)
+  t.is(safeObject.description.length, 3)
 })
 
 test(`Validating arbitrary objects`, t => {
   /**
-   * I'll continue using the `UserSchema` example to validate arbitrary objects.
+   * Using the same `UserSchema` example above:
    */
 
   const UserSchema = new Schema({
@@ -47,9 +58,8 @@ test(`Validating arbitrary objects`, t => {
   })
 
   /**
-   * Think of an *arbitrary object* as one that could have been inputted and send through an HTML form,
-   * retrieved from a POST request; or maybe inputted from a terminal application. An error will be thrown given an
-   * arbitrary object not matching the defined schema.
+   * Think of an *arbitrary object* as one coming from an unreliable source, i.e. retrieved through a POST request;
+   * or maybe retrieved by a manual input from a terminal application.
    */
 
   const arbitraryObject = {
@@ -61,9 +71,11 @@ test(`Validating arbitrary objects`, t => {
   }
 
   /**
-   * Given object contains fields that does not exists in our schema (`firstName`, `middleName` and `lastName`),
-   * following validation will result in an error since the arbitrary object contains 3 unknown properties, plus the
-   * property `name` (expected by the schema) is also missing.
+   * Above's object `arbitraryObject` contains fields that do not exist in the schema: `firstName`, `middleName` and
+   * `lastName`, are not defined in the schema.
+   *
+   * Following validation will result in an error since the arbitrary object does not match the schema: it contains
+   * these 3 unknown properties, plus the property `name` (expected by the schema) is also missing.
    */
 
   const error = t.throws(() => UserSchema.parse(arbitraryObject))
@@ -90,7 +102,7 @@ test(`Required properties`, t => {
   })
 
   /**
-   * Whenever a required property is missing, an error will be thrown.
+   * Whenever a required property is missing, an error is thrown.
    */
 
   let error = t.throws(() => ProductSchema.parse({
@@ -105,8 +117,8 @@ test(`Required properties`, t => {
 
 test(`Optional properties`, t => {
   /**
-   * In the example below I'm gonna create a schema with an optional property called `age`.
-   * In order to do so I'm gonna set the property setting `required` to `false`.
+   * A schema is created below with an optional-property named `age`.
+   * The property-setting `required` set to `false` is what enables this feature.
    */
 
   const ContactSchema = new Schema({
@@ -119,7 +131,7 @@ test(`Optional properties`, t => {
   })
 
   /**
-   * I can now validate arbitrary objects missing the property `age` as long as they match other required properties.
+   * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
    */
 
   let contact
@@ -131,7 +143,7 @@ test(`Optional properties`, t => {
   })
 
   /**
-   * Whenever `age` is present, the validation will ensure it is a `Number`.
+   * Whenever `age` is present, the validation will ensure it is a `Number`, though.
    */
 
   let contact2
@@ -165,7 +177,7 @@ test(`Optional properties`, t => {
 
 test(`Default values`, t => {
   /**
-   * Default values are meant to be assigned to a property when absent.
+   * Default values are meant to be used when an arbitrary object misses the value of the property in subject.
    */
 
   const ContactSchema = new Schema({
@@ -177,7 +189,10 @@ test(`Default values`, t => {
   })
 
   /**
-   * When a property is assigned with a default value, it will be treated as `{ required: false }`.
+   * When a property is assigned with a `default` value, it is explicitly treated as an optional property
+   * (`required` = `false`)
+   *
+   * See [optional properties](#optional-properties) for more infomation.
    */
 
   let sanitized
@@ -193,7 +208,7 @@ test(`Default values`, t => {
   })
 
   /**
-   * A default value could also be a function. Refer to the [docs](DOCS.md) for more information.
+   * A default value could also be a function. Refer to the [docs > Schema~SchemaSettings](./DOCS.md#schemaschemasettings--object) for more information.
    */
 
   const UserSchema = new Schema({
@@ -217,18 +232,21 @@ test(`Default values`, t => {
 
 test(`Auto-casting`, t => {
   /**
-   * Most transformers provide an option for auto-casting. When `autoCast=true` (depending on the transformer) it may
-   * try to resolve given arbitrary value into the expected one.
+   * Most transformers provide an option for auto-casting. When property-setting `autoCast=true`
+   * (depending on the transformer) it may try to resolve given arbitrary value into the expected one.
    *
-   * For example, the `Date` transformer will try to auto-cast `String`'s into a proper `Date`, if possible.
-   * The `Number` transformer as well: will try to resolve those `String`'s that look like a number and convert them into
-   * a proper `Number.
+   * For example, the [Date](#date) transformer will try to cast values given as `String`'s into a proper `Date`, if possible.
+   * The [Number](#number) transformer as well: will try to resolve those `String`'s that look like a number and convert them into
+   * a proper `Number`.
    */
 
   const UserSchema = new Schema({
     name: String,
     birthday: Date,
-    kids: Number
+    kids: {
+      type: Number,
+      autoCast: true
+    }
   })
 
   let Olivia
@@ -245,8 +263,9 @@ test(`Auto-casting`, t => {
   t.is(typeof Olivia.kids, 'number')
 
   /**
-   * Now, depending on how strictly we need to perform our validations, sometimes we may require to turn this
-   * feature off.
+   * **Turning off auto-casting**
+   *
+   * Now, when a strict validation is required, this feature can be turned off.
    */
 
   const StrictUserSchema = new Schema({

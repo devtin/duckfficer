@@ -98,7 +98,8 @@ test(`autoCasting`, t => {
 
   const qtty = new Schema({
     name: 'quantity',
-    type: Number
+    type: Number,
+    autoCast: true
   })
 
   // Auto-casting is nice

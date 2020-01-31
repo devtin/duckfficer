@@ -32,7 +32,7 @@
     "build:readme": "node build/readme.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava --serial --verbose",
-    "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/features/*.test.js test/types/*.test.js",
+    "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/features/*.test.js test/transformers/*.test.js",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
     "release": "standard-version --branch next",

@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../'
 
-test(`Parses objects`, t => {
+test(`Object`, t => {
   const Transaction = new Schema({
     created: {
       type: Date,
