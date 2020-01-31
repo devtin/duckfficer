@@ -12,25 +12,33 @@
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
+<dd><p>key map object that holds the available Transformer&#39;s (types) that can be validated.</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
+<dt><a href="#ValueError">ValueError</a> : <code>Array</code></dt>
+<dd><p>Used as value in certain settings to alternatively customize error messages</p>
+</dd>
 <dt><a href="#Validator">Validator</a> ⇒ <code>void</code></dt>
-<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a {ValidationError} when not.</p>
+<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a <a href="#ValidationError">ValidationError</a> when not.</p>
 </dd>
 <dt><a href="#Parser">Parser</a> ⇒ <code>*</code></dt>
 <dd><p>Synchronous function that performs custom logic possibly customized via settings that could transform given
 value, throwing a {ValidationError} when error.</p>
 </dd>
-<dt><a href="#ValueCaster">ValueCaster</a> ⇒ <code>*</code></dt>
+<dt><a href="#Caster">Caster</a> ⇒ <code>*</code></dt>
 <dd><p>Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
 original value in case it could not be guessed.</p>
 </dd>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
 <dd><p>A transformer holds the logic of instantiating a data type (casting, validation and parsing).</p>
-</dd>
-<dt><a href="#Transformers">Transformers</a> : <code>Object</code></dt>
-<dd><p>key map object that holds the available Transformer&#39;s (types) that can be validated.</p>
 </dd>
 </dl>
 
@@ -42,23 +50,24 @@ Set of utilities
 **Kind**: global class  
 
 * [Utils](#Utils)
-    * [~castArray(v)](#Utils..castArray) ⇒ <code>Array</code>
+    * [~castArray(value)](#Utils..castArray) ⇒ <code>Array</code>
     * [~obj2dot(obj, [parent], [separator])](#Utils..obj2dot) ⇒ <code>Array.&lt;String&gt;</code>
     * [~find(obj, path)](#Utils..find) ⇒ <code>\*</code>
     * [~forEach(arr, cb)](#Utils..forEach)
     * [~render(template, obj)](#Utils..render)
     * [~propertiesRestricted(obj, properties, [options])](#Utils..propertiesRestricted)
+    * [~castThrowable(value, error)](#Utils..castThrowable) ⇒ [<code>ValueError</code>](#ValueError)
 
 <a name="Utils..castArray"></a>
 
-### Utils~castArray(v) ⇒ <code>Array</code>
+### Utils~castArray(value) ⇒ <code>Array</code>
 Makes sure a value is wrapped in an array
 
 **Kind**: inner method of [<code>Utils</code>](#Utils)  
 
-| Param |
-| --- |
-| v | 
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value to wrap in an array. If the value is already an array, it is returned as is. |
 
 <a name="Utils..obj2dot"></a>
 
@@ -176,6 +185,16 @@ console.log(Utils.propertiesRestricted(user, ['name', 'email', 'address'])) // =
 console.log(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'])) // => true
 console.log(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'], { strict: true })) // => false
 ```
+<a name="Utils..castThrowable"></a>
+
+### Utils~castThrowable(value, error) ⇒ [<code>ValueError</code>](#ValueError)
+**Kind**: inner method of [<code>Utils</code>](#Utils)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> \| [<code>ValueError</code>](#ValueError) | The value |
+| error | <code>String</code> | Default error message |
+
 <a name="ValidationError"></a>
 
 ## ValidationError
@@ -216,7 +235,7 @@ Orchestrates the validation of a data schema
     * _static_
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
-        * [~SchemaModel](#Schema..SchemaModel) : <code>Object</code>
+        * [~TheSchema](#Schema..TheSchema) : <code>Object</code>
         * [~SchemaSettings](#Schema..SchemaSettings) : <code>Object</code>
 
 <a name="new_Schema_new"></a>
@@ -225,7 +244,7 @@ Orchestrates the validation of a data schema
 
 | Param | Type | Description |
 | --- | --- | --- |
-| schema | <code>SchemaModel</code> |  |
+| schema | <code>TheSchema</code> |  |
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
@@ -303,39 +322,218 @@ Checks whether a given object is a nested object
 | --- | --- |
 | obj | <code>Object</code> | 
 
-<a name="Schema..SchemaModel"></a>
+<a name="Schema..TheSchema"></a>
 
-### Schema~SchemaModel : <code>Object</code>
-This object defines the desired structure of our schema. It must contain as many properties
-as fields we want to validate. Each property must be either a [Field](Field) or a [Schema](#Schema) for
-nested objects.
+### Schema~TheSchema : <code>Object</code>
+This object defines the schema or desired structure of an arbitrary object.
 
 **Kind**: inner typedef of [<code>Schema</code>](#Schema)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| theFieldName | <code>SchemaModel</code> | Add as many property schemas as you need in order to build your validation model |
-
+**Example**  
+```js
+const MySchemaStructure = {
+  name: String,
+  email: String,
+  address: {
+    zip: Number,
+    street: String
+  }
+}
+```
 <a name="Schema..SchemaSettings"></a>
 
 ### Schema~SchemaSettings : <code>Object</code>
-This object describes the settings of a schema.
+This object describes the settings of a schema-property and serves as a host to hold possible other settings
+belonging to its correspondent transformer.
 
 **Kind**: inner typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| type | <code>String</code> |  | Name of the transformer to use to parse the property. |
-| autoCast | <code>Boolean</code> | <code>true</code> | Runs the `autoCast` feature of the Transformer. |
-| required | <code>Boolean</code> | <code>true</code> | Whether the property is or not required. |
+| type | <code>String</code> |  | Name of the available [Transformers](#Transformers) to use to process the value. |
+| [required] | <code>Boolean</code> | <code>true</code> | Whether the property is or not required. |
+| [cast] | [<code>Caster</code>](#Caster) |  | Optional caster |
+| [validate] | [<code>Validator</code>](#Validator) |  | Optional validator |
+| [parse] | [<code>Parser</code>](#Parser) |  | Optional parser |
 | [default] | <code>function</code> \| <code>\*</code> |  | Default value when non-passed. Mind this will treat properties as `required=false`. When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument. Must return the desired default value. |
 
+**Example**  
+```js
+new Schema({
+  // when an SchemaSetting is an object it will have a property named `type`.
+  name: {
+    type: String, // < it is a SchemaSetting since it has a property called type
+    validate (value) {
+      if (/^[a-z]/.test(value)) {
+        throw new Error(`Start your name in uppercase, please`)
+      }
+    }
+  }
+})
+```
+<a name="Transformers"></a>
+
+## Transformers : <code>Object</code>
+key map object that holds the available Transformer's (types) that can be validated.
+
+**Kind**: global constant  
+
+* [Transformers](#Transformers) : <code>Object</code>
+    * [.String](#Transformers.String) : [<code>Transformer</code>](#Transformer)
+    * [.Boolean](#Transformers.Boolean) : [<code>Transformer</code>](#Transformer)
+    * [.Object](#Transformers.Object) : [<code>Transformer</code>](#Transformer)
+    * [.Array](#Transformers.Array) : [<code>Transformer</code>](#Transformer)
+    * [.Set](#Transformers.Set) : [<code>Transformer</code>](#Transformer)
+    * [.Number](#Transformers.Number) : [<code>Transformer</code>](#Transformer)
+    * [.Date](#Transformers.Date) : [<code>Transformer</code>](#Transformer)
+    * [.Function](#Transformers.Function) : [<code>Transformer</code>](#Transformer)
+
+<a name="Transformers.String"></a>
+
+### Transformers.String : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid string</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast objects with method `toString`. |
+| [settings.minlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional minimum length |
+| [settings.maxlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional maximum length |
+| [settings.regex] | <code>RegExp</code> \| [<code>ValueError</code>](#ValueError) |  | Optional RegExp to match against given string |
+| cast | [<code>Caster</code>](#Caster) |  | Basically checks if a value is an object and this object has the method `toString`. If so, calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value was returned by the method. |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `String`. Additionally, performs built-in validations: minlength, maxlength and regex. |
+
+<a name="Transformers.Boolean"></a>
+
+### Transformers.Boolean : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid boolean</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast truthy values into `true` and falsy ones into `false`. |
+| cast | [<code>Caster</code>](#Caster) |  | Casts truthy values into `true` and falsy ones into `false` |
+| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is a `Boolean`. |
+
+<a name="Transformers.Object"></a>
+
+### Transformers.Object : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid object</code> | Default error message thrown |
+| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
+
+<a name="Transformers.Array"></a>
+
+### Transformers.Array : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid array</code> | Default error message thrown |
+| [settings.arraySchema] | <code>SchemaSettings</code> |  | Alternatively initializes (which involves validating, casting and parsing) array items using given schema. |
+| parse | [<code>Parser</code>](#Parser) |  | Alternatively instantiates array items given an `arraySchema`. |
+| validate | [<code>Validator</code>](#Validator) |  | Validates that given value is an array |
+
+<a name="Transformers.Set"></a>
+
+### Transformers.Set : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid set</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>true</code> | Whether to auto-cast `Array`'s into `Set`'s. |
+| cast | [<code>Caster</code>](#Caster) |  | Casts `Array` into `Set` |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given values is a `Set` |
+
+<a name="Transformers.Number"></a>
+
+### Transformers.Number : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid number</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast `String`'s with numeric values. |
+| cast | [<code>Caster</code>](#Caster) |  | Tries to cast given value into a `Number` |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Number` |
+
+<a name="Transformers.Date"></a>
+
+### Transformers.Date : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid date</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>true</code> |  |
+| cast | [<code>Caster</code>](#Caster) |  | Casts `String`s into `Date`'s when possible |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Date` |
+
+<a name="Transformers.Function"></a>
+
+### Transformers.Function : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid function</code> | Default error message thrown |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Function` |
+
+<a name="ValueError"></a>
+
+## ValueError : <code>Array</code>
+Used as value in certain settings to alternatively customize error messages
+
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| 0 | <code>\*</code> | The value |
+| 1 | <code>String</code> | Alternative error message |
+
+**Example**  
+```js
+const ValueError = [3, `username's must have at least three characters`]
+const mySchema = new Schema({
+  username: {
+    type: String,
+    minlength: ValueError
+  }
+})
+```
 <a name="Validator"></a>
 
 ## Validator ⇒ <code>void</code>
-Synchronous function that validates that given value is of the expected kind. Throws a {ValidationError} when not.
+Synchronous function that validates that given value is of the expected kind. Throws a [ValidationError](#ValidationError) when not.
 
 **Kind**: global typedef  
 **Throws**:
@@ -364,9 +562,9 @@ value, throwing a {ValidationError} when error.
 | --- | --- | --- |
 | value | <code>\*</code> | The value being validated |
 
-<a name="ValueCaster"></a>
+<a name="Caster"></a>
 
-## ValueCaster ⇒ <code>\*</code>
+## Caster ⇒ <code>\*</code>
 Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
 original value in case it could not be guessed.
 
@@ -387,22 +585,11 @@ A transformer holds the logic of instantiating a data type (casting, validation 
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [cast] | [<code>ValueCaster</code>](#ValueCaster) | Cast function |
+| [settings] | <code>Object</code> | Initial transformer settings |
+| [cast] | [<code>Caster</code>](#Caster) | Cast function |
 | [parse] | [<code>Parser</code>](#Parser) | Parser function |
 | [validate] | [<code>Validator</code>](#Validator) | Validator function |
 | [loaders] | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
-
-<a name="Transformers"></a>
-
-## Transformers : <code>Object</code>
-key map object that holds the available Transformer's (types) that can be validated.
-
-**Kind**: global typedef  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| TransformerName | [<code>Transformer</code>](#Transformer) | The transformer name |
 
 
 * * *

@@ -19,14 +19,15 @@ test(`Array`, t => {
   t.is(product.category.length, 3)
   t.is(product.category[1], 'Tea')
 
-  const error = t.throws(() => ProductType.parse({
-    name: 'Kombucha',
-    category: 'none'
-  }))
-
   /**
    * Given an invalid `Array` it will throw a `ValidationError`
    */
+
+  const error = t.throws(() => ProductType.parse({
+    name: 'Kombucha',
+    category: 'none' // < not an array
+  }))
+
   t.is(error.message, `Data is not valid`)
   t.is(error.errors[0].message, 'Invalid array')
   t.is(error.errors[0].field.fullPath, 'category')

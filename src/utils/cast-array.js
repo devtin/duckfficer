@@ -1,9 +1,9 @@
 /**
  * @method Utils~castArray
  * @desc Makes sure a value is wrapped in an array
- * @param v
+ * @param {*} value - The value to wrap in an array. If the value is already an array, it is returned as is.
  * @return {Array}
  */
-export function castArray (v) {
-  return Array.isArray(v) ? v : [v]
+export function castArray (value) {
+  return Array.isArray(value) ? value : [value]
 }

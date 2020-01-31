@@ -33,10 +33,24 @@ test(`Number`, t => {
 
 test('autoCast (default `false`)', t => {
   /**
-   * `Number` transformer accepts has a built-in auto-casting function that would convert any numeric representation
-   * `String` into a proper `Number`. This feature is off by default.
+   * `Number` transformer has a built-in auto-casting function that would convert any numeric representation
+   * `String` into a proper `Number`. This feature is disabled by default.
    */
-  const ProductType = new Schema({
+  const UserSchema = new Schema({
+    user: String,
+    age: Number
+  })
+
+  t.throws(() => UserSchema.parse({
+    user: 'tin',
+    age: '36'
+  }))
+
+  /**
+   * To enable it, just pass the setting `autoCast` equaled to `true`
+   */
+
+  const UserSchema2 = new Schema({
     user: String,
     age: {
       type: Number,
@@ -46,16 +60,16 @@ test('autoCast (default `false`)', t => {
 
   let contact
   t.notThrows(() => {
-    contact = ProductType.parse({
+    contact = UserSchema2.parse({
       user: 'tin',
-      age: '36'
+      age: '36' // < numeric string
     })
   })
 
   t.is(contact.user, 'tin')
   t.is(contact.age, 36)
 
-  const error = t.throws(() => ProductType.parse({
+  const error = t.throws(() => UserSchema2.parse({
     user: 'tin',
     age: 'thirty six'
   }))

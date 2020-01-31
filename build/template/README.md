@@ -7,17 +7,25 @@ Zero-dependencies, light-weight library for validating & sanitizing JavaScript d
 
 - [About](#about)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
+- [At-a-glance](#at-a-glance)
+- [Guide](#guide)
+  {{ #index }}
+  {{{ . }}}
+  {{ /index }}
+  - [Transformers](#transformers)
+    {{ #transformersIndex }}
+    {{{ . }}}
+    {{ /transformersIndex }}
+  - [Hooks](#hooks)
+  - [Loaders](#loaders)
 - [License](#license) (MIT)
 
-### About
+## About
 
-In my beloved JavaScript ecosystem, I'm constantly defining data schemas just to find myself later performing duck-type
-validation and casting values to ensure data-type consistency prior proceeding with further business logic...
-One day I got tired and found some inspiration on the [mongoose](https://mongoosejs.com)'s validation syntax.
+One day I got tired of performing duck-type validation as I shared entity-data across different endpoints of my beloved
+JavaScript ecosystem. This library is initially inspired in [mongoose](https://mongoosejs.com)'s validation syntax. 
 
-### Installation
+## Installation
 
 ```sh
 $ npm install @devtin/schema-validator
@@ -25,30 +33,60 @@ $ npm install @devtin/schema-validator
 $ yarn add @devtin/schema-validator
 ```
 
-### Usage
+## At-a-glance
 
 ```js
 {{{ sandbox }}}
 ```
 
-Have a look at [the docs](./DOCS.md)  
-Also have a look at this [codepen](https://codepen.io/tin_r/pen/VwYbego) playground.  
+I would suggest having a look at [the guide](#guide) and [the docs](./DOCS.md) respectively.  
+Maybe also playing with this [codepen](https://codepen.io/tin_r/pen/VwYbego) for a quick overview.
 
-### Guide
+## Guide
 
-All features showcased above in this guide are taken straight from the [test/features](test/features) directory.
-Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the syntax is
-pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at the
-<a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
+All features showcased above in this guide are taken straight from some of the tests performed in the [test](test)
+directory. Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the
+syntax is pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at
+the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track. 
 
-**Index**  
-{{{ index }}}
+{{ #index }}
+{{{ . }}}
+{{ /index }}
 
-{{{ schema }}}
+{{{ guide }}}
+
+## Transformers
+
+Transformers are the ones validating, casting and parsing all property-types defined in the schema.
+
+{{ #transformersIndex }}
+{{{ . }}}
+{{ /transformersIndex }}
+
+{{ #transformers }}
+{{{ . }}}
+{{ /transformers }}
+
+## Hooks
+
+Hooks spread the schema functionality by allowing to compute custom logic
+during different points of the parsing lifecycle.
+
+{{ #hooks }}
+{{{ . }}}
+{{ /hooks }}
+
+## Loaders
+
+Loaders could be seen as a transformer extending other transformer's functionality.
+
+{{ #loaders }}
+{{{ . }}}
+{{ /loaders }}
 
 * * *
 
-### License
+## License
 
 [MIT](https://opensource.org/licenses/MIT)
 

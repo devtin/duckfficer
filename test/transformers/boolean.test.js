@@ -6,7 +6,7 @@ test(`Boolean`, t => {
    * Validates `Boolean`s.
    */
 
-  const ProductType = new Schema({
+  const ProductSchema = new Schema({
     name: String,
     active: {
       type: Boolean,
@@ -14,7 +14,7 @@ test(`Boolean`, t => {
     }
   })
 
-  const error = t.throws(() => ProductType.parse({
+  const error = t.throws(() => ProductSchema.parse({
     name: 'Kombucha',
     active: 'no'
   }))
@@ -24,7 +24,7 @@ test(`Boolean`, t => {
 
   let product1
   t.notThrows(() => {
-    product1 = ProductType.parse({
+    product1 = ProductSchema.parse({
       name: 'Kombucha',
       active: true
     })
@@ -35,7 +35,7 @@ test(`Boolean`, t => {
 
   let product2
   t.notThrows(() => {
-    product2 = ProductType.parse({
+    product2 = ProductSchema.parse({
       name: 'tin'
     })
   })
@@ -63,7 +63,7 @@ test('autoCast (default `false`)', t => {
   t.notThrows(() => {
     product = ProductType.parse({
       name: 'Kombucha',
-      active: 'no'
+      active: 'sure!'
     })
   })
 

@@ -3,9 +3,13 @@ const { Schema } = require('./')
 // defining the schema
 const User = new Schema({
   name: String,
-  email: {
-    type: String,
-    regex: [/^[a-z0-9.]+@[a-z0-9.]+\.[a-z]{2,}$/, `Invalid e-mail address`]
+  address: {
+    state: {
+      type: String,
+      default: 'Florida'
+    },
+    zip: Number,
+    street: String
   },
   created: {
     type: Date,
@@ -15,26 +19,32 @@ const User = new Schema({
 
 const Martin = User.parse({
   name: 'Martin',
-  email: 'tin@devtin.io'
+  address: {
+    zip: 33129,
+    street: 'Brickell Av'
+  }
 })
 
 console.log(Martin.hasOwnProperty('name')) // => true
-console.log(Martin.hasOwnProperty('email')) // => true
+console.log(Martin.hasOwnProperty('address')) // => true
 console.log(Martin.hasOwnProperty('created')) // => true
 console.log(Martin.name) // => Martin
-console.log(Martin.email) // => tin@devtin.io
+console.log(Martin.address.state) // => Florida
+console.log(Martin.address.zip) // => 33129
+console.log(Martin.address.street) // => Brickell Av
 console.log(Martin.created instanceof Date) // => true
 
 try {
   User.parse({
-    name: 'Martin Rafael Gonzalez',
-    email: 'none'
+    name: 'Martin Rafael Gonzalez'
   })
 } catch (err) {
   console.log(err instanceof Error) // => true
   console.log(err.message) // => Data is not valid
-  console.log(err.errors.length) // => 1
+  console.log(err.errors.length) // => 2
   console.log(err.errors[0] instanceof Error) // => true
-  console.log(err.errors[0].message) // => Invalid e-mail address
-  console.log(err.errors[0].field.name) // => email
+  console.log(err.errors[0].message) // => Property address.zip is required
+  console.log(err.errors[0].field.fullPath) // => address.zip
+  console.log(err.errors[1].message) // => Property address.street is required
+  console.log(err.errors[1].field.fullPath) // => address.street
 }

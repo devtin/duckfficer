@@ -14,8 +14,9 @@ test(`Creating a schema`, async t => {
   })
 
   /**
-   * The created schema has a method called `parse`. This method is used to (optionally) cast, validate and parse
-   * arbitrary objects, returning a newly created schema-compliant object.
+   * The created schema has a method called `parse`. This method is used to
+   * (optionally) cast, validate and parse arbitrary objects, returning a newly created schema-compliant object. See the
+   * [Schema](./DOCS.md#Schema) class docs for more information.
    */
 
   t.true(typeof UserSchema.parse === 'function')
@@ -36,7 +37,7 @@ test(`Creating a schema`, async t => {
   t.true(safeObject !== arbitraryObject)
 
   /**
-   * The returned object can be used fearlessly since it was validated to be schema-compliant.
+   * Returned object-properties can now be accessed safely since the object was validated to be schema-compliant.
    */
 
   t.truthy(safeObject)
@@ -71,11 +72,11 @@ test(`Validating arbitrary objects`, t => {
   }
 
   /**
-   * Above's object `arbitraryObject` contains fields that do not exist in the schema: `firstName`, `middleName` and
-   * `lastName`, are not defined in the schema.
+   * Above's object `arbitraryObject` contains properties that do not exist in the schema: `firstName`,
+   * `middleName` and `lastName`, are not defined in the schema.
    *
    * Following validation will result in an error since the arbitrary object does not match the schema: it contains
-   * these 3 unknown properties, plus the property `name` (expected by the schema) is also missing.
+   * these 3 unknown properties, plus the property `name` (expected by the defined schema) is also missing.
    */
 
   const error = t.throws(() => UserSchema.parse(arbitraryObject))
@@ -189,10 +190,8 @@ test(`Default values`, t => {
   })
 
   /**
-   * When a property is assigned with a `default` value, it is explicitly treated as an optional property
-   * (`required` = `false`)
-   *
-   * See [optional properties](#optional-properties) for more infomation.
+   * When a property is assigned with a `default` value, it is implicitly treated as an optional property (`required`
+   * equaled to `false`). See [optional properties](#optional-properties) for more information.
    */
 
   let sanitized
@@ -208,7 +207,8 @@ test(`Default values`, t => {
   })
 
   /**
-   * A default value could also be a function. Refer to the [docs > Schema~SchemaSettings](./DOCS.md#schemaschemasettings--object) for more information.
+   * A default value could also be a function. Refer to the [SchemaSettings](./DOCS.md#schemaschemasettings--object) docs
+   * for more information.
    */
 
   const UserSchema = new Schema({
@@ -232,7 +232,7 @@ test(`Default values`, t => {
 
 test(`Auto-casting`, t => {
   /**
-   * Most transformers provide an option for auto-casting. When property-setting `autoCast=true`
+   * Most transformers provide an option for auto-casting. When property-setting `autoCast` equals `true`
    * (depending on the transformer) it may try to resolve given arbitrary value into the expected one.
    *
    * For example, the [Date](#date) transformer will try to cast values given as `String`'s into a proper `Date`, if possible.

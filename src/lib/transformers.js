@@ -45,13 +45,14 @@ export const Transformers = {
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid string] - Default error message thrown
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast objects with method `toString`.
-   * @property {(Number|ValueError)} [minlength] - Optional minimum length
-   * @property {(Number|ValueError)} [maxlength] - Optional maximum length
-   * @property {(RegExp|ValueError)} [regex] - Optional RegExp to match against given string
-   * @property {Caster} cast - Basically checks if a value is an object and has the method `toString`. If so,
+   * @property {(Number|ValueError)} [settings.minlength] - Optional minimum length
+   * @property {(Number|ValueError)} [settings.maxlength] - Optional maximum length
+   * @property {(RegExp|ValueError)} [settings.regex] - Optional RegExp to match against given string
+   * @property {Caster} cast - Basically checks if a value is an object and this object has the method `toString`. If so,
    * calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value
-   * returned by the method.
-   * @property {Validator} validate - Performs built-in validations: type, minlength, maxlength and regex.
+   * was returned by the method.
+   * @property {Validator} validate - Validates given value is a `String`. Additionally, performs built-in validations:
+   * minlength, maxlength and regex.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
    */
   String: {
@@ -139,9 +140,9 @@ export const Transformers = {
    * @constant {Transformer} Transformers.Array
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid array] - Default error message thrown
-   * @property {SchemaSettings} [settings.itemSchema] - Alternatively initializes (which involves validating, casting and parsing)
+   * @property {SchemaSettings} [settings.arraySchema] - Alternatively initializes (which involves validating, casting and parsing)
    * array items using given schema.
-   * @property {Parser} parse - Alternatively instantiates array items given an `itemSchema`.
+   * @property {Parser} parse - Alternatively instantiates array items given an `arraySchema`.
    * @property {Validator} validate - Validates that given value is an array
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
    */
@@ -150,9 +151,9 @@ export const Transformers = {
       typeError: `Invalid array`
     },
     parse (value) {
-      if (this.settings.items) {
+      if (this.settings.arraySchema) {
         value = value.map((value, name) => {
-          return (new this.constructor(this.settings.items, Object.assign({}, this.settings.items, {
+          return (new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
             name,
             parent: this
           }))).parse(value)

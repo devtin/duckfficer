@@ -7,22 +7,51 @@ import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
 
 /**
- * @typedef {Object} Schema~SchemaModel
- * @desc This object defines the desired structure of our schema. It must contain as many properties
- * as fields we want to validate. Each property must be either a {@link Field} or a {@link Schema} for
- * nested objects.
- * @property {SchemaModel} theFieldName - Add as many property schemas as you need in order to build your validation model
+ * @typedef {Object} Schema~TheSchema
+ * @desc This object defines the schema or desired structure of an arbitrary object.
+ *
+ * @example
+ *
+ * ```js
+ * const MySchemaStructure = {
+ *   name: String,
+ *   email: String,
+ *   address: {
+ *     zip: Number,
+ *     street: String
+ *   }
+ * }
+ * ```
  */
 
 /**
  * @typedef {Object} Schema~SchemaSettings
- * @desc This object describes the settings of a schema.
- * @property {String} type - Name of the transformer to use to parse the property.
- * @property {Boolean} autoCast=true - Runs the `autoCast` feature of the Transformer.
- * @property {Boolean} required=true - Whether the property is or not required.
- * @property {Function|*} [default] - Default value when non-passed. Mind this will treat properties as `required=false`.
- * When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument.
- * Must return the desired default value.
+ * @desc This object describes the settings of a schema-property and serves as a host to hold possible other settings
+ * belonging to its correspondent transformer.
+ * @property {String} type - Name of the available {@link Transformers} to use to process the value.
+ * @property {Boolean} [required=true] - Whether the property is or not required.
+ * @property {Caster} [cast] - Optional caster
+ * @property {Validator} [validate] - Optional validator
+ * @property {Parser} [parse] - Optional parser
+ * @property {(Function|*)} [default] - Default value when non-passed. Mind this will treat properties as `required=false`.
+ * When a function is given, its called using the schema of the property as its `this` object, receiving given value as
+ * first argument. Must return the desired default value.
+ *
+ * @example
+ *
+ * ```js
+ * new Schema({
+ *   // when an SchemaSetting is an object it will have a property named `type`.
+ *   name: {
+ *     type: String, // < it is a SchemaSetting since it has a property called type
+ *     validate (value) {
+ *       if (/^[a-z]/.test(value)) {
+ *         throw new Error(`Start your name in uppercase, please`)
+ *       }
+ *     }
+ *   }
+ * })
+ * ```
  */
 
 /**
@@ -34,7 +63,7 @@ import { Transformers } from './transformers.js'
 export class Schema {
   /**
    * @constructor
-   * @param {SchemaModel} schema
+   * @param {TheSchema} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Schema} [options.parent]
