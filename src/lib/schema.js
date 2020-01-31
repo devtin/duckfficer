@@ -40,8 +40,7 @@ export class Schema {
    * @param {Schema} [options.parent]
    */
   constructor (schema, { name, parent } = {}) {
-    this.settings = {
-      autoCast: true,
+    this._settings = {
       required: true,
       default: undefined
     }
@@ -62,13 +61,20 @@ export class Schema {
     } else {
       // primitive
       this.type = Schema.guessType(schema)
-      this.settings = typeof schema === 'object' ? Object.assign({}, this.settings, { required: schema.default === undefined }, schema) : this.settings
-      delete this.settings.type
+      this._settings = typeof schema === 'object' ? Object.assign({}, this._settings, { required: schema.default === undefined }, schema) : this._settings
+      delete this._settings.type
     }
 
-    if (this.settings.default !== undefined && this.settings.required) {
+    if (this._settings.default !== undefined && this._settings.required) {
       throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
     }
+  }
+
+  get settings () {
+    if (!this.children && Transformers[this.type] && Transformers[this.type].settings) {
+      return Object.assign({}, Transformers[this.type].settings, this._settings)
+    }
+    return this._settings
   }
 
   _parseSchema (obj) {
@@ -212,7 +218,7 @@ export class Schema {
     return this._run(this.type, v)
   }
 
-  _run (type, v) {
+  _run (type, v, runLoaders = true) {
     const transformer = Transformers[type]
 
     if (!transformer) {
