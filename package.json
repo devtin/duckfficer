@@ -67,6 +67,9 @@
     "env": {
       "es6": true
     },
+    "globals": {
+      "BigInt": true
+    },
     "parserOptions": {
       "ecmaVersion": 2018,
       "sourceType": "module"
