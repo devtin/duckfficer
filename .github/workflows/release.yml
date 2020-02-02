@@ -27,6 +27,7 @@ jobs:
         git config --global user.email "tin@devtin.io"
         git config --global user.name "Martin Rafael Gonzalez"
         git fetch origin next
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
         git checkout next
         npm ci
         yarn build:wcoverage && yarn test:all && yarn release
