@@ -408,12 +408,16 @@ key map object that holds the available Transformer's (types) that can be valida
 
 ### Transformers.BigInt : [<code>Transformer</code>](#Transformer)
 **Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt  
 **Properties**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| validate | [<code>Validator</code>](#Validator) | Confirms given value is a `BigInt`. |
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid bigint</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to automatically cast values or not |
+| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is a `BigInt` |
+| cast | [<code>Caster</code>](#Caster) |  | Converts `String`s and `Number`s into `BigInt` (if possible) |
 
 <a name="Transformers.Boolean"></a>
 

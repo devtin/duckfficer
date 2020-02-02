@@ -72,6 +72,36 @@ export const Transformers = {
     }
   },
   /**
+   * @constant {Transformer} Transformers.BigInt
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid bigint] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=false] - Whether to automatically cast values or not
+   * @property {Validator} validate - Confirms given value is a `BigInt`
+   * @property {Caster} cast - Converts `String`s and `Number`s into `BigInt` (if possible)
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt
+   */
+  BigInt: {
+    settings: {
+      typeError: 'Invalid bigint',
+      autoCast: false
+    },
+    validate (value) {
+      if (typeof value !== 'bigint') {
+        this.throwError(Transformers.BigInt.settings.typeError)
+      }
+    },
+    cast (value) {
+      if (/^(string|number)$/.test(typeof value)) {
+        try {
+          value = BigInt(value)
+        } catch (e) {
+          // shh...
+        }
+      }
+      return value
+    }
+  },
+  /**
    * @constant {Transformer} Transformers.Boolean
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid boolean] - Default error message thrown

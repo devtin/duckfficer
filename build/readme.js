@@ -36,6 +36,7 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
     const Transformers = {
       Array: await parseTransformer('array'),
       Boolean: await parseTransformer('boolean'),
+      BigInt: await parseTransformer('bigint'),
       Date: await parseTransformer('date'),
       Function: await parseTransformer('function'),
       Number: await parseTransformer('number'),
