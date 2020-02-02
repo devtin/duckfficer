@@ -379,60 +379,14 @@ key map object that holds the available Transformer's (types) that can be valida
 **Kind**: global constant  
 
 * [Transformers](#Transformers) : <code>Object</code>
-    * [.String](#Transformers.String) : [<code>Transformer</code>](#Transformer)
-    * [.Boolean](#Transformers.Boolean) : [<code>Transformer</code>](#Transformer)
-    * [.Object](#Transformers.Object) : [<code>Transformer</code>](#Transformer)
     * [.Array](#Transformers.Array) : [<code>Transformer</code>](#Transformer)
-    * [.Set](#Transformers.Set) : [<code>Transformer</code>](#Transformer)
-    * [.Number](#Transformers.Number) : [<code>Transformer</code>](#Transformer)
+    * [.Boolean](#Transformers.Boolean) : [<code>Transformer</code>](#Transformer)
     * [.Date](#Transformers.Date) : [<code>Transformer</code>](#Transformer)
     * [.Function](#Transformers.Function) : [<code>Transformer</code>](#Transformer)
-
-<a name="Transformers.String"></a>
-
-### Transformers.String : [<code>Transformer</code>](#Transformer)
-**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid string</code> | Default error message thrown |
-| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast objects with method `toString`. |
-| [settings.minlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional minimum length |
-| [settings.maxlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional maximum length |
-| [settings.regex] | <code>RegExp</code> \| [<code>ValueError</code>](#ValueError) |  | Optional RegExp to match against given string |
-| cast | [<code>Caster</code>](#Caster) |  | Basically checks if a value is an object and this object has the method `toString`. If so, calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value was returned by the method. |
-| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `String`. Additionally, performs built-in validations: minlength, maxlength and regex. |
-
-<a name="Transformers.Boolean"></a>
-
-### Transformers.Boolean : [<code>Transformer</code>](#Transformer)
-**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid boolean</code> | Default error message thrown |
-| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast truthy values into `true` and falsy ones into `false`. |
-| cast | [<code>Caster</code>](#Caster) |  | Casts truthy values into `true` and falsy ones into `false` |
-| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is a `Boolean`. |
-
-<a name="Transformers.Object"></a>
-
-### Transformers.Object : [<code>Transformer</code>](#Transformer)
-**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid object</code> | Default error message thrown |
-| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
+    * [.Number](#Transformers.Number) : [<code>Transformer</code>](#Transformer)
+    * [.Object](#Transformers.Object) : [<code>Transformer</code>](#Transformer)
+    * [.Set](#Transformers.Set) : [<code>Transformer</code>](#Transformer)
+    * [.String](#Transformers.String) : [<code>Transformer</code>](#Transformer)
 
 <a name="Transformers.Array"></a>
 
@@ -449,35 +403,20 @@ key map object that holds the available Transformer's (types) that can be valida
 | parse | [<code>Parser</code>](#Parser) |  | Alternatively instantiates array items given an `arraySchema`. |
 | validate | [<code>Validator</code>](#Validator) |  | Validates that given value is an array |
 
-<a name="Transformers.Set"></a>
+<a name="Transformers.Boolean"></a>
 
-### Transformers.Set : [<code>Transformer</code>](#Transformer)
+### Transformers.Boolean : [<code>Transformer</code>](#Transformer)
 **Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean  
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid set</code> | Default error message thrown |
-| [settings.autoCast] | <code>Boolean</code> | <code>true</code> | Whether to auto-cast `Array`'s into `Set`'s. |
-| cast | [<code>Caster</code>](#Caster) |  | Casts `Array` into `Set` |
-| validate | [<code>Validator</code>](#Validator) |  | Validates given values is a `Set` |
-
-<a name="Transformers.Number"></a>
-
-### Transformers.Number : [<code>Transformer</code>](#Transformer)
-**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid number</code> | Default error message thrown |
-| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast `String`'s with numeric values. |
-| cast | [<code>Caster</code>](#Caster) |  | Tries to cast given value into a `Number` |
-| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Number` |
+| [settings.typeError] | <code>String</code> | <code>Invalid boolean</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast truthy values into `true` and falsy ones into `false`. |
+| cast | [<code>Caster</code>](#Caster) |  | Casts truthy values into `true` and falsy ones into `false` |
+| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is a `Boolean`. |
 
 <a name="Transformers.Date"></a>
 
@@ -506,6 +445,67 @@ key map object that holds the available Transformer's (types) that can be valida
 | settings | <code>Object</code> |  | Default transformer settings |
 | [settings.typeError] | <code>String</code> | <code>Invalid function</code> | Default error message thrown |
 | validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Function` |
+
+<a name="Transformers.Number"></a>
+
+### Transformers.Number : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid number</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast `String`'s with numeric values. |
+| cast | [<code>Caster</code>](#Caster) |  | Tries to cast given value into a `Number` |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Number` |
+
+<a name="Transformers.Object"></a>
+
+### Transformers.Object : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid object</code> | Default error message thrown |
+| validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
+
+<a name="Transformers.Set"></a>
+
+### Transformers.Set : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid set</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>true</code> | Whether to auto-cast `Array`'s into `Set`'s. |
+| cast | [<code>Caster</code>](#Caster) |  | Casts `Array` into `Set` |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given values is a `Set` |
+
+<a name="Transformers.String"></a>
+
+### Transformers.String : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid string</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast objects with method `toString`. |
+| [settings.minlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional minimum length |
+| [settings.maxlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional maximum length |
+| [settings.regex] | <code>RegExp</code> \| [<code>ValueError</code>](#ValueError) |  | Optional RegExp to match against given string |
+| cast | [<code>Caster</code>](#Caster) |  | Basically checks if a value is an object and this object has the method `toString`. If so, calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value was returned by the method. |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `String`. Additionally, performs built-in validations: minlength, maxlength and regex. |
 
 <a name="ValueError"></a>
 

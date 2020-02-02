@@ -41,6 +41,176 @@ import { castThrowable } from 'utils/cast-throwable.js'
 
 export const Transformers = {
   /**
+   * @constant {Transformer} Transformers.Array
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid array] - Default error message thrown
+   * @property {SchemaSettings} [settings.arraySchema] - Alternatively initializes (which involves validating, casting and parsing)
+   * array items using given schema.
+   * @property {Parser} parse - Alternatively instantiates array items given an `arraySchema`.
+   * @property {Validator} validate - Validates that given value is an array
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+   */
+  Array: {
+    settings: {
+      typeError: `Invalid array`
+    },
+    parse (value) {
+      if (this.settings.arraySchema) {
+        value = value.map((value, name) => {
+          return (new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
+            name,
+            parent: this
+          }))).parse(value)
+        })
+      }
+      return value
+    },
+    validate (value) {
+      if (!Array.isArray(value)) {
+        this.throwError(Transformers.Array.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Boolean
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid boolean] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast truthy values into `true` and falsy ones into `false`.
+   * @property {Caster} cast - Casts truthy values into `true` and falsy ones into `false`
+   * @property {Validator} validate - Confirms given value is a `Boolean`.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+   */
+  Boolean: {
+    settings: {
+      typeError: `Invalid boolean`,
+      autoCast: false
+    },
+    cast (value) {
+      return !!value
+    },
+    validate (value) {
+      if (typeof value !== 'boolean') {
+        this.throwError(Transformers.Boolean.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Date
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid date] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=true]
+   * @property {Caster} cast - Casts `String`s into `Date`'s when possible
+   * @property {Validator} validate - Validates given value is a `Date`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+   */
+  Date: {
+    settings: {
+      typeError: `Invalid date`,
+      autoCast: true
+    },
+    cast (value) {
+      if (value instanceof Date) {
+        return value
+      }
+
+      const suggested = new Date(Number.isInteger(value) ? value : Date.parse(value))
+
+      if (suggested.toString() !== 'Invalid Date') {
+        value = suggested
+      }
+      return value
+    },
+    validate (value) {
+      if (!(value instanceof Date)) {
+        this.throwError(Transformers.Date.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Function
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid function] - Default error message thrown
+   * @property {Validator} validate - Validates given value is a `Function`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+   */
+  Function: {
+    settings: {
+      typeError: `Invalid function`
+    },
+    validate (value) {
+      if (typeof value !== 'function') {
+        this.throwError(Transformers.Function.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Number
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid number] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast `String`'s with numeric values.
+   * @property {Caster} cast - Tries to cast given value into a `Number`
+   * @property {Validator} validate - Validates given value is a `Number`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+   */
+  Number: {
+    settings: {
+      typeError: `Invalid number`,
+      autoCast: false
+    },
+    cast (value) {
+      return Number(value)
+    },
+    validate (value) {
+      if (typeof value !== 'number' || isNaN(value)) {
+        this.throwError(Transformers.Number.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Object
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid object] - Default error message thrown
+   * @property {Validator} validate - Confirms given value is an object
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+   */
+  Object: {
+    settings: {
+      typeError: `Invalid object`
+    },
+    validate (value) {
+      if (typeof value !== 'object') {
+        this.throwError(Transformers.Object.settings.typeError, { value })
+      }
+    }
+  },
+  /**
+   * @constant {Transformer} Transformers.Set
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid set] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=true] - Whether to auto-cast `Array`'s into `Set`'s.
+   * @property {Caster} cast - Casts `Array` into `Set`
+   * @property {Validator} validate - Validates given values is a `Set`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+   */
+  Set: {
+    settings: {
+      typeError: `Invalid set`,
+      autoCast: true
+    },
+    cast (value) {
+      if (Array.isArray(value)) {
+        value = new Set(value)
+      }
+
+      return value
+    },
+    validate (value) {
+      if (!(value instanceof Set)) {
+        this.throwError(Transformers.Set.settings.typeError, { value })
+      }
+    }
+  },
+  /**
    * @constant {Transformer} Transformers.String
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid string] - Default error message thrown
@@ -93,176 +263,6 @@ export const Transformers = {
         if (!regex.test(value)) {
           this.throwError(error, { value })
         }
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Boolean
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid boolean] - Default error message thrown
-   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast truthy values into `true` and falsy ones into `false`.
-   * @property {Caster} cast - Casts truthy values into `true` and falsy ones into `false`
-   * @property {Validator} validate - Confirms given value is a `Boolean`.
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-   */
-  Boolean: {
-    settings: {
-      typeError: `Invalid boolean`,
-      autoCast: false
-    },
-    cast (value) {
-      return !!value
-    },
-    validate (value) {
-      if (typeof value !== 'boolean') {
-        this.throwError(Transformers.Boolean.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Object
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid object] - Default error message thrown
-   * @property {Validator} validate - Confirms given value is an object
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
-   */
-  Object: {
-    settings: {
-      typeError: `Invalid object`
-    },
-    validate (value) {
-      if (typeof value !== 'object') {
-        this.throwError(Transformers.Object.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Array
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid array] - Default error message thrown
-   * @property {SchemaSettings} [settings.arraySchema] - Alternatively initializes (which involves validating, casting and parsing)
-   * array items using given schema.
-   * @property {Parser} parse - Alternatively instantiates array items given an `arraySchema`.
-   * @property {Validator} validate - Validates that given value is an array
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
-   */
-  Array: {
-    settings: {
-      typeError: `Invalid array`
-    },
-    parse (value) {
-      if (this.settings.arraySchema) {
-        value = value.map((value, name) => {
-          return (new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
-            name,
-            parent: this
-          }))).parse(value)
-        })
-      }
-      return value
-    },
-    validate (value) {
-      if (!Array.isArray(value)) {
-        this.throwError(Transformers.Array.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Set
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid set] - Default error message thrown
-   * @property {Boolean} [settings.autoCast=true] - Whether to auto-cast `Array`'s into `Set`'s.
-   * @property {Caster} cast - Casts `Array` into `Set`
-   * @property {Validator} validate - Validates given values is a `Set`
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
-   */
-  Set: {
-    settings: {
-      typeError: `Invalid set`,
-      autoCast: true
-    },
-    cast (value) {
-      if (Array.isArray(value)) {
-        value = new Set(value)
-      }
-
-      return value
-    },
-    validate (value) {
-      if (!(value instanceof Set)) {
-        this.throwError(Transformers.Set.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Number
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid number] - Default error message thrown
-   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast `String`'s with numeric values.
-   * @property {Caster} cast - Tries to cast given value into a `Number`
-   * @property {Validator} validate - Validates given value is a `Number`
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
-   */
-  Number: {
-    settings: {
-      typeError: `Invalid number`,
-      autoCast: false
-    },
-    cast (value) {
-      return Number(value)
-    },
-    validate (value) {
-      if (typeof value !== 'number' || isNaN(value)) {
-        this.throwError(Transformers.Number.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Date
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid date] - Default error message thrown
-   * @property {Boolean} [settings.autoCast=true]
-   * @property {Caster} cast - Casts `String`s into `Date`'s when possible
-   * @property {Validator} validate - Validates given value is a `Date`
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
-   */
-  Date: {
-    settings: {
-      typeError: `Invalid date`,
-      autoCast: true
-    },
-    cast (value) {
-      if (value instanceof Date) {
-        return value
-      }
-
-      const suggested = new Date(Number.isInteger(value) ? value : Date.parse(value))
-
-      if (suggested.toString() !== 'Invalid Date') {
-        value = suggested
-      }
-      return value
-    },
-    validate (value) {
-      if (!(value instanceof Date)) {
-        this.throwError(Transformers.Date.settings.typeError, { value })
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Function
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid function] - Default error message thrown
-   * @property {Validator} validate - Validates given value is a `Function`
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
-   */
-  Function: {
-    settings: {
-      typeError: `Invalid function`
-    },
-    validate (value) {
-      if (typeof value !== 'function') {
-        this.throwError(Transformers.Function.settings.typeError, { value })
       }
     }
   }
