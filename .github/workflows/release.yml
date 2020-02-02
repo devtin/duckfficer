@@ -30,4 +30,4 @@ jobs:
         git checkout next
         npm ci
         yarn build:wcoverage && yarn test:all && yarn release
-        git push --follow-tags
+        git push

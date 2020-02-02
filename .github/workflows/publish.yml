@@ -27,6 +27,9 @@ jobs:
         npm ci
         yarn build && yarn test:all
     - name: publish
-      run: npm publish --access public
+      run: |
+        npm publish --access public
+        git tag v$(node -p -e "require('./package.json').version")
+        git push --tags
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
