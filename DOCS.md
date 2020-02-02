@@ -380,6 +380,7 @@ key map object that holds the available Transformer's (types) that can be valida
 
 * [Transformers](#Transformers) : <code>Object</code>
     * [.Array](#Transformers.Array) : [<code>Transformer</code>](#Transformer)
+    * [.BigInt](#Transformers.BigInt) : [<code>Transformer</code>](#Transformer)
     * [.Boolean](#Transformers.Boolean) : [<code>Transformer</code>](#Transformer)
     * [.Date](#Transformers.Date) : [<code>Transformer</code>](#Transformer)
     * [.Function](#Transformers.Function) : [<code>Transformer</code>](#Transformer)
@@ -402,6 +403,17 @@ key map object that holds the available Transformer's (types) that can be valida
 | [settings.arraySchema] | <code>SchemaSettings</code> |  | Alternatively initializes (which involves validating, casting and parsing) array items using given schema. |
 | parse | [<code>Parser</code>](#Parser) |  | Alternatively instantiates array items given an `arraySchema`. |
 | validate | [<code>Validator</code>](#Validator) |  | Validates that given value is an array |
+
+<a name="Transformers.BigInt"></a>
+
+### Transformers.BigInt : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| validate | [<code>Validator</code>](#Validator) | Confirms given value is a `BigInt`. |
 
 <a name="Transformers.Boolean"></a>
 

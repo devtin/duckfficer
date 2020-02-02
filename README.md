@@ -18,6 +18,7 @@ Zero-dependencies, light-weight library for validating & sanitizing JavaScript d
   - [Transformers](#transformers)
     - [Array](#array)
     - [Boolean](#boolean)
+    - [Date](#date)
     - [Function](#function)
     - [Number](#number)
     - [Object](#object)
@@ -426,6 +427,7 @@ Transformers are the ones validating, casting and parsing all property-types def
 
 - [Array](#array)
 - [Boolean](#boolean)
+- [Date](#date)
 - [Function](#function)
 - [Number](#number)
 - [Object](#object)
@@ -577,6 +579,90 @@ t.notThrows(() => {
 })
 
 t.true(product.active)
+```
+## Date
+
+
+
+Validates `Date`'s
+
+```js
+const dateValidator = new Schema({
+  name: String,
+  birthday: Date
+})
+
+let contact
+t.notThrows(() => {
+  contact = dateValidator.parse({
+    name: 'Martin',
+    birthday: new Date('6/11/1983')
+  })
+})
+
+const error = t.throws(() => dateValidator.parse({
+  name: 'Martin',
+  birthday: `Somewhere in the 80s`
+}))
+
+t.is(error.message, 'Data is not valid')
+t.is(error.errors[0].message, 'Invalid date')
+```
+
+### autoCast (default `true`)
+
+
+
+Date transformer has a built-in cast function that transforms proper `String`-dates into `Date`'s.
+
+```js
+const dateValidator = new Schema({
+  name: String,
+  birthday: Date
+})
+
+let contact
+t.notThrows(() => {
+  contact = dateValidator.parse({
+    name: 'Martin',
+    birthday: '6/11/1983' // this is a string originally
+  })
+})
+
+t.true(contact.birthday instanceof Date)
+```
+
+`String`'s that can not be guessed as `Date`'s would result in an error.
+
+```js
+const error = t.throws(() => dateValidator.parse({
+  name: 'Martin',
+  birthday: `Somewhere in the 80s`
+}))
+
+t.is(error.message, 'Data is not valid')
+t.is(error.errors[0].message, 'Invalid date')
+t.is(error.errors[0].field.fullPath, 'birthday')
+```
+
+**Turning off autoCast**
+
+```js
+const dateValidator2 = new Schema({
+  name: String,
+  birthday: {
+    type: Date,
+    autoCast: false
+  }
+})
+const error2 = t.throws(() => dateValidator2.parse({
+  name: 'Martin',
+  birthday: '6/11/1983'
+}))
+
+t.is(error2.message, 'Data is not valid')
+t.is(error2.errors[0].message, 'Invalid date')
+t.is(error2.errors[0].field.fullPath, 'birthday')
 ```
 ## Function
 
