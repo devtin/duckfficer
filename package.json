@@ -26,8 +26,8 @@
   "scripts": {
     "build": "yarn build:lib && yarn build:docs && yarn build:readme",
     "build:wcoverage": "yarn build:lib && yarn coverage && yarn build:docs && yarn build:readme",
-    "build:docs": "jsdoc2md --template DOCS.hbs --files dist/schema-validator.js > DOCS.md",
-    "build:lib": "rollup -c",
+    "build:docs": "jsdoc2md --template build/template/DOCS.hbs --files dist/schema-validator.js > DOCS.md",
+    "build:lib": "rollup -c && gzip -c dist/schema-validator.iife.js > dist/schema-validator.iife.js.gz",
     "build:live": "nodemon -w src -w test --exec yarn build",
     "build:readme": "node build/readme.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",

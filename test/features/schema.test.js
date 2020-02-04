@@ -16,7 +16,7 @@ test(`Creating a schema`, async t => {
   /**
    * The created schema has a method called `parse`. This method is used to
    * (optionally) cast, validate and parse arbitrary objects, returning a newly created schema-compliant object. See the
-   * [Schema](./DOCS.md#Schema) class docs for more information.
+   * [Schema](/DOCS.md#Schema) class docs for more information.
    */
 
   t.true(typeof UserSchema.parse === 'function')
@@ -218,7 +218,7 @@ test(`Default values`, t => {
   })
 
   /**
-   * A default value could also be a function. Refer to the [SchemaSettings](./DOCS.md#schemaschemasettings--object) docs
+   * A default value could also be a function. Refer to the [SchemaSettings](/DOCS.md#schemaschemasettings--object) docs
    * for more information.
    */
 

@@ -47,22 +47,24 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
     }
 
     // const hooks = avaTestsToMd(await parseAvaFile('array'))
-    const hooks = ['todo']
-    const loaders = ['todo']
+    const hooks = await avaTestsToMd(await parseAvaFile(locateTest(`features/hooks.test.js`)), { headingLevel: mdOptions.headingLevel + 1 })
+    const loaders = await avaTestsToMd(await parseAvaFile(locateTest(`features/loaders.test.js`)), mdOptions)
     const transformers = []
     const transformersIndex = Object.keys(Transformers).map(t => `- [${ t }](#${ _.kebabCase(t) })`)
 
     Object.keys(Transformers).forEach(transformerName => {
       transformers.push(Transformers[transformerName])
     })
-    const template = fs.readFileSync(path.join(__dirname, './template/README.md')).toString()
-
-    fs.writeFileSync(path.join(__dirname, '../README.md'), mustache.render(template, {
+    const readmeTemplate = fs.readFileSync(path.join(__dirname, './template/README.md')).toString()
+    const guideTemplate = fs.readFileSync(path.join(__dirname, './template/GUIDE.md')).toString()
+    const transformersTemplate = fs.readFileSync(path.join(__dirname, './template/TRANSFORMERS.md')).toString()
+    const payload = {
       guide,
       transformers,
       transformersIndex,
       hooks,
       loaders,
+      libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.iife.js.gz')).size / 1024) * 10) / 10 }KB`,
       shields: [
         CoverageShield.getShield(), // test coverage
         '![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)',
@@ -70,6 +72,12 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       ],
       sandbox: fs.readFileSync(path.join(__dirname, '../sandbox.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       index
-    }))
+    }
+
+    fs.writeFileSync(path.join(__dirname, '../README.md'), mustache.render(readmeTemplate, payload))
     console.log(`Readme created!`)
+    fs.writeFileSync(path.join(__dirname, '../guide/README.md'), mustache.render(guideTemplate, payload))
+    console.log(`Guide created!`)
+    fs.writeFileSync(path.join(__dirname, '../guide/TRANSFORMERS.md'), mustache.render(transformersTemplate, payload))
+    console.log(`Transformers created!`)
   })

@@ -40,7 +40,7 @@ test(`property cast`, t => {
 
 test(`property validate`, t => {
   /**
-   * The [cast](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
+   * The [validate](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
    * extra validation logic.
    */
 

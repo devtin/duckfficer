@@ -1,5 +1,7 @@
 # Requirements
 
+Always rebase from `remote/dev`
+
 - node.js >= 10
 - yarn
 
