@@ -6,6 +6,8 @@ import { forEach } from 'utils/for-each.js'
 import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
 
+const fnProxyStub = v => v
+
 /**
  * @typedef {Object} Schema~TheSchema
  * @desc This object defines the schema or desired structure of an arbitrary object.
@@ -30,9 +32,8 @@ import { Transformers } from './transformers.js'
  * belonging to its correspondent transformer.
  * @property {String} type - Name of the available {@link Transformers} to use to process the value.
  * @property {Boolean} [required=true] - Whether the property is or not required.
- * @property {Caster} [cast] - Optional caster
- * @property {Validator} [validate] - Optional validator
- * @property {Parser} [parse] - Optional parser
+ * @property {Caster} [cast] - An (optional) additional caster
+ * @property {Validator} [validate] - An (optional) additional validator
  * @property {(Function|*)} [default] - Default value when non-passed. Mind this will treat properties as `required=false`.
  * When a function is given, its called using the schema of the property as its `this` object, receiving given value as
  * first argument. Must return the desired default value.
@@ -63,19 +64,30 @@ import { Transformers } from './transformers.js'
 export class Schema {
   /**
    * @constructor
+   * @description Sets the environment up:
+   * - Stores the schema locally
+   * - Guesses the type of the schema
    * @param {TheSchema} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Schema} [options.parent]
+   * @param {Caster} [options.cast] - Schema caster
+   * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, parent } = {}) {
-    this._settings = {
+  constructor (schema, { name, parent, validate, cast } = {}) {
+    this._defaultSettings = {
       required: true,
       default: undefined
     }
 
+    this._settings = {}
+
     this.schema = schema
     this.parent = parent
+    // schema level validation: validates using the entire value (maybe an object) of this path
+    this._validate = validate
+    // schema level c: validates using the entire value (object) of this path
+    this._cast = cast
     this.name = name || ''
 
     /**
@@ -94,16 +106,24 @@ export class Schema {
       delete this._settings.type
     }
 
-    if (this._settings.default !== undefined && this._settings.required) {
+    if (this.settings.default !== undefined && this.settings.required) {
       throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
     }
   }
 
+  get validate () {
+    return this._validate || fnProxyStub
+  }
+
+  get cast () {
+    return this._cast || fnProxyStub
+  }
+
   get settings () {
     if (!this.children && Transformers[this.type] && Transformers[this.type].settings) {
-      return Object.assign({}, Transformers[this.type].settings, this._settings)
+      return Object.assign(this._defaultSettings, Transformers[this.type].settings, this._settings)
     }
-    return this._settings
+    return Object.assign(this._defaultSettings, this._settings)
   }
 
   _parseSchema (obj) {
@@ -158,9 +178,6 @@ export class Schema {
     return (this.parent && this.parent.fullPath ? `${ this.parent.fullPath }.` : '') + this.name
   }
 
-  /**
-   * @property {String[]} paths - Contains paths
-   */
   get ownPaths () {
     return this.children.map(({ name }) => name)
   }
@@ -184,6 +201,11 @@ export class Schema {
     return foundPaths
   }
 
+  /**
+   * Finds schema in given path
+   * @param {String} pathName - Dot notation path
+   * @return {Schema~SchemaSettings}
+   */
   schemaAtPath (pathName) {
     const [path] = pathName.split(/\./)
     let schema
@@ -229,29 +251,74 @@ export class Schema {
   }
 
   /**
-   * Validates schema structure and synchronous hooks of every field in the schema
+   * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v) {
     if (this.children) {
-      return this._parseNested(v)
+      v = this.runChildren(v)
+    } else {
+      v = this.parseProperty(this.type, v)
+
+      /*
+      Value here would be:
+      - casted
+      - validated
+      - parsed
+       */
     }
 
-    // custom manipulators
-    if (this.settings.default !== undefined && v === undefined) {
-      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, v) : this.settings.default
+    // perform property-level hooks
+    if (!this.parent) {
+      // final casting / validation (schema-level)
+      v = this.cast.call(this, v)
+      this.validate.call(this, v)
     }
 
-    return this._run(this.type, v)
+    return v
   }
 
-  _run (type, v, runLoaders = true) {
+  /**
+   *
+   * @param {*} v
+   * @param {Schema~SchemaSettings[]} loaders
+   * @return {*}
+   */
+  processLoaders (v, loaders) {
+    // throw new Error(`uya!`)
+    forEach(castArray(loaders), loaderSchema => {
+      if (typeof loaderSchema !== 'object') {
+        loaderSchema = { type: loaderSchema }
+      }
+
+      const type = Schema.guessType(loaderSchema)
+      const clone = Object.assign(Object.create(this), this, { type, _cast: undefined, _validate: undefined })
+
+      if (type !== 'Schema') {
+        clone._settings = Object.assign({}, clone._settings, loaderSchema, {
+          loaders: undefined,
+          cast: undefined,
+          validate: undefined
+        })
+      }
+
+      v = clone.parseProperty(type, v)
+    })
+
+    return v
+  }
+
+  parseProperty (type, v) {
     const transformer = Transformers[type]
 
     if (!transformer) {
       throw new Error(`Don't know how to resolve ${ type }`)
+    }
+
+    if (this.settings.default !== undefined && v === undefined) {
+      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, v) : this.settings.default
     }
 
     if (v === undefined && !this.settings.required) {
@@ -263,49 +330,35 @@ export class Schema {
       required && this.throwError(error, { value: v })
     }
 
-    const processLoaders = (loaders, runLoaders = false) => {
-      forEach(castArray(loaders), loader => {
-        const type = Schema.guessType(loader)
-        const clone = Object.assign(Object.create(this), this)
-        if (type !== 'Schema' && typeof loader === 'object') {
-          clone._settings = Object.assign({}, clone._settings, loader, { loaders: undefined })
-        }
-        v = clone._run(type, v, runLoaders)
-      })
+    // run user-level loaders (inception transformers)
+    if (this.settings.loaders) {
+      v = this.processLoaders(v, this.settings.loaders) // infinite loop
     }
 
-    // todo: check settings loaders
-    if (runLoaders && this.settings.loaders) {
-      processLoaders(this.settings.loaders, true)
-    }
-
+    // run transformer-level loaders
     if (transformer.loaders) {
-      processLoaders(transformer.loaders, true)
+      v = this.processLoaders(v, transformer.loaders)
     }
 
-    const callTransformer = (method, transform, payload) => {
-      if (this.settings[method] && typeof this.settings[method] === 'function') {
-        const newPayload = this.settings[method].call(this, payload)
-        if (transform) {
-          payload = newPayload
-        }
-      }
-      return transformer[method] ? transformer[method].call(this, payload) : payload
-    }
-
+    // run transformer caster
     if (this.settings.autoCast) {
-      v = callTransformer('cast', true, v)
+      v = this.runTransformer({ method: 'cast', transformer, payload: v })
     }
 
-    callTransformer('validate', false, v)
-    v = callTransformer('parse', true, v)
+    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v })
 
-    return v
+    // run transformer validator
+    this.runTransformer({ method: 'validate', transformer, payload: v })
+    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v })
+
+    // run transformer parser
+    return this.runTransformer({ method: 'parse', transformer, payload: v })
   }
 
-  _parseNested (obj) {
+  runChildren (obj, { method = 'parse' } = {}) {
     const resultingObject = {}
     const errors = []
+    // error trapper
     const sandbox = (fn) => {
       try {
         fn()
@@ -327,7 +380,7 @@ export class Schema {
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName)
       sandbox(() => {
-        const val = schema.parse(typeof obj === 'object' ? obj[schema.name] : undefined)
+        const val = schema[method](typeof obj === 'object' ? obj[schema.name] : undefined)
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })
         }
@@ -338,7 +391,22 @@ export class Schema {
       throw new ValidationError(`Data is not valid`, { errors })
     }
 
-    return resultingObject
+    return Object.keys(resultingObject).length > 0 ? resultingObject : obj
+  }
+
+  /**
+   * Runs given method found in transformer
+   * @param method
+   * @param transformer
+   * @param payload
+   * @return {*}
+   */
+  runTransformer ({ method, transformer, payload } = {}) {
+    if (!transformer[method]) {
+      return payload
+    }
+
+    return transformer[method].call(this, payload)
   }
 
   throwError (message, { errors, value } = {}) {

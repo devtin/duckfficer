@@ -38,8 +38,8 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
   if (strict) {
     forEach(properties, property => {
       if (property.indexOf('.') > 0) {
-        const [parent, childrens] = property.split(/\./)
-        return valid = propertiesRestricted(obj[parent], [childrens], { strict })
+        const [parent, children] = property.split(/\./)
+        return valid = propertiesRestricted(obj[parent], [children], { strict })
       }
 
       if (Object.prototype.hasOwnProperty.call(obj, property)) {
