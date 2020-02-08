@@ -32,7 +32,8 @@
     "build:readme": "node build/readme.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava --serial --verbose",
-    "test:all": "NODE_ENV=test ava --serial --verbose test/*.test.js test/features/*.test.js test/transformers/*.test.js",
+    "test:unit": "yarn test src/**/*.unit.js",
+    "test:all": "NODE_ENV=test ava --serial --verbose",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
     "release": "standard-version --branch next",
@@ -46,6 +47,7 @@
     "babel-eslint": "^10.0.3",
     "bluebird": "^3.7.2",
     "eslint": "^6.8.0",
+    "esm": "^3.2.25",
     "jsdoc-to-markdown": "^5.0.3",
     "lodash": "^4.17.15",
     "mustache": "^4.0.0",
@@ -59,6 +61,13 @@
     "standard-version": "^7.1.0"
   },
   "ava": {
+    "files": [
+      "test/**/*.test.js",
+      "src/**/*.unit.js"
+    ],
+    "require": [
+      "esm"
+    ],
     "babel": true
   },
   "eslintConfig": {
