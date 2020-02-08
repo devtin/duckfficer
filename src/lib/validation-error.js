@@ -7,7 +7,7 @@ import { render } from 'utils/render.js'
  * @property {ValidationError[]} errors - Errors found
  */
 export class ValidationError extends Error {
-  constructor (message, { errors = [], value, field } = {}) {
+  constructor (message, { errors = [], value, field }) {
     super(render(message, { errors, value, field }))
     this.errors = errors
     this.value = value

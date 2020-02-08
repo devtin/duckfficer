@@ -1,7 +1,6 @@
 import test from 'ava'
 import { Schema, Utils } from '../'
 
-
 test(`Return schema paths`, t => {
   const schema = new Schema({
     title: {
@@ -45,4 +44,16 @@ test(`Renders handlebars kind-of templates`, t => {
       line1: 'Brickell Ave'
     }
   }), 'My address: Brickell Ave')
+})
+
+test(`castArray wraps values that are not an array into an array`, t => {
+  const t1 = Utils.castArray('some value')
+  t.true(Array.isArray(t1))
+  t.is(t1.length, 1)
+  t.is(t1[0], 'some value')
+
+  const t2 = Utils.castArray(['some other value'])
+  t.true(Array.isArray(t2))
+  t.is(t2.length, 1)
+  t.is(t2[0], 'some other value')
 })

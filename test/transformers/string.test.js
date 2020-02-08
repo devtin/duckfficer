@@ -15,6 +15,28 @@ test(`String`, t => {
   t.is(error.errors[0].field.fullPath, 'name')
 })
 
+test(`autoCast (default \`false\`)`, async t => {
+  /**
+   * String transformer would call the method `toString` of any given object when `autoCast` equals `true` and would assign
+   * returned value as long as it is different than `[object Object]`
+   */
+  const nameSchema = new Schema({
+    name: {
+      type: String,
+      autoCast: true
+    }
+  })
+
+  const user = nameSchema.parse({
+    name: {
+      toString () {
+        return `Some name`
+      }
+    }
+  })
+  t.is(user.name, 'Some name')
+})
+
 test(`minlength`, async t => {
   /**
    * Setting `minlength` validates given `String` has a minimum length.

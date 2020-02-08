@@ -113,12 +113,8 @@ test(`autoCasting`, t => {
     autoCast: false
   })
 
-  try {
-    BooleanSchema.parse(5)
-    t.fail(`Parsed boolean schema with autoCast=false`)
-  } catch (err) {
-    t.is(err.message, `Invalid boolean`) // => Invalid boolean
-  }
+  let error = t.throws(() => BooleanSchema.parse(5))
+  t.is(error.message, `Invalid boolean`) // => Invalid boolean
 
   const DateSchema = new Schema({
     type: Date,
@@ -127,13 +123,8 @@ test(`autoCasting`, t => {
 
   t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
 
-  try {
-    DateSchema.parse('6/11/1983')
-    t.fail(`Parsed DateSchema with autoCast=false`)
-  } catch (err) {
-    t.is(err.message, `Invalid date`)
-  }
-
+  error = t.throws(() => DateSchema.parse('6/11/1983'))
+  t.is(error.message, `Invalid date`)
 })
 
 test(`Validates an object schema in terms of contained properties`, t => {
@@ -147,6 +138,7 @@ test(`Validates an object schema in terms of contained properties`, t => {
     }
   }
 
+  t.false(Utils.propertiesRestricted('', ['name'])) // => false
   t.false(Utils.propertiesRestricted(user, ['name'])) // => false
   t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address'])) // => true
   t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'])) // => true

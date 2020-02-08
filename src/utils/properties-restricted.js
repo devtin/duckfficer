@@ -57,9 +57,9 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
           .filter((v) => {
             return propMatch.test(v)
           })
-          .map((v) => {
+          .map(v => {
             defaultApproved = false
-            return (v || '').replace(propMatch, '$1')
+            return v.replace(propMatch, '$1')
           })
 
         return valid = defaultApproved || propertiesRestricted(obj[property], childProps)

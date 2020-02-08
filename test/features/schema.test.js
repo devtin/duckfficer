@@ -194,6 +194,17 @@ test(`Default values`, t => {
    * equaled to `false`). See [optional properties](#optional-properties) for more information.
    */
 
+  const error = t.throws(() => new Schema({
+    name: String,
+    state: {
+      type: String,
+      required: true,
+      default: 'Florida'
+    }
+  }))
+
+  t.is(error.message, 'Remove either the \'required\' or the \'default\' option for property state.')
+
   let sanitized
   t.notThrows(() => {
     sanitized = ContactSchema.parse({

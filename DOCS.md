@@ -227,11 +227,13 @@ Orchestrates the validation of a data schema
 * [Schema](#Schema)
     * [new Schema(schema, [options])](#new_Schema_new)
     * _instance_
-        * [.ownPaths](#Schema+ownPaths)
         * [.paths](#Schema+paths)
+        * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>SchemaSettings</code>](#Schema..SchemaSettings)
         * [.hasField(fieldName)](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
         * [.parse([v])](#Schema+parse) ⇒ <code>Object</code>
+        * [.processLoaders(v, loaders)](#Schema+processLoaders) ⇒ <code>\*</code>
+        * [.runTransformer(method, transformer, payload)](#Schema+runTransformer) ⇒ <code>\*</code>
     * _static_
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
@@ -241,6 +243,10 @@ Orchestrates the validation of a data schema
 <a name="new_Schema_new"></a>
 
 ### new Schema(schema, [options])
+Sets the environment up:
+- Stores the schema locally
+- Guesses the type of the schema
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -248,16 +254,8 @@ Orchestrates the validation of a data schema
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
-
-<a name="Schema+ownPaths"></a>
-
-### schema.ownPaths
-**Kind**: instance property of [<code>Schema</code>](#Schema)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| paths | <code>Array.&lt;String&gt;</code> | Contains paths |
+| [options.cast] | [<code>Caster</code>](#Caster) | Schema caster |
+| [options.validate] | [<code>Validator</code>](#Validator) | Final validation |
 
 <a name="Schema+paths"></a>
 
@@ -268,6 +266,17 @@ Orchestrates the validation of a data schema
 | Name | Type | Description |
 | --- | --- | --- |
 | paths | <code>Array.&lt;String&gt;</code> | Contains paths |
+
+<a name="Schema+schemaAtPath"></a>
+
+### schema.schemaAtPath(pathName) ⇒ [<code>SchemaSettings</code>](#Schema..SchemaSettings)
+Finds schema in given path
+
+**Kind**: instance method of [<code>Schema</code>](#Schema)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pathName | <code>String</code> | Dot notation path |
 
 <a name="Schema+hasField"></a>
 
@@ -298,7 +307,7 @@ Validates if the given object have a structure valid for the schema in subject
 <a name="Schema+parse"></a>
 
 ### schema.parse([v]) ⇒ <code>Object</code>
-Validates schema structure and synchronous hooks of every field in the schema
+Validates schema structure, casts, validates and parses  hooks of every field in the schema
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 **Returns**: <code>Object</code> - The sanitized object  
@@ -310,6 +319,29 @@ Validates schema structure and synchronous hooks of every field in the schema
 | Param | Type | Description |
 | --- | --- | --- |
 | [v] | <code>Object</code> | The object to evaluate |
+
+<a name="Schema+processLoaders"></a>
+
+### schema.processLoaders(v, loaders) ⇒ <code>\*</code>
+**Kind**: instance method of [<code>Schema</code>](#Schema)  
+
+| Param | Type |
+| --- | --- |
+| v | <code>\*</code> | 
+| loaders | [<code>Array.&lt;SchemaSettings&gt;</code>](#Schema..SchemaSettings) | 
+
+<a name="Schema+runTransformer"></a>
+
+### schema.runTransformer(method, transformer, payload) ⇒ <code>\*</code>
+Runs given method found in transformer
+
+**Kind**: instance method of [<code>Schema</code>](#Schema)  
+
+| Param |
+| --- |
+| method | 
+| transformer | 
+| payload | 
 
 <a name="Schema.isNested"></a>
 
@@ -352,9 +384,8 @@ belonging to its correspondent transformer.
 | --- | --- | --- | --- |
 | type | <code>String</code> |  | Name of the available [Transformers](#Transformers) to use to process the value. |
 | [required] | <code>Boolean</code> | <code>true</code> | Whether the property is or not required. |
-| [cast] | [<code>Caster</code>](#Caster) |  | Optional caster |
-| [validate] | [<code>Validator</code>](#Validator) |  | Optional validator |
-| [parse] | [<code>Parser</code>](#Parser) |  | Optional parser |
+| [cast] | [<code>Caster</code>](#Caster) |  | An (optional) additional caster |
+| [validate] | [<code>Validator</code>](#Validator) |  | An (optional) additional validator |
 | [default] | <code>function</code> \| <code>\*</code> |  | Default value when non-passed. Mind this will treat properties as `required=false`. When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument. Must return the desired default value. |
 
 **Example**  

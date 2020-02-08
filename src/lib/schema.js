@@ -127,9 +127,6 @@ export class Schema {
   }
 
   _parseSchema (obj) {
-    if (!Schema.isNested(obj)) {
-      return []
-    }
     return Object.keys(obj).map((prop) => {
       if (obj[prop] instanceof Schema) {
         const schemaClone = Object.assign(Object.create(Object.getPrototypeOf(obj[prop])), obj[prop], {
