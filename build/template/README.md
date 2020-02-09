@@ -9,6 +9,7 @@ Zero-dependencies, light-weight library (~{{{ libSize }}} gzipped) for validatin
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
 - [Guide](./guide)
+- [Documentation](/DOCS.md)
 - [License](#license) (MIT)
 
 ## About
