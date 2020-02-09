@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.3](https://github.com/devtin/schema-validator/compare/v2.1.2...v2.1.3) (2020-02-09)
+
+
+### Bug Fixes
+
+* **docs:** add link to documentation from readme ([033a890](https://github.com/devtin/schema-validator/commit/033a8903968f7f61a71acf4b662c6d64eec139ab))
+
 ### [2.1.2](https://github.com/devtin/schema-validator/compare/v2.1.1...v2.1.2) (2020-02-09)
 
 ### [2.1.1](https://github.com/devtin/schema-validator/compare/v2.1.0...v2.1.1) (2020-02-08)
