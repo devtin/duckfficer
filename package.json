@@ -35,10 +35,10 @@
     "test:unit": "yarn test src/**/*.unit.js",
     "test:all": "NODE_ENV=test ava --serial --verbose",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
-    "prepublishOnly": "yarn lint && yarn build && yarn test:all && echo 'Looks good for a release!'",
-    "release": "standard-version --branch next",
+    "prepublishOnly": "yarn lint && yarn build:wcoverage && echo 'Looks good for a release!'",
+    "release": "standard-version -a --branch next",
     "postpublish": "git push && git push --tags",
-    "coverage": "nyc --reporter=json-summary yarn test:all"
+    "coverage": "nyc --reporter=json-summary --reporter=lcov yarn test:all"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.0",
@@ -82,6 +82,11 @@
     "parserOptions": {
       "ecmaVersion": 2018,
       "sourceType": "module"
+    }
+  },
+  "standard-version": {
+    "scripts": {
+      "precommit": "git add -f coverage"
     }
   }
 }

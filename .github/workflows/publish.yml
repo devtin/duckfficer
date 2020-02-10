@@ -15,21 +15,20 @@ jobs:
     steps:
     - name: Authenticate github cli
       uses: actions/checkout@v2
+    - name: Identify github user
+      run: |
+        git config --global user.email "tin@devtin.io"
+        git config --global user.name "Martin Rafael Gonzalez"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: 'https://registry.npmjs.org'
-    - name: test
+    - name: install dependencies
       run: |
-        git config --global user.email "tin@devtin.io"
-        git config --global user.name "Martin Rafael Gonzalez"
         npm ci
-        yarn build && yarn test:all
-    - name: publish
+    - name: publish package to npm registry
       run: |
-        npm publish --access public
-        git tag v$(node -p -e "require('./package.json').version")
-        git push --tags
+        npm publish --access public && git tag v$(node -p -e "require('./package.json').version") && git push --tags
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
