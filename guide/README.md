@@ -1,6 +1,6 @@
 ## Guide
 
-All features showcased above in this guide are taken straight from some of the tests performed in the [test](/test)
+All features showcased below in this guide are taken straight from some of the tests performed in the [test](/test)
 directory. Mind tests are performed using <a href="https://github.com/avajs/ava" target="_blank">AVA</a>. I think the
 syntax is pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at
 the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track.
