@@ -66,6 +66,7 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       loaders,
       libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.iife.js.gz')).size / 1024) * 10) / 10 }KB`,
       shields: [
+        '<a href="https://www.npmjs.com/package/@devtin/schema-validator"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>',
         CoverageShield.getShield(), // test coverage
         '![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)',
         '[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)', // MIT
