@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.4](https://github.com/devtin/schema-validator/compare/v2.1.3...v2.1.4) (2020-02-10)
+
+
+### Bug Fixes
+
+* **docs:** point tests badge to /test/features directory ([cb33ace](https://github.com/devtin/schema-validator/commit/cb33ace6b53d842804c427748d0f6c5c8d880e74))
+* **docs:** typo ([9314716](https://github.com/devtin/schema-validator/commit/9314716676dd90ffbacf989bdd33e2d04fd35a44))
+
 ### [2.1.3](https://github.com/devtin/schema-validator/compare/v2.1.2...v2.1.3) (2020-02-09)
 
 
