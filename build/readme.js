@@ -68,7 +68,7 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       shields: [
         '<a href="https://www.npmjs.com/package/@devtin/schema-validator"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>',
         CoverageShield.getShield(), // test coverage
-        '![](https://github.com/devtin/schema-validator/workflows/tests/badge.svg)',
+        `<a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/tests/badge.svg"></a>`,
         '[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)', // MIT
       ],
       sandbox: fs.readFileSync(path.join(__dirname, '../sandbox.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
