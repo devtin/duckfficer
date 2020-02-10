@@ -34,7 +34,7 @@ class CoverageShield {
 
   static getShield () {
     const pct = Math.round(CoverageShield.computeCoverage())
-    return `![](https://img.shields.io/badge/coverage-${ pct }%25-${ CoverageShield.coveragePctColor(pct) })`
+    return `<a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-${ pct }%25-${ CoverageShield.coveragePctColor(pct) }" alt="Coverage ${ pct }%"></a>`
   }
 }
 
