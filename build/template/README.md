@@ -3,7 +3,7 @@
 {{{ . }}}
 {{/shields}}
 
-Zero-dependencies, light-weight library (~{{{ libSize }}} gzipped) for validating & sanitizing JavaScript data schemas.  
+Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.  
 
 - [About](#about)
 - [Installation](#installation)
