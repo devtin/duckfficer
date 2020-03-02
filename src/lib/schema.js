@@ -89,6 +89,8 @@ export class Schema {
     // schema level c: validates using the entire value (object) of this path
     this._cast = cast
     this.name = name || ''
+    this.type = Schema.guessType(schema)
+    this.children = []
 
     /**
      * @property {String} type - The schema type. Options vary according to available Transformers. Could be 'Schema'
@@ -97,11 +99,8 @@ export class Schema {
      */
 
     if (Schema.isNested(schema)) {
-      this.type = this.constructor.name
       this.children = this._parseSchema(schema)
     } else {
-      // primitive
-      this.type = Schema.guessType(schema)
       this._settings = typeof schema === 'object' ? Object.assign({}, this._settings, { required: schema.default === undefined }, schema) : this._settings
       delete this._settings.type
     }
@@ -109,6 +108,10 @@ export class Schema {
     if (this.settings.default !== undefined && this.settings.required) {
       throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
     }
+  }
+
+  get hasChildren () {
+    return this.children.length > 0
   }
 
   get validate () {
@@ -120,22 +123,44 @@ export class Schema {
   }
 
   get settings () {
-    if (!this.children && Transformers[this.type] && Transformers[this.type].settings) {
+    if (!this.hasChildren && Transformers[this.type] && Transformers[this.type].settings) {
       return Object.assign(this._defaultSettings, Transformers[this.type].settings, this._settings)
     }
     return Object.assign(this._defaultSettings, this._settings)
   }
 
+  static castSchema (obj) {
+    // console.log(`castSchema`, obj, obj instanceof Schema, typeof obj === 'object' && Schema.guessType(obj.type) === 'Schema')
+    if (obj instanceof Schema) {
+      return obj
+    }
+    if (typeof obj === 'object' && Schema.guessType(obj.type) === 'Schema') {
+      return obj.type
+    }
+    return obj
+  }
+
+  static castSettings (obj) {
+    if (typeof obj === 'object' && Schema.guessType(obj.type) === 'Schema') {
+      const settings = Object.assign({}, obj)
+      delete settings.type
+      return settings
+    }
+    return {}
+  }
+
   _parseSchema (obj) {
     return Object.keys(obj).map((prop) => {
-      if (obj[prop] instanceof Schema) {
-        const schemaClone = Object.assign(Object.create(Object.getPrototypeOf(obj[prop])), obj[prop], {
+      // console.log(`obj[${ prop }]`, /*obj[prop], */Schema.guessType(obj[prop]))
+      if (Schema.guessType(obj[prop]) === 'Schema') {
+        const schemaClone = Schema.cloneSchema({
+          schema: Schema.castSchema(obj[prop]),
+          settings: Schema.castSettings(obj[prop]),
           name: prop,
-          parent: this,
-          settings: this.settings
+          parent: this
         })
-        schemaClone.name = prop
-        schemaClone.parent = this
+        // schemaClone.name = prop
+        // schemaClone.parent = this
         // schemaClone.settings = this.settings
         return schemaClone
       }
@@ -150,10 +175,14 @@ export class Schema {
    * @return {boolean}
    */
   static isNested (obj) {
-    return typeof obj === 'object' && !obj.type
+    return Schema.guessType(obj) === 'Object' && !obj.type
   }
 
   static guessType (value) {
+    if (value instanceof Schema) {
+      return 'Schema'
+    }
+
     if (typeof value === 'function') {
       return value.name
     }
@@ -162,13 +191,11 @@ export class Schema {
       return Schema.guessType(value.type)
     }
 
-    // serialized
-    if (typeof value === 'string') {
-      return value
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      return 'Object'
     }
 
-    // nested schema
-    return 'Schema'
+    return value
   }
 
   get fullPath () {
@@ -185,7 +212,7 @@ export class Schema {
   get paths () {
     const foundPaths = []
 
-    if (this.children) {
+    if (this.hasChildren) {
       this.children.forEach(({ paths }) => {
         paths.forEach(path => {
           foundPaths.push((this.name ? `${ this.name }.` : '') + path)
@@ -198,13 +225,28 @@ export class Schema {
     return foundPaths
   }
 
+  static cloneSchema ({ schema, name, parent, settings = {} }) {
+    const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
+      name: name || schema.name,
+      parent,
+      _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
+    })
+    if (clonedSchema.children) {
+      clonedSchema.children = clonedSchema.children.map(theSchema => Schema.cloneSchema({
+        schema: theSchema,
+        parent: clonedSchema
+      }))
+    }
+    return clonedSchema
+  }
+
   /**
    * Finds schema in given path
    * @param {String} pathName - Dot notation path
    * @return {Schema~SchemaSettings}
    */
   schemaAtPath (pathName) {
-    const [path] = pathName.split(/\./)
+    const [path, rest] = pathName.split(/\./)
     let schema
     forEach(this.children, possibleSchema => {
       if (possibleSchema.name === path) {
@@ -212,6 +254,10 @@ export class Schema {
         return false
       }
     })
+
+    if (rest) {
+      return schema.schemaAtPath(rest)
+    }
 
     return schema
   }
@@ -231,7 +277,8 @@ export class Schema {
    * @throws {ValidationError}
    */
   structureValidation (obj) {
-    if (!obj) {
+    // console.log(`structureValidation`, this.name, this.ownPaths, propertiesRestricted(obj, this.ownPaths), this.type)
+    if (!obj || !this.hasChildren) {
       return true
     }
     if (!propertiesRestricted(obj, this.ownPaths)) {
@@ -254,9 +301,10 @@ export class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v) {
-    if (this.children) {
+    if (this.hasChildren) {
       v = this.runChildren(v)
     } else {
+      // console.log(this)
       v = this.parseProperty(this.type, v)
 
       /*
@@ -286,6 +334,7 @@ export class Schema {
   processLoaders (v, loaders) {
     // throw new Error(`uya!`)
     forEach(castArray(loaders), loaderSchema => {
+      // console.log({ loaderSchema })
       if (typeof loaderSchema !== 'object') {
         loaderSchema = { type: loaderSchema }
       }
@@ -353,8 +402,12 @@ export class Schema {
   }
 
   runChildren (obj, { method = 'parse' } = {}) {
+    if (!this.settings.required && obj === undefined) {
+      return
+    }
     const resultingObject = {}
     const errors = []
+
     // error trapper
     const sandbox = (fn) => {
       try {
@@ -375,9 +428,11 @@ export class Schema {
     sandbox(() => this.structureValidation(obj))
 
     this.ownPaths.forEach(pathName => {
-      const schema = this.schemaAtPath(pathName)
+      const schema = this.schemaAtPath(pathName.replace(/\..*$/))
+      const input = typeof obj === 'object' ? obj[schema.name] : undefined
+
       sandbox(() => {
-        const val = schema[method](typeof obj === 'object' ? obj[schema.name] : undefined)
+        const val = schema[method](input)
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })
         }

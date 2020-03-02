@@ -304,3 +304,57 @@ test(`Auto-casting`, t => {
   t.is(error.errors[1].message, `Invalid number`)
   t.is(error.errors[1].field.fullPath, `kids`)
 })
+
+test(`Nesting schemas`, t => {
+  /**
+   * We can use a previously defined schema in order to extend the validation of other schemas.
+   */
+  const AddressSchema = new Schema({
+    line1: String,
+    line2: {
+      type: String,
+      required: false,
+    },
+    zip: {
+      type: Number,
+      required: false
+    }
+  })
+
+  const UserSchema = new Schema({
+    name: String,
+    birthday: Date,
+    // using an already defined schema in another schema's property
+    address: {
+      type: AddressSchema,
+      required: false
+    }
+  })
+
+  const user = UserSchema.parse({
+    name: 'Martin',
+    birthday: '6/11/1983'
+  })
+
+  t.truthy(user)
+
+  const error = t.throws(() => UserSchema.parse({
+    name: 'Martin',
+    birthday: '6/11/1983',
+    address: {
+      zip: 33129
+    }
+  }))
+
+  t.is(error.errors[0].message, 'Property address.line1 is required')
+  t.is(error.errors[0].field.fullPath, 'address.line1')
+
+  t.notThrows(() => UserSchema.parse({
+    name: 'Martin',
+    birthday: '6/11/1983',
+    address: {
+      line1: 'Brickell Ave',
+      zip: 33129
+    }
+  }))
+})
