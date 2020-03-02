@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/devtin/schema-validator/compare/v2.1.4...v2.2.0) (2020-03-02)
+
+
+### Features
+
+* nested schemas ([ad55683](https://github.com/devtin/schema-validator/commit/ad556832f710bcd5984aa4edb2b315fe61e52e71))
+
 ### [2.1.4](https://github.com/devtin/schema-validator/compare/v2.1.3...v2.1.4) (2020-02-10)
 
 
