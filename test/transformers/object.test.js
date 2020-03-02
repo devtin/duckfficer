@@ -28,14 +28,12 @@ test(`Object`, t => {
 
   t.is(product.payload, payload) // remains untouched
 
-  try {
-    Transaction.parse({
-      payload: 'none'
-    })
-    t.fail(`Invalid object was resolved!`)
-  } catch (err) {
-    t.is(err.message, `Data is not valid`) // => Data is not valid
-    t.is(err.errors[0].message, 'Invalid object') // => Invalid date
-    t.is(err.errors[0].field.fullPath, 'payload')
-  }
+
+  const error = t.throws(() => Transaction.parse({
+    payload: 'none'
+  }))
+
+  t.is(error.message, `Data is not valid`) // => Data is not valid
+  t.is(error.errors[0].message, 'Invalid object') // => Invalid date
+  t.is(error.errors[0].field.fullPath, 'payload')
 })
