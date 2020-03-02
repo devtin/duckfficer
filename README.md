@@ -9,7 +9,7 @@ Zero-dependencies, light-weight library (~2.7KB minified + gzipped) for validati
 - [About](#about)
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
-- [Guide](./guide)
+- [Guide](./guide/README.md)
 - [Documentation](/DOCS.md)
 - [License](#license) (MIT)
 

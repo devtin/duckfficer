@@ -8,7 +8,7 @@ Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped) fo
 - [About](#about)
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
-- [Guide](./guide)
+- [Guide](./guide/README.md)
 - [Documentation](/DOCS.md)
 - [License](#license) (MIT)
 
