@@ -89,6 +89,7 @@ export class Schema {
     // schema level c: validates using the entire value (object) of this path
     this._cast = cast
     this.name = name || ''
+    this.originalName = this.name
     this.type = Schema.guessType(schema)
     this.children = []
 
