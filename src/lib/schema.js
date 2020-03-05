@@ -230,6 +230,7 @@ export class Schema {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
+      cloned: true,
       _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
     })
     if (clonedSchema.children) {
