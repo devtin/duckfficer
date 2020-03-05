@@ -319,6 +319,8 @@ test(`Nesting schemas`, t => {
       type: Number,
       required: false
     }
+  }, {
+    name: 'AddressSchema'
   })
 
   const UserSchema = new Schema({
