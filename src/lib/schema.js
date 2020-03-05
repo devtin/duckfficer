@@ -67,7 +67,7 @@ export class Schema {
    * @description Sets the environment up:
    * - Stores the schema locally
    * - Guesses the type of the schema
-   * @param {TheSchema} schema
+   * @param {Schema~TheSchema} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Schema} [options.parent]
@@ -89,6 +89,7 @@ export class Schema {
     // schema level c: validates using the entire value (object) of this path
     this._cast = cast
     this.name = name || ''
+    this.originalName = this.name
     this.type = Schema.guessType(schema)
     this.children = []
 
@@ -229,6 +230,7 @@ export class Schema {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
+      cloned: true,
       _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
     })
     if (clonedSchema.children) {
@@ -274,7 +276,7 @@ export class Schema {
   /**
    * Validates if the given object have a structure valid for the schema in subject
    * @param {Object} obj - The object to evaluate
-   * @throws {ValidationError}
+   * @throws {Schema~ValidationError}
    */
   structureValidation (obj) {
     // console.log(`structureValidation`, this.name, this.ownPaths, propertiesRestricted(obj, this.ownPaths), this.type)

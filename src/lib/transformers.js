@@ -1,19 +1,19 @@
 import { castThrowable } from 'utils/cast-throwable.js'
 /**
  * @typedef {Function} Validator
- * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link ValidationError} when not.
+ * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
  * @param {*} value - The value being validated
  * @return {void}
- * @throws ValidationError
+ * @throws Schema~ValidationError
  */
 
 /**
  * @typedef {Function} Parser
  * @desc Synchronous function that performs custom logic possibly customized via settings that could transform given
- * value, throwing a {ValidationError} when error.
+ * value, throwing a {Schema~ValidationError} when error.
  * @param {*} value - The value being validated
  * @return {*} Resulting value
- * @throws ValidationError
+ * @throws Schema~ValidationError
  */
 
 /**

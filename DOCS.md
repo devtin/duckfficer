@@ -4,9 +4,6 @@
 <dt><a href="#Utils">Utils</a></dt>
 <dd><p>Set of utilities</p>
 </dd>
-<dt><a href="#ValidationError">ValidationError</a></dt>
-<dd><p>Thrown by <a href="#Schema">Schema</a></p>
-</dd>
 <dt><a href="#Schema">Schema</a></dt>
 <dd><p>Orchestrates the validation of a data schema</p>
 </dd>
@@ -27,11 +24,11 @@
 <dd><p>Used as value in certain settings to alternatively customize error messages</p>
 </dd>
 <dt><a href="#Validator">Validator</a> ⇒ <code>void</code></dt>
-<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a <a href="#ValidationError">ValidationError</a> when not.</p>
+<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a <a href="#Schema..ValidationError">ValidationError</a> when not.</p>
 </dd>
 <dt><a href="#Parser">Parser</a> ⇒ <code>*</code></dt>
 <dd><p>Synchronous function that performs custom logic possibly customized via settings that could transform given
-value, throwing a {ValidationError} when error.</p>
+value, throwing a {Schema~ValidationError} when error.</p>
 </dd>
 <dt><a href="#Caster">Caster</a> ⇒ <code>*</code></dt>
 <dd><p>Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
@@ -195,20 +192,6 @@ console.log(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', '
 | value | <code>\*</code> \| [<code>ValueError</code>](#ValueError) | The value |
 | error | <code>String</code> | Default error message |
 
-<a name="ValidationError"></a>
-
-## ValidationError
-Thrown by [Schema](#Schema)
-
-**Kind**: global class  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| value | <code>\*</code> | Given value |
-| field | [<code>Schema</code>](#Schema) |  |
-| errors | [<code>Array.&lt;ValidationError&gt;</code>](#ValidationError) | Errors found |
-
 <a name="Schema"></a>
 
 ## Schema
@@ -237,6 +220,7 @@ Orchestrates the validation of a data schema
     * _static_
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
+        * [~ValidationError](#Schema..ValidationError)
         * [~TheSchema](#Schema..TheSchema) : <code>Object</code>
         * [~SchemaSettings](#Schema..SchemaSettings) : <code>Object</code>
 
@@ -250,7 +234,7 @@ Sets the environment up:
 
 | Param | Type | Description |
 | --- | --- | --- |
-| schema | <code>TheSchema</code> |  |
+| schema | [<code>TheSchema</code>](#Schema..TheSchema) |  |
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
@@ -297,7 +281,7 @@ Validates if the given object have a structure valid for the schema in subject
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 **Throws**:
 
-- [<code>ValidationError</code>](#ValidationError) 
+- [<code>ValidationError</code>](#Schema..ValidationError) 
 
 
 | Param | Type | Description |
@@ -313,7 +297,7 @@ Validates schema structure, casts, validates and parses  hooks of every field in
 **Returns**: <code>Object</code> - The sanitized object  
 **Throws**:
 
-- [<code>ValidationError</code>](#ValidationError) when given object does not meet the schema
+- <code>ValidationError</code> when given object does not meet the schema
 
 
 | Param | Type | Description |
@@ -353,6 +337,20 @@ Checks whether a given object is a nested object
 | Param | Type |
 | --- | --- |
 | obj | <code>Object</code> | 
+
+<a name="Schema..ValidationError"></a>
+
+### Schema~ValidationError
+Thrown by [Schema](#Schema)
+
+**Kind**: inner class of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | Given value |
+| field | [<code>Schema</code>](#Schema) |  |
+| errors | [<code>Array.&lt;ValidationError&gt;</code>](#Schema..ValidationError) | Errors found |
 
 <a name="Schema..TheSchema"></a>
 
@@ -580,12 +578,12 @@ const mySchema = new Schema({
 <a name="Validator"></a>
 
 ## Validator ⇒ <code>void</code>
-Synchronous function that validates that given value is of the expected kind. Throws a [ValidationError](#ValidationError) when not.
+Synchronous function that validates that given value is of the expected kind. Throws a [ValidationError](#Schema..ValidationError) when not.
 
 **Kind**: global typedef  
 **Throws**:
 
-- ValidationError
+- Schema~ValidationError
 
 
 | Param | Type | Description |
@@ -596,13 +594,13 @@ Synchronous function that validates that given value is of the expected kind. Th
 
 ## Parser ⇒ <code>\*</code>
 Synchronous function that performs custom logic possibly customized via settings that could transform given
-value, throwing a {ValidationError} when error.
+value, throwing a {Schema~ValidationError} when error.
 
 **Kind**: global typedef  
 **Returns**: <code>\*</code> - Resulting value  
 **Throws**:
 
-- ValidationError
+- Schema~ValidationError
 
 
 | Param | Type | Description |
