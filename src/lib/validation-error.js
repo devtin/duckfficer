@@ -1,10 +1,11 @@
 import { render } from 'utils/render.js'
 
 /**
+ * @class Schema~ValidationError
  * @classdesc Thrown by {@link Schema}
  * @property {*} value - Given value
  * @property {Schema} field
- * @property {ValidationError[]} errors - Errors found
+ * @property {Schema~ValidationError[]} errors - Errors found
  */
 export class ValidationError extends Error {
   constructor (message, { errors = [], value, field }) {

@@ -276,7 +276,7 @@ export class Schema {
   /**
    * Validates if the given object have a structure valid for the schema in subject
    * @param {Object} obj - The object to evaluate
-   * @throws {ValidationError}
+   * @throws {Schema~ValidationError}
    */
   structureValidation (obj) {
     // console.log(`structureValidation`, this.name, this.ownPaths, propertiesRestricted(obj, this.ownPaths), this.type)

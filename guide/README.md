@@ -362,6 +362,8 @@ const AddressSchema = new Schema({
     type: Number,
     required: false
   }
+}, {
+  name: 'AddressSchema'
 })
 
 const UserSchema = new Schema({
