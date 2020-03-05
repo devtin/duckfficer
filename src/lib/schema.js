@@ -67,7 +67,7 @@ export class Schema {
    * @description Sets the environment up:
    * - Stores the schema locally
    * - Guesses the type of the schema
-   * @param {TheSchema} schema
+   * @param {Schema~TheSchema} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Schema} [options.parent]
