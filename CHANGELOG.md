@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.1](https://github.com/devtin/schema-validator/compare/v2.4.0...v2.4.1) (2020-03-07)
+
+
+### Bug Fixes
+
+* broken regex escape ([4b06e75](https://github.com/devtin/schema-validator/commit/4b06e75fd4d27544a018d94e0ded28cdce3f7892))
+* **utils:** properties restricted was not behaving properly ([130cb43](https://github.com/devtin/schema-validator/commit/130cb4329c75791e03bc03ea4f2bc0015554f494))
+
 ## [2.4.0](https://github.com/devtin/schema-validator/compare/v2.3.0...v2.4.0) (2020-03-07)
 
 
