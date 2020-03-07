@@ -1,5 +1,10 @@
 import { forEach } from './for-each'
 
+function getSubProperties (properties, parent) {
+  const pattern = new RegExp(`^${ parent }\.`)
+  return properties.filter(prop => pattern.test(prop)).map(prop => prop.replace(pattern, ''))
+}
+
 /**
  * @method Utils~propertiesRestricted
  * @desc Validates that given `obj`'s properties exists in `properties`.
@@ -38,11 +43,11 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
   if (strict) {
     forEach(properties, property => {
       if (property.indexOf('.') > 0) {
-        const [parent, children] = property.split(/\./)
-        return valid = propertiesRestricted(obj[parent], [children], { strict })
+        const [parent] = property.split('.')
+        return valid = propertiesRestricted(obj[parent], getSubProperties(properties, parent), { strict })
       }
 
-      if (Object.prototype.hasOwnProperty.call(obj, property)) {
+      if (!Object.prototype.hasOwnProperty.call(obj, property)) {
         return valid = false
       }
     })

@@ -134,14 +134,19 @@ test(`Validates an object schema in terms of contained properties`, t => {
     address: {
       city: 'Miami, Fl',
       zip: 33129,
-      line1: 'Brickell Ave'
+      line1: 'Brickell Ave',
+      metadata: {
+        houseColor: 'yellow'
+      }
     }
   }
 
   t.false(Utils.propertiesRestricted('', ['name'])) // => false
   t.false(Utils.propertiesRestricted(user, ['name'])) // => false
   t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address'])) // => true
-  t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'])) // => true
+  t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2', 'address.metadata.houseColor'])) // => true
+  t.false(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.metadata', 'address.papanata'], { strict: true })) // => true
+  t.true(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.metadata'], { strict: true })) // => true
   t.false(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'], { strict: true })) // => false
 })
 
