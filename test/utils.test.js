@@ -57,3 +57,12 @@ test(`castArray wraps values that are not an array into an array`, t => {
   t.is(t2.length, 1)
   t.is(t2[0], 'some other value')
 })
+
+test(`Casts Schemas`, t => {
+  const UserSchema = new Schema({
+    name: String
+  })
+  t.true(Schema.castSchema(UserSchema) instanceof Schema)
+  t.true(Schema.castSchema({ type: UserSchema }) instanceof Schema)
+  t.false(Schema.castSchema({ some: 'Object' }) instanceof Schema)
+})
