@@ -566,6 +566,8 @@ key map object that holds the available Transformer's (types) that can be valida
 | --- | --- | --- | --- |
 | settings | <code>Object</code> |  | Default transformer settings |
 | [settings.typeError] | <code>String</code> | <code>Invalid string</code> | Default error message thrown |
+| [settings.enumError] | <code>String</code> | <code>Invalid enum option { value }</code> | Default error message thrown |
+| [settings.enum] | <code>Array.&lt;String&gt;</code> |  | Whether to restrict allowed values to given sample. |
 | [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast objects with method `toString`. |
 | [settings.minlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional minimum length |
 | [settings.maxlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional maximum length |

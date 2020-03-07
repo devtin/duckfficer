@@ -654,6 +654,20 @@ const error2 = t.throws(() => nameSchema2.parse({ name: 'Tin Rafael' }))
 t.is(error2.message, `Data is not valid`)
 t.is(error2.errors[0].message, `lowercase only`)
 ```
+
+### enum
+
+```js
+const mySchema = new Schema({
+  topping: {
+    type: String,
+    enum: ['cheese', 'ham', 'tomatoes']
+  }
+})
+const error = t.throws(() => mySchema.parse({ topping: 'potatoes' }))
+t.is(error.errors[0].message, 'Unknown enum option potatoes')
+t.notThrows(() => mySchema.parse({ topping: 'ham' }))
+```
 ## Custom
 
 

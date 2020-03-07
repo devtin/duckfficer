@@ -279,6 +279,8 @@ export const Transformers = {
    * @constant {Transformer} Transformers.String
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid string] - Default error message thrown
+   * @property {String} [settings.enumError=Invalid enum option { value }] - Default error message thrown
+   * @property {String[]} [settings.enum] - Whether to restrict allowed values to given sample.
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast objects with method `toString`.
    * @property {(Number|ValueError)} [settings.minlength] - Optional minimum length
    * @property {(Number|ValueError)} [settings.maxlength] - Optional maximum length
@@ -293,6 +295,8 @@ export const Transformers = {
   String: {
     settings: {
       typeError: `Invalid string`,
+      enumError: `Unknown enum option { value }`,
+      enum: [],
       autoCast: false
     },
     cast (v) {
@@ -304,6 +308,10 @@ export const Transformers = {
     validate (value) {
       if (typeof value !== 'string') {
         this.throwError(Transformers.String.settings.typeError, { value })
+      }
+
+      if (this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
+        this.throwError(Transformers.String.settings.enumError, { value })
       }
 
       if (this.settings.minlength) {
