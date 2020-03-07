@@ -4,12 +4,13 @@ Transformers are the ones validating, casting and parsing all property-types def
 Read the [Transformers documentation](../DOCS.md#Transformer) for more information.
 
 - [Array](#array)
-- [Boolean](#boolean)
 - [BigInt](#big-int)
+- [Boolean](#boolean)
 - [Date](#date)
 - [Function](#function)
 - [Number](#number)
 - [Object](#object)
+- [Promise](#promise)
 - [Set](#set)
 - [String](#string)
 - [Custom](#custom)
@@ -87,78 +88,6 @@ const error = t.throws(() => Log.parse({
 t.is(error.message, `Data is not valid`)
 t.is(error.errors[0].message, 'Invalid date')
 t.is(error.errors[0].field.fullPath, 'lastAccess.1')
-```
-## Boolean
-
-
-
-Validates `Boolean`s.
-
-```js
-const ProductSchema = new Schema({
-  name: String,
-  active: {
-    type: Boolean,
-    default: false,
-  }
-})
-
-const error = t.throws(() => ProductSchema.parse({
-  name: 'Kombucha',
-  active: 'no'
-}))
-
-t.is(error.message, 'Data is not valid')
-t.is(error.errors[0].message, 'Invalid boolean')
-
-let product1
-t.notThrows(() => {
-  product1 = ProductSchema.parse({
-    name: 'Kombucha',
-    active: true
-  })
-})
-
-t.truthy(product1)
-t.true(product1.active)
-
-let product2
-t.notThrows(() => {
-  product2 = ProductSchema.parse({
-    name: 'tin'
-  })
-})
-
-t.truthy(product2)
-t.false(product2.active)
-```
-
-### autoCast (default `false`)
-
-
-
-`Boolean`'s have a built-in auto-casting function that would transform any truthy value into `true`,
-falsy values into `false`, when enabled. This setting is `false` by default.
-
-```js
-const ProductType = new Schema({
-  name: String,
-  active: {
-    type: Boolean,
-    default: false,
-    autoCast: true // has to be enabled
-  }
-})
-
-let product
-t.notThrows(() => {
-  product = ProductType.parse({
-    name: 'Kombucha',
-    active: 'sure!'
-  })
-})
-
-t.true(product.active)
 ```
 ## BigInt
 
@@ -242,6 +171,78 @@ const error = t.throws(() => UserSchema2.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid bigint')
 t.is(error.errors[0].field.fullPath, 'id')
+```
+## Boolean
+
+
+
+Validates `Boolean`s.
+
+```js
+const ProductSchema = new Schema({
+  name: String,
+  active: {
+    type: Boolean,
+    default: false,
+  }
+})
+
+const error = t.throws(() => ProductSchema.parse({
+  name: 'Kombucha',
+  active: 'no'
+}))
+
+t.is(error.message, 'Data is not valid')
+t.is(error.errors[0].message, 'Invalid boolean')
+
+let product1
+t.notThrows(() => {
+  product1 = ProductSchema.parse({
+    name: 'Kombucha',
+    active: true
+  })
+})
+
+t.truthy(product1)
+t.true(product1.active)
+
+let product2
+t.notThrows(() => {
+  product2 = ProductSchema.parse({
+    name: 'tin'
+  })
+})
+
+t.truthy(product2)
+t.false(product2.active)
+```
+
+### autoCast (default `false`)
+
+
+
+`Boolean`'s have a built-in auto-casting function that would transform any truthy value into `true`,
+falsy values into `false`, when enabled. This setting is `false` by default.
+
+```js
+const ProductType = new Schema({
+  name: String,
+  active: {
+    type: Boolean,
+    default: false,
+    autoCast: true // has to be enabled
+  }
+})
+
+let product
+t.notThrows(() => {
+  product = ProductType.parse({
+    name: 'Kombucha',
+    active: 'sure!'
+  })
+})
+
+t.true(product.active)
 ```
 ## Date
 
@@ -474,6 +475,73 @@ const error = t.throws(() => Transaction.parse({
 t.is(error.message, `Data is not valid`) // => Data is not valid
 t.is(error.errors[0].message, 'Invalid object') // => Invalid date
 t.is(error.errors[0].field.fullPath, 'payload')
+```
+## Promise
+
+```js
+const UserType = new Schema({
+  user: String,
+  picture: Promise
+})
+
+t.notThrows(() => UserType.parse({
+  user: 'tin',
+  picture: new Promise((resolve) => {
+    setTimeout(() => resolve(`that`), 3000)
+  })
+}))
+
+const error = t.throws(() => UserType.parse({
+  user: 'tin',
+  async picture () {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(`nah`), 3000)
+    })
+  }
+}))
+
+t.is(error.message, 'Data is not valid')
+t.is(error.errors.length, 1)
+t.is(error.errors[0].message, 'Invalid Promise')
+t.is(error.errors[0].field.fullPath, 'picture')
+```
+
+### autoCast (default `false`)
+
+```js
+const UserType = new Schema({
+  user: String,
+  picture: {
+    type: Promise,
+    autoCast: true
+  }
+})
+
+t.notThrows(() => UserType.parse({
+  user: 'tin',
+  async picture () {
+    return `Something`
+  }
+}))
+
+t.notThrows(() => UserType.parse({
+  user: 'tin',
+  picture () {
+    return `Something`
+  }
+}))
+
+t.notThrows(() => UserType.parse({
+  user: 'tin',
+  picture: `Something`
+}))
+
+t.notThrows(() => UserType.parse({
+  user: 'tin',
+  picture: new Promise(resolve => {
+    resolve(`Something`)
+  })
+}))
 ```
 ## Set
 
