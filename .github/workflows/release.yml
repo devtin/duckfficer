@@ -33,4 +33,4 @@ jobs:
     - name: pre-release
       run: |
         npm ci
-        yarn build:wcoverage && yarn release && git push
+        yarn lint && yarn build:wcoverage && yarn release && git push
