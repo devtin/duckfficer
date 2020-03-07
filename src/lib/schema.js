@@ -133,7 +133,6 @@ export class Schema {
   }
 
   static castSchema (obj) {
-    // console.log(`castSchema`, obj, obj instanceof Schema, typeof obj === 'object' && Schema.guessType(obj.type) === 'Schema')
     if (obj instanceof Schema) {
       return obj
     }
@@ -144,12 +143,9 @@ export class Schema {
   }
 
   static castSettings (obj) {
-    if (typeof obj === 'object' && Schema.guessType(obj.type) === 'Schema') {
-      const settings = Object.assign({}, obj)
-      delete settings.type
-      return settings
-    }
-    return {}
+    const settings = Object.assign({}, obj)
+    delete settings.type
+    return settings
   }
 
   _parseSchema (obj) {
@@ -455,7 +451,7 @@ export class Schema {
 
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/))
-      const input = typeof obj === 'object' ? obj[schema.name] : undefined
+      const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined
 
       sandbox(() => {
         const val = schema[method](input)
