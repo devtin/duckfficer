@@ -66,3 +66,34 @@ test(`Casts Schemas`, t => {
   t.true(Schema.castSchema({ type: UserSchema }) instanceof Schema)
   t.false(Schema.castSchema({ some: 'Object' }) instanceof Schema)
 })
+
+test(`Resolves schema at given path`, t => {
+  const AddressSchema = new Schema({
+    street: String,
+    zip: Number
+  }, {
+    name: 'AddressSchema'
+  })
+
+  const UserSchema = new Schema({
+    name: String,
+    birthday: Date,
+    // using an already defined schema in another schema's property
+    address: {
+      type: AddressSchema,
+      required: false
+    }
+  })
+
+  const ClonedAddressSchema = UserSchema.schemaAtPath('address')
+  t.true(ClonedAddressSchema instanceof  Schema)
+  t.deepEqual(ClonedAddressSchema.paths, ['address.street', 'address.zip'])
+
+  const BirthdaySchema = UserSchema.schemaAtPath('birthday')
+  t.true(BirthdaySchema instanceof  Schema)
+  t.deepEqual(BirthdaySchema.paths, ['birthday'])
+
+  const AddressZipSchema = UserSchema.schemaAtPath('address.zip')
+  t.true(AddressZipSchema instanceof  Schema)
+  t.deepEqual(AddressZipSchema.paths, ['zip'])
+})

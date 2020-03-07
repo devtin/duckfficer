@@ -143,6 +143,14 @@ test(`Optional properties`, t => {
     })
   })
 
+  t.notThrows(() => {
+    contact = ContactSchema.parse({
+      name: 'Martin',
+      email: 'tin@devtin.io',
+      age: undefined
+    })
+  })
+
   /**
    * Whenever `age` is present, the validation will ensure it is a `Number`, though.
    */
@@ -359,6 +367,8 @@ test(`Nesting schemas`, t => {
 
   t.is(error2.errors[0].message, 'Property address.line1 is required')
   t.is(error2.errors[0].field.fullPath, 'address.line1')
+
+  t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address.line1', 'address.line2', 'address.zip'])
 
   t.notThrows(() => UserSchema.parse({
     name: 'Martin',

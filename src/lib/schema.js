@@ -465,7 +465,7 @@ export class Schema {
       throw new ValidationError(`Data is not valid`, { errors })
     }
 
-    return Object.keys(resultingObject).length > 0 ? resultingObject : obj
+    return resultingObject
   }
 
   /**
@@ -475,7 +475,7 @@ export class Schema {
    * @param payload
    * @return {*}
    */
-  runTransformer ({ method, transformer, payload } = {}) {
+  runTransformer ({ method, transformer, payload }) {
     if (!transformer[method]) {
       return payload
     }
