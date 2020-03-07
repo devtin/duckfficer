@@ -1,7 +1,7 @@
 import { forEach } from './for-each'
 
 function getSubProperties (properties, parent) {
-  const pattern = new RegExp(`^${ parent }\.`)
+  const pattern = new RegExp(`^${ parent }\\.`)
   return properties.filter(prop => pattern.test(prop)).map(prop => prop.replace(pattern, ''))
 }
 
