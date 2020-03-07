@@ -5,6 +5,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const CoverageShield = require('./lib/coverage-shield.js')
+const { Transformers: TheTransformers } = require('../')
 
 const mdOptions = { headingLevel: 2 }
 
@@ -33,18 +34,11 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
         return avaTestToMd(test, { headingLevel: index === 0 ? mdOptions.headingLevel : mdOptions.headingLevel + 1 })
       })).join(`\n\n`)
     }
-    const Transformers = {
-      Array: await parseTransformer('array'),
-      Boolean: await parseTransformer('boolean'),
-      BigInt: await parseTransformer('bigint'),
-      Date: await parseTransformer('date'),
-      Function: await parseTransformer('function'),
-      Number: await parseTransformer('number'),
-      Object: await parseTransformer('object'),
-      Set: await parseTransformer('set'),
-      String: await parseTransformer('string'),
-      Custom: await parseTransformer('custom')
-    }
+    const Transformers = {}
+    await Promise.each(Object.keys(TheTransformers), async name => {
+      Transformers[name] = await parseTransformer(name.toLowerCase())
+    })
+    Transformers.Custom = await parseTransformer('custom')
 
     // const hooks = avaTestsToMd(await parseAvaFile('array'))
     const hooks = await avaTestsToMd(await parseAvaFile(locateTest(`features/hooks.test.js`)), { headingLevel: mdOptions.headingLevel + 1 })
