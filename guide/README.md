@@ -24,6 +24,7 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 - [Default values](#default-values)
 - [Auto-casting](#auto-casting)
 - [Nesting schemas](#nesting-schemas)
+- [Initial settings](#initial-settings)
 - [Transformers](./TRANSFORMERS.md)
 - [Hooks](#hooks)
 - [Loaders](#loaders)
@@ -402,6 +403,36 @@ t.notThrows(() => UserSchema.parse({
     zip: 33129
   }
 }))
+```
+
+## Initial settings
+
+```js
+const SomeSchema = new Schema({
+  name: String
+})
+
+const error1 = t.throws(() => SomeSchema.parse(undefined))
+t.is(error1.message, `Data is not valid`)
+t.is(error1.errors[0].message, `Property name is required`)
+```
+
+We can override the initial settings of our schema
+
+```js
+const SomeOptionalSchema = new Schema({
+    name: String
+  },
+  {
+    settings: {
+      required: false
+    }
+  })
+
+t.notThrows(() => SomeOptionalSchema.parse(undefined))
+const error2 = t.throws(() => SomeOptionalSchema.parse({}))
+t.is(error2.message, `Data is not valid`)
+t.is(error2.errors[0].message, `Property name is required`)
 ```
 
 ## Transformers
