@@ -374,7 +374,9 @@ export class Schema {
           result = this.parseProperty(t, v)
           parsed = true
           return false
-        } catch (err) {}
+        } catch (err) {
+          // shh...
+        }
       })
       if (!parsed) {
         this.throwError(`Could not resolve given value type`)
