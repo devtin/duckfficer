@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/devtin/schema-validator/compare/v2.3.0...v2.4.0) (2020-03-07)
+
+
+### Features
+
+* **schema:** Initial settings ([758374d](https://github.com/devtin/schema-validator/commit/758374d5d02ff520f89f02c73171ce4cf77eb775))
+* **schema:** Introducing multiple allowed types ([fd26237](https://github.com/devtin/schema-validator/commit/fd26237dcd42d683504ed67c1e478db47968fb00))
+* **transformer-string:** Introducing enum option ([7492768](https://github.com/devtin/schema-validator/commit/7492768e427f2843d1f2b12ce4f0b51abf5fcdd3))
+* **transformers:** Introducing type Promise ([227899e](https://github.com/devtin/schema-validator/commit/227899e1f541ae983ff8da2d30a4a6580a7790b0))
+
+
+### Bug Fixes
+
+* lint issue ([4d1eb5d](https://github.com/devtin/schema-validator/commit/4d1eb5da0a696eba7c2ed9c4cebb2f6879f3a485))
+
 ## [2.3.0](https://github.com/devtin/schema-validator/compare/v2.2.0...v2.3.0) (2020-03-05)
 
 
