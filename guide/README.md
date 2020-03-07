@@ -385,7 +385,16 @@ const user = UserSchema.parse({
 
 t.truthy(user)
 
-const error = t.throws(() => UserSchema.parse({
+const error1 = t.throws(() => UserSchema.parse({
+  name: 'Martin',
+  birthday: '6/11/1983',
+  address: null
+}))
+
+t.is(error1.errors[0].message, 'Property address.line1 is required')
+t.is(error1.errors[0].field.fullPath, 'address.line1')
+
+const error2 = t.throws(() => UserSchema.parse({
   name: 'Martin',
   birthday: '6/11/1983',
   address: {
@@ -393,8 +402,8 @@ const error = t.throws(() => UserSchema.parse({
   }
 }))
 
-t.is(error.errors[0].message, 'Property address.line1 is required')
-t.is(error.errors[0].field.fullPath, 'address.line1')
+t.is(error2.errors[0].message, 'Property address.line1 is required')
+t.is(error2.errors[0].field.fullPath, 'address.line1')
 
 t.notThrows(() => UserSchema.parse({
   name: 'Martin',
