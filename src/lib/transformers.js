@@ -214,6 +214,41 @@ export const Transformers = {
     }
   },
   /**
+   * @constant {Transformer} Transformers.Promise
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid Promise] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast values into Promises.
+   * @property {Function} [settings.isPromise] - Checks whether given value is or not a Promise
+   * @property {Validator} validate - Validates given values is a `Promise`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+   * @see https://stackoverflow.com/a/27746324/1064165
+   */
+  Promise: {
+    settings: {
+      typeError: `Invalid Promise`,
+      autoCast: false,
+      isPromise (v) {
+        return typeof v === 'object' && typeof v.then === 'function'
+      }
+    },
+    cast (value) {
+      if (Transformers.Promise.settings.isPromise(value)) {
+        return value
+      }
+
+      if (typeof value === 'function') {
+        return Promise.resolve(value())
+      }
+
+      return Promise.resolve(value)
+    },
+    validate (value) {
+      if (!Transformers.Promise.settings.isPromise(value)) {
+        this.throwError(Transformers.Promise.settings.typeError, { value })
+      }
+    }
+  },
+  /**
    * @constant {Transformer} Transformers.Set
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid set] - Default error message thrown

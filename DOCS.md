@@ -416,6 +416,7 @@ key map object that holds the available Transformer's (types) that can be valida
     * [.Function](#Transformers.Function) : [<code>Transformer</code>](#Transformer)
     * [.Number](#Transformers.Number) : [<code>Transformer</code>](#Transformer)
     * [.Object](#Transformers.Object) : [<code>Transformer</code>](#Transformer)
+    * [.Promise](#Transformers.Promise) : [<code>Transformer</code>](#Transformer)
     * [.Set](#Transformers.Set) : [<code>Transformer</code>](#Transformer)
     * [.String](#Transformers.String) : [<code>Transformer</code>](#Transformer)
 
@@ -519,6 +520,25 @@ key map object that holds the available Transformer's (types) that can be valida
 | settings | <code>Object</code> |  | Default transformer settings |
 | [settings.typeError] | <code>String</code> | <code>Invalid object</code> | Default error message thrown |
 | validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
+
+<a name="Transformers.Promise"></a>
+
+### Transformers.Promise : [<code>Transformer</code>](#Transformer)
+**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
+**See**
+
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+- https://stackoverflow.com/a/27746324/1064165
+
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>Object</code> |  | Default transformer settings |
+| [settings.typeError] | <code>String</code> | <code>Invalid Promise</code> | Default error message thrown |
+| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast values into Promises. |
+| [settings.isPromise] | <code>function</code> |  | Checks whether given value is or not a Promise |
+| validate | [<code>Validator</code>](#Validator) |  | Validates given values is a `Promise` |
 
 <a name="Transformers.Set"></a>
 
