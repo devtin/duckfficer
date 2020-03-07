@@ -360,3 +360,31 @@ test(`Nesting schemas`, t => {
     }
   }))
 })
+
+test(`Initial settings`, t => {
+  const SomeSchema = new Schema({
+    name: String
+  })
+
+  const error1 = t.throws(() => SomeSchema.parse(undefined))
+  t.is(error1.message, `Data is not valid`)
+  t.is(error1.errors[0].message, `Property name is required`)
+
+  /**
+   * We can override the initial settings of our schema
+   */
+
+  const SomeOptionalSchema = new Schema({
+      name: String
+    },
+    {
+      settings: {
+        required: false
+      }
+    })
+
+  t.notThrows(() => SomeOptionalSchema.parse(undefined))
+  const error2 = t.throws(() => SomeOptionalSchema.parse({}))
+  t.is(error2.message, `Data is not valid`)
+  t.is(error2.errors[0].message, `Property name is required`)
+})

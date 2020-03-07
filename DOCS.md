@@ -239,6 +239,7 @@ Sets the environment up:
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
 | [options.cast] | [<code>Caster</code>](#Caster) | Schema caster |
+| [options.settings] | <code>Object</code> | Initial settings |
 | [options.validate] | [<code>Validator</code>](#Validator) | Final validation |
 
 <a name="Schema+paths"></a>

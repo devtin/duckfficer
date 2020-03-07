@@ -72,15 +72,16 @@ export class Schema {
    * @param {String} [options.name] - Alternative name of the object
    * @param {Schema} [options.parent]
    * @param {Caster} [options.cast] - Schema caster
+   * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, parent, validate, cast } = {}) {
+  constructor (schema, { name, parent, validate, cast, settings = {} } = {}) {
     this._defaultSettings = {
       required: true,
       default: undefined
     }
 
-    this._settings = {}
+    this._settings = settings
 
     this.schema = schema
     this.parent = parent
