@@ -25,6 +25,7 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 - [Auto-casting](#auto-casting)
 - [Nesting schemas](#nesting-schemas)
 - [Initial settings](#initial-settings)
+- [Multiple types](#multiple-types)
 - [Transformers](./TRANSFORMERS.md)
 - [Hooks](#hooks)
 - [Loaders](#loaders)
@@ -433,6 +434,22 @@ t.notThrows(() => SomeOptionalSchema.parse(undefined))
 const error2 = t.throws(() => SomeOptionalSchema.parse({}))
 t.is(error2.message, `Data is not valid`)
 t.is(error2.errors[0].message, `Property name is required`)
+```
+
+## Multiple types
+
+```js
+const UserSchema = new Schema({
+  picture: [Function, Promise]
+})
+
+t.notThrows(() => UserSchema.parse({ picture () {} }))
+t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`this`)) }))
+
+const error = t.throws(() => UserSchema.parse({ picture: `some pic` }))
+t.is(error.message, `Data is not valid`)
+t.is(error.errors[0].message, `Could not resolve given value type`)
+t.is(error.errors[0].field.fullPath, `picture`)
 ```
 
 ## Transformers

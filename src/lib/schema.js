@@ -92,6 +92,7 @@ export class Schema {
     this.name = name || ''
     this.originalName = this.name
     this.type = Schema.guessType(schema)
+    this.currentType = castArray(this.type)[0]
     this.children = []
 
     /**
@@ -125,8 +126,8 @@ export class Schema {
   }
 
   get settings () {
-    if (!this.hasChildren && Transformers[this.type] && Transformers[this.type].settings) {
-      return Object.assign(this._defaultSettings, Transformers[this.type].settings, this._settings)
+    if (!this.hasChildren && Transformers[this.currentType] && Transformers[this.currentType].settings) {
+      return Object.assign(this._defaultSettings, Transformers[this.currentType].settings, this._settings)
     }
     return Object.assign(this._defaultSettings, this._settings)
   }
@@ -195,6 +196,10 @@ export class Schema {
 
     if (typeof value === 'object' && !Array.isArray(value)) {
       return 'Object'
+    }
+
+    if (Array.isArray(value)) {
+      value = value.map(Schema.guessType)
     }
 
     return value
@@ -360,10 +365,26 @@ export class Schema {
   }
 
   parseProperty (type, v) {
+    if (Array.isArray(type)) {
+      let parsed = false
+      let result
+      forEach(type, t => {
+        try {
+          this.currentType = t
+          result = this.parseProperty(t, v)
+          parsed = true
+          return false
+        } catch (err) {}
+      })
+      if (!parsed) {
+        this.throwError(`Could not resolve given value type`)
+      }
+      return result
+    }
     const transformer = Transformers[type]
 
     if (!transformer) {
-      throw new Error(`Don't know how to resolve ${ type }`)
+      this.throwError(`Don't know how to resolve ${ type }`)
     }
 
     if (this.settings.default !== undefined && v === undefined) {

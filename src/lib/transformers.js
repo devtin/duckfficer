@@ -310,7 +310,7 @@ export const Transformers = {
         this.throwError(Transformers.String.settings.typeError, { value })
       }
 
-      if (this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
+      if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
         this.throwError(Transformers.String.settings.enumError, { value })
       }
 

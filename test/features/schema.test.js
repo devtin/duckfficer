@@ -388,3 +388,17 @@ test(`Initial settings`, t => {
   t.is(error2.message, `Data is not valid`)
   t.is(error2.errors[0].message, `Property name is required`)
 })
+
+test(`Multiple types`, t => {
+  const UserSchema = new Schema({
+    picture: [Function, Promise]
+  })
+
+  t.notThrows(() => UserSchema.parse({ picture () {} }))
+  t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`this`)) }))
+
+  const error = t.throws(() => UserSchema.parse({ picture: `some pic` }))
+  t.is(error.message, `Data is not valid`)
+  t.is(error.errors[0].message, `Could not resolve given value type`)
+  t.is(error.errors[0].field.fullPath, `picture`)
+})
