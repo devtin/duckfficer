@@ -38,8 +38,6 @@ All notable changes to this project will be documented in this file. See [standa
 * add cloned flag for docs purposes ([b352c8f](https://github.com/devtin/schema-validator/commit/b352c8f2ee33a0a7c2fd628fa398101a756ec939))
 * add originalName for docs purposes ([04322ae](https://github.com/devtin/schema-validator/commit/04322aec61971183463158b08a65aa78114a3924))
 
-### 2.1.4 (2020-02-10)
-
 ## [2.2.0](https://github.com/devtin/schema-validator/compare/v2.1.4...v2.2.0) (2020-03-02)
 
 
