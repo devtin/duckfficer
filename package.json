@@ -4,11 +4,13 @@
   "version": "2.4.1",
   "description": "Zero-dependencies, light-weight library for duck-type validating & sanitizing javascript's data schemas",
   "keywords": [
+    "json",
     "duck-type",
     "duck-typing",
     "sanitize",
     "schema",
     "validation",
+    "validator",
     "casting",
     "modeling"
   ],
