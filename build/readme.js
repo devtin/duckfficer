@@ -11,20 +11,6 @@ const mdOptions = { headingLevel: 2 }
 
 parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
   .then(async tests => {
-    const index = []
-
-    tests = tests
-      .filter(t => {
-        return t.flag !== 'todo'
-      })
-
-    tests
-      .forEach(({ title }) => {
-        index.push(`- [${ title }](#${ _.kebabCase(title) })`)
-      })
-
-    const guide = await avaTestsToMd(tests, mdOptions)
-
     const locateTest = (...paths) => {
       return path.join(__dirname, `../test`, ...paths)
     }
@@ -34,17 +20,41 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
         return avaTestToMd(test, { headingLevel: index === 0 ? mdOptions.headingLevel : mdOptions.headingLevel + 1 })
       })).join(`\n\n`)
     }
+
     const Transformers = {}
     await Promise.each(Object.keys(TheTransformers), async name => {
       Transformers[name] = await parseTransformer(name.toLowerCase())
     })
     Transformers.Custom = await parseTransformer('custom')
 
+    const index = []
+
+    tests = tests
+      .filter(t => {
+        return t.flag !== 'todo'
+      })
+
+    tests
+      .forEach(({ title }) => {
+        index.push(`- [${ title }](/guide/README.md#${ _.kebabCase(title) })`)
+      })
+
+    const transformersIndex = Object.keys(Transformers).map(t => `- [${ t }](/guide/TRANSFORMERS.md#${ _.kebabCase(t) })`)
+    const additionalIndex = [`- [Life-cycle](/guide/README.md#life-cycle)`, `- [Transformers](/guide/TRANSFORMERS.md)`, `- [Hooks](/guide/README.md#hooks)`, `- [Loaders](/guide/README.md#loaders)`]
+
+    const indexWithTransformers = index.slice()
+
+    index.push(...additionalIndex)
+    indexWithTransformers.push(...additionalIndex.slice(0, 2))
+    indexWithTransformers.push(...transformersIndex.slice().map(link => `  ${ link }`))
+    indexWithTransformers.push(...additionalIndex.slice(2))
+
+    const guide = await avaTestsToMd(tests, mdOptions)
+
     // const hooks = avaTestsToMd(await parseAvaFile('array'))
     const hooks = await avaTestsToMd(await parseAvaFile(locateTest(`features/hooks.test.js`)), { headingLevel: mdOptions.headingLevel + 1 })
     const loaders = await avaTestsToMd(await parseAvaFile(locateTest(`features/loaders.test.js`)), mdOptions)
     const transformers = []
-    const transformersIndex = Object.keys(Transformers).map(t => `- [${ t }](#${ _.kebabCase(t) })`)
 
     Object.keys(Transformers).forEach(transformerName => {
       transformers.push(Transformers[transformerName])
@@ -67,7 +77,8 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       ],
       'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
-      index
+      index,
+      indexWithTransformers
     }
 
     fs.writeFileSync(path.join(__dirname, '../README.md'), mustache.render(readmeTemplate, payload))

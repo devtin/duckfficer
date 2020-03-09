@@ -1,5 +1,7 @@
 <p align="center"><img align="center" width="480" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p>
-<h1 align="center">@devtin/schema-validator</h1>
+
+<div align="center"><h1 align="center">@devtin/schema-validator</h1></div>
+
 <p align="center">
 {{#shields}}
 {{{ . }}}
@@ -18,7 +20,10 @@ for validating & sanitizing JavaScript data schemas.
 - [At-a-glance](#at-a-glance)
 - [Advanced Usage](#advanced-usage)
 - [Guide](./guide/README.md)
-- [Documentation](/DOCS.md)
+  {{ #index }}
+  {{{ . }}}
+  {{ /index }}
+- [JS-Docs](/DOCS.md)
 - [License](#license) (MIT)
 
 ## About
@@ -39,12 +44,6 @@ $ yarn add @devtin/schema-validator
 
 ```js
 {{{ at-a-glance }}}
-```
-
-## Advanced Usage
-
-```js
-{{{ advanced-usage }}}
 ```
 
 

@@ -7,13 +7,9 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 
 **Index**
 
-{{ #index }}
+{{ #indexWithTransformers }}
 {{{ . }}}
-{{ /index }}
-- [Life-cycle](#life-cycle)
-- [Transformers](./TRANSFORMERS.md)
-- [Hooks](#hooks)
-- [Loaders](#loaders)
+{{ /indexWithTransformers }}
 
 {{{ guide }}}
 

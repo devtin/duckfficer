@@ -1,19 +1,19 @@
 ## Guide » Transformers
 
 Transformers are the ones validating, casting and parsing all property-types defined in the schema.
-Read the [Transformers documentation](../DOCS.md#Transformer) for more information.
+Read the [Transformers section in the JS-Docs](../DOCS.md#Transformer) for more information.
 
-- [Array](#array)
-- [BigInt](#big-int)
-- [Boolean](#boolean)
-- [Date](#date)
-- [Function](#function)
-- [Number](#number)
-- [Object](#object)
-- [Promise](#promise)
-- [Set](#set)
-- [String](#string)
-- [Custom](#custom)
+- [Array](/guide/TRANSFORMERS.md#array)
+- [BigInt](/guide/TRANSFORMERS.md#big-int)
+- [Boolean](/guide/TRANSFORMERS.md#boolean)
+- [Date](/guide/TRANSFORMERS.md#date)
+- [Function](/guide/TRANSFORMERS.md#function)
+- [Number](/guide/TRANSFORMERS.md#number)
+- [Object](/guide/TRANSFORMERS.md#object)
+- [Promise](/guide/TRANSFORMERS.md#promise)
+- [Set](/guide/TRANSFORMERS.md#set)
+- [String](/guide/TRANSFORMERS.md#string)
+- [Custom](/guide/TRANSFORMERS.md#custom)
 - [Back to guide](./README.md)
 
 ## Array
