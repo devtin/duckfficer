@@ -3,7 +3,8 @@
 {{{ . }}}
 {{/shields}}
 
-Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.  
+# @devtin/schema-validator
+Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.  
 
 - [About](#about)
 - [Installation](#installation)
