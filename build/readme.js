@@ -60,10 +60,10 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       loaders,
       libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.iife.js.gz')).size / 1024) * 10) / 10 }KB`,
       shields: [
-        '<a href="https://www.npmjs.com/package/@devtin/schema-validator"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>',
+        '<a href="https://www.npmjs.com/package/@devtin/schema-validator" target="_blank"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>',
         CoverageShield.getShield(), // test coverage
         `<a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/tests/badge.svg"></a>`,
-        '[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)', // MIT
+        '<a href="http://opensource.org/licenses" target="_blank"><img src="http://img.shields.io/badge/License-MIT-brightgreen.svg"></a>', // MIT
       ],
       'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
