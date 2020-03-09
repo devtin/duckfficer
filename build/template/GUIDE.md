@@ -5,7 +5,20 @@ directory. Mind tests are performed using <a href="https://github.com/avajs/ava"
 syntax is pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at
 the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track.
 
-**Life-cycle**
+**Index**
+
+{{ #index }}
+{{{ . }}}
+{{ /index }}
+- [Life-cycle](#life-cycle)
+- [Transformers](./TRANSFORMERS.md)
+- [Hooks](#hooks)
+- [Loaders](#loaders)
+
+{{{ guide }}}
+
+
+## Life-cycle
 
 - [Schema.parse](/DOCS.md#Schema+parse)
   - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
@@ -13,18 +26,6 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
   - runs [cast](/DOCS.md#Caster) hook
   - runs [validate](/DOCS.md#Validator) hook
   - runs [parse](/DOCS.md#Parser) hook 
-
-
-**Index**
-
-{{ #index }}
-{{{ . }}}
-{{ /index }}
-- [Transformers](./TRANSFORMERS.md)
-- [Hooks](#hooks)
-- [Loaders](#loaders)
-
-{{{ guide }}}
 
 ## Transformers
 

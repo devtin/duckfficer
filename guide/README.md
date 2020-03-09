@@ -5,16 +5,6 @@ directory. Mind tests are performed using <a href="https://github.com/avajs/ava"
 syntax is pretty self-explanatory but in case you find yourself lost reading the examples below, maybe having a look at
 the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may help you get quickly on track.
 
-**Life-cycle**
-
-- [Schema.parse](/DOCS.md#Schema+parse)
-  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
-  - apply specified [transformer](/DOCS.md#Transformers)
-  - runs [cast](/DOCS.md#Caster) hook
-  - runs [validate](/DOCS.md#Validator) hook
-  - runs [parse](/DOCS.md#Parser) hook 
-
-
 **Index**
 
 - [Creating a schema](#creating-a-schema)
@@ -26,6 +16,7 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 - [Nesting schemas](#nesting-schemas)
 - [Initial settings](#initial-settings)
 - [Multiple types](#multiple-types)
+- [Life-cycle](#life-cycle)
 - [Transformers](./TRANSFORMERS.md)
 - [Hooks](#hooks)
 - [Loaders](#loaders)
@@ -470,6 +461,16 @@ t.is(error.message, `Data is not valid`)
 t.is(error.errors[0].message, `Could not resolve given value type`)
 t.is(error.errors[0].field.fullPath, `picture`)
 ```
+
+
+## Life-cycle
+
+- [Schema.parse](/DOCS.md#Schema+parse)
+  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
+  - apply specified [transformer](/DOCS.md#Transformers)
+  - runs [cast](/DOCS.md#Caster) hook
+  - runs [validate](/DOCS.md#Validator) hook
+  - runs [parse](/DOCS.md#Parser) hook 
 
 ## Transformers
 
