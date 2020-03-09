@@ -1,12 +1,17 @@
-<p align="center"><img align="center" width="480" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p><br/>
+<p align="center"><img align="center" width="480" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p>
+<h1 align="center">@devtin/schema-validator</h1>
 <p align="center">
 {{#shields}}
 {{{ . }}}
 {{/shields}}
 </p>
 
-# @devtin/schema-validator
-Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.  
+<p align="center">
+Zero-dependencies, light-weight library (~3KB minified + gzipped)<br>
+for validating & sanitizing JavaScript data schemas.
+</p>  
+
+## Content
 
 - [About](#about)
 - [Installation](#installation)
