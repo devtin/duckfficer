@@ -1,8 +1,10 @@
-# schema-validator
+<p align="center"><img align="center" style="max-width:600px; width: 100%; height: auto;" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p><br/>
+<p align="center">
 <a href="https://www.npmjs.com/package/@devtin/schema-validator"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>
 <a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-99%25-green" alt="Coverage 99%"></a>
 <a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/tests/badge.svg"></a>
 [![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)
+</p>
 
 # @devtin/schema-validator
 Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.  

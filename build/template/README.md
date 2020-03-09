@@ -1,7 +1,9 @@
-# schema-validator
+<p align="center"><img align="center" style="max-width:600px; width: 100%; height: auto;" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p><br/>
+<p align="center">
 {{#shields}}
 {{{ . }}}
 {{/shields}}
+</p>
 
 # @devtin/schema-validator
 Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.  
