@@ -18,7 +18,6 @@ for validating & sanitizing JavaScript data schemas.
 - [About](#about)
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
-- [Advanced Usage](#advanced-usage)
 - [Guide](./guide/README.md)
   {{ #index }}
   {{{ . }}}
