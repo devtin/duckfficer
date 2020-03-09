@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.2](https://github.com/devtin/schema-validator/compare/v2.4.1...v2.4.2) (2020-03-09)
+
+
+### Bug Fixes
+
+* package name ([cb4e54f](https://github.com/devtin/schema-validator/commit/cb4e54fc98f5a726efc690aca72f2434c0b34e63))
+* unexpected entry in changelog ([84fcc37](https://github.com/devtin/schema-validator/commit/84fcc37d863ff389e885b5bd76bd58e061751924))
+
 ### [2.4.1](https://github.com/devtin/schema-validator/compare/v2.4.0...v2.4.1) (2020-03-07)
 
 
