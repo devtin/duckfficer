@@ -65,7 +65,8 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
         `<a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/tests/badge.svg"></a>`,
         '[![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](http://opensource.org/licenses)', // MIT
       ],
-      sandbox: fs.readFileSync(path.join(__dirname, '../sandbox.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
+      'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
+      'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace(`require('./')`, `require('@devtin/schema-validator')`),
       index
     }
 

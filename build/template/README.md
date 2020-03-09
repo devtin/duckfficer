@@ -9,6 +9,7 @@ Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating
 - [About](#about)
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
+- [Advanced Usage](#advanced-usage)
 - [Guide](./guide/README.md)
 - [Documentation](/DOCS.md)
 - [License](#license) (MIT)
@@ -30,7 +31,13 @@ $ yarn add @devtin/schema-validator
 ## At-a-glance
 
 ```js
-{{{ sandbox }}}
+{{{ at-a-glance }}}
+```
+
+## Advanced Usage
+
+```js
+{{{ advanced-usage }}}
 ```
 
 
