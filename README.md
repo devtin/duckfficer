@@ -16,8 +16,9 @@ Zero-dependencies, light-weight library (~3KB minified + gzipped) for validating
 
 ## About
 
-One day I got tired of performing duck-type validation as I shared entity-data across different endpoints of my beloved
-JavaScript ecosystem. This library is initially inspired in [mongoose](https://mongoosejs.com)'s validation syntax. 
+Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
+JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
+this light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Installation
 
