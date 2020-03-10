@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>  
 
