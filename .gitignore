@@ -3,3 +3,4 @@ node_modules
 dist
 .nyc_output
 assets
+test/utils/vm-test.js
