@@ -26,6 +26,7 @@ for validating & sanitizing JavaScript data schemas.
   - [Optional properties](/guide/README.md#optional-properties)
   - [Default values](/guide/README.md#default-values)
   - [Auto-casting](/guide/README.md#auto-casting)
+  - [Allowing null values](/guide/README.md#allowing-null-values)
   - [Nesting schemas](/guide/README.md#nesting-schemas)
   - [Initial settings](/guide/README.md#initial-settings)
   - [Multiple types](/guide/README.md#multiple-types)

@@ -32,6 +32,7 @@ const fnProxyStub = v => v
  * belonging to its correspondent transformer.
  * @property {String} type - Name of the available {@link Transformers} to use to process the value.
  * @property {Boolean} [required=true] - Whether the property is or not required.
+ * @property {Boolean} [allowNull=false] - Whether the allow null values or not.
  * @property {Caster} [cast] - An (optional) additional caster
  * @property {Validator} [validate] - An (optional) additional validator
  * @property {(Function|*)} [default] - Default value when non-passed. Mind this will treat properties as `required=false`.
@@ -78,6 +79,7 @@ export class Schema {
   constructor (schema, { name, parent, validate, cast, settings = {} } = {}) {
     this._defaultSettings = {
       required: true,
+      allowNull: false,
       default: undefined
     }
 
@@ -361,6 +363,10 @@ export class Schema {
   }
 
   parseProperty (type, v) {
+    if (v === null && this.settings.allowNull) {
+      return v
+    }
+
     if (Array.isArray(type)) {
       let parsed = false
       let result

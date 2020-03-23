@@ -313,6 +313,25 @@ test(`Auto-casting`, t => {
   t.is(error.errors[1].field.fullPath, `kids`)
 })
 
+test(`Allowing null values`, t => {
+  /**
+   * Sometimes it is useful to allow a property to accept null values no matter what type it has.
+   * Property-setting `allowNull` allows you to do so.
+   */
+  const RegularSchema = new Schema({
+    type: String
+  })
+  const error = t.throws(() => RegularSchema.parse(null))
+  t.is(error.message, 'Invalid string')
+
+  const NullSchema = new Schema({
+    type: String,
+    // allowing null values!
+    allowNull: true
+  })
+  t.is(NullSchema.parse(null), null)
+})
+
 test(`Nesting schemas`, t => {
   /**
    * We can use a previously defined schema in order to extend the validation of other schemas.

@@ -383,6 +383,7 @@ belonging to its correspondent transformer.
 | --- | --- | --- | --- |
 | type | <code>String</code> |  | Name of the available [Transformers](#Transformers) to use to process the value. |
 | [required] | <code>Boolean</code> | <code>true</code> | Whether the property is or not required. |
+| [allowNull] | <code>Boolean</code> | <code>false</code> | Whether the allow null values or not. |
 | [cast] | [<code>Caster</code>](#Caster) |  | An (optional) additional caster |
 | [validate] | [<code>Validator</code>](#Validator) |  | An (optional) additional validator |
 | [default] | <code>function</code> \| <code>\*</code> |  | Default value when non-passed. Mind this will treat properties as `required=false`. When a function is given, its called using the schema of the property as its `this` object, receiving given value as first argument. Must return the desired default value. |
