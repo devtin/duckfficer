@@ -13,6 +13,7 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 - [Optional properties](/guide/README.md#optional-properties)
 - [Default values](/guide/README.md#default-values)
 - [Auto-casting](/guide/README.md#auto-casting)
+- [Allowing null values](/guide/README.md#allowing-null-values)
 - [Nesting schemas](/guide/README.md#nesting-schemas)
 - [Initial settings](/guide/README.md#initial-settings)
 - [Multiple types](/guide/README.md#multiple-types)
@@ -355,6 +356,28 @@ t.is(error.errors[0].message, `Invalid date`)
 t.is(error.errors[0].field.fullPath, `birthday`)
 t.is(error.errors[1].message, `Invalid number`)
 t.is(error.errors[1].field.fullPath, `kids`)
+```
+
+## Allowing null values
+
+
+
+Sometimes it is useful to allow a property to accept null values no matter what type it has.
+Property-setting `allowNull` allows you to do so.
+
+```js
+const RegularSchema = new Schema({
+  type: String
+})
+const error = t.throws(() => RegularSchema.parse(null))
+t.is(error.message, 'Invalid string')
+
+const NullSchema = new Schema({
+  type: String,
+  // allowing null values!
+  allowNull: true
+})
+t.is(NullSchema.parse(null), null)
 ```
 
 ## Nesting schemas
