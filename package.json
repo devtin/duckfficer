@@ -26,21 +26,21 @@
     "url": "https://github.com/devtin/schema-validator"
   },
   "scripts": {
-    "build": "yarn build:lib && yarn build:docs && yarn build:readme",
-    "build:wcoverage": "yarn build:lib && yarn coverage && yarn build:docs && yarn build:readme",
+    "build": "npm run build:lib && npm run build:docs && npm run build:readme",
+    "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:docs && npm run build:readme",
     "build:docs": "jsdoc2md --template build/template/DOCS.hbs --files dist/schema-validator.js > DOCS.md",
     "build:lib": "rollup -c && gzip -c dist/schema-validator.iife.js > dist/schema-validator.iife.js.gz",
-    "build:live": "nodemon -w src -w test --exec yarn build",
+    "build:live": "nodemon -w src -w test --exec npm run build",
     "build:readme": "node build/readme.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava --serial --verbose",
-    "test:unit": "yarn test src/**/*.unit.js",
+    "test:unit": "npm run test src/**/*.unit.js",
     "test:all": "NODE_ENV=test ava --serial --verbose",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
-    "prepublishOnly": "yarn lint && yarn build:wcoverage && echo 'Looks good for a release!'",
+    "prepublishOnly": "npm run lint && npm run build:wcoverage && echo 'Looks good for a release!'",
     "release": "standard-version -a --branch next",
     "postpublish": "git push && git push --tags",
-    "coverage": "nyc --reporter=json-summary --reporter=lcov yarn test:all"
+    "coverage": "nyc --reporter=json-summary --reporter=lcov npm run test:all"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
