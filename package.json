@@ -36,7 +36,7 @@
     "test": "NODE_ENV=test ava",
     "test:unit": "npm run test src/**/*.unit.js",
     "test:browser": "cp dist/schema-validator.iife.js sandbox/ && light-server -s sandbox -p 3000 -o",
-    "prepublishOnly": "npm run lint && npm run build:wcoverage && echo 'Looks good for a release!'",
+    "prepublishOnly": "npm run lint && npm run build:wcoverage && npm run test && echo 'Looks good for a release!'",
     "release": "standard-version -a --branch next",
     "postpublish": "git push && git push --tags",
     "coverage": "nyc --reporter=json-summary --reporter=lcov npm run test:all"
