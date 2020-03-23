@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/devtin/schema-validator/compare/v2.4.5...v2.5.0) (2020-03-23)
+
+
+### Features
+
+* Introducing property-setting allowNull ([cf5bac1](https://github.com/devtin/schema-validator/commit/cf5bac179788d10b1114bfbbf60c8e0fbe879dfc))
+
 ### [2.4.5](https://github.com/devtin/schema-validator/compare/v2.4.4...v2.4.5) (2020-03-09)
 
 ### [2.4.4](https://github.com/devtin/schema-validator/compare/v2.4.3...v2.4.4) (2020-03-09)
