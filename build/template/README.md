@@ -51,7 +51,7 @@ $ yarn add @devtin/schema-validator
 I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [js-docs](./DOCS.md)
 respectively.  
 
-Playing with this <a href="https://codepen.io/tin_r/pen/PoqwLMb" target="_blank">codepen</a> may also be helpful for a
+Playing with this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen</a> may also be helpful for a
 quick overview.
 
 * * *
