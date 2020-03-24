@@ -398,17 +398,17 @@ const AddressSchema = new Schema({
     required: false
   }
 }, {
-  name: 'AddressSchema'
+  name: 'AddressSchema',
+  settings: {
+    required: false
+  }
 })
 
 const UserSchema = new Schema({
   name: String,
   birthday: Date,
   // using an already defined schema in another schema's property
-  address: {
-    type: AddressSchema,
-    required: false
-  }
+  address: AddressSchema
 })
 
 const user = UserSchema.parse({
