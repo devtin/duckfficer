@@ -28,6 +28,6 @@ jobs:
         npm ci
     - name: publish package to npm registry
       run: |
-        npm publish --access public && git tag v$(node -p -e "require('./package.json').version") && git push --tags
+        npm publish --access public && git tag v$(node -p -e "require('./package.json').version")
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
