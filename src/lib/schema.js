@@ -152,7 +152,6 @@ export class Schema {
 
   _parseSchema (obj) {
     return Object.keys(obj).map((prop) => {
-      // console.log(`obj[${ prop }]`, /*obj[prop], */Schema.guessType(obj[prop]))
       if (Schema.guessType(obj[prop]) === 'Schema') {
         const schemaClone = Schema.cloneSchema({
           schema: Schema.castSchema(obj[prop]),
@@ -160,9 +159,6 @@ export class Schema {
           name: prop,
           parent: this
         })
-        // schemaClone.name = prop
-        // schemaClone.parent = this
-        // schemaClone.settings = this.settings
         return schemaClone
       }
       return new Schema(obj[prop], { name: prop, parent: this })
