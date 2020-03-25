@@ -237,6 +237,7 @@ Sets the environment up:
 | schema | [<code>TheSchema</code>](#Schema..TheSchema) |  |
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
+| [options.defaultValues] | <code>Object</code> | Default values to override the schema with |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
 | [options.cast] | [<code>Caster</code>](#Caster) | Schema caster |
 | [options.settings] | <code>Object</code> | Initial settings |

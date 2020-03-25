@@ -251,6 +251,38 @@ test(`Default values`, t => {
 
   t.deepEqual(Object.keys(Martin), ['name', 'registered'])
   t.true(Martin.registered instanceof Date)
+
+  /**
+   * Another useful way of passing default values is on the schema level using the option `defaultValues`.
+   */
+
+  const defaultValues = {
+    address: {
+      state: 'Florida',
+      zip: 33129
+    },
+    subscribe: true
+  }
+  const SomeSchema = new Schema({
+    name: String,
+    address: {
+      state: String,
+      zip: Number,
+      street: String
+    },
+    phoneNumber: Number,
+    subscribe: Boolean
+  }, { defaultValues })
+  const parsed = SomeSchema.parse({
+    name: 'Martin',
+    address: {
+      street: 'Brickell ave'
+    },
+    phoneNumber: 3051234567
+  })
+  t.is(parsed.address.state, 'Florida')
+  t.is(parsed.address.zip, 33129)
+  t.is(parsed.subscribe, true)
 })
 
 test(`Auto-casting`, t => {
