@@ -5,6 +5,7 @@ import { ValidationError } from './validation-error.js'
 import { forEach } from 'utils/for-each.js'
 import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
+import { find } from 'utils/find'
 
 const fnProxyStub = v => v
 
@@ -71,18 +72,13 @@ export class Schema {
    * @param {Schema~TheSchema} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
+   * @param {Object} [options.defaultValues] - Default values to override the schema with
    * @param {Schema} [options.parent]
    * @param {Caster} [options.cast] - Schema caster
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, parent, validate, cast, settings = {} } = {}) {
-    this._defaultSettings = {
-      required: true,
-      allowNull: false,
-      default: undefined
-    }
-
+  constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings
 
     this.schema = schema
@@ -96,6 +92,12 @@ export class Schema {
     this.type = Schema.guessType(schema)
     this.currentType = castArray(this.type)[0]
     this.children = []
+    this._defaultSettings = {
+      required: true,
+      allowNull: false,
+      default: undefined
+    }
+    this._defaultValues = defaultValues
 
     /**
      * @property {String} type - The schema type. Options vary according to available Transformers. Could be 'Schema'
@@ -113,6 +115,8 @@ export class Schema {
     if (this.settings.default !== undefined && this.settings.required) {
       throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
     }
+
+    this._defaultSettings.default = this.getDefault()
   }
 
   get hasChildren () {
@@ -226,11 +230,12 @@ export class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {} }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues = {} }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
       cloned: true,
+      _defaultValues: defaultValues,
       _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
     })
     if (clonedSchema.children) {
@@ -245,7 +250,7 @@ export class Schema {
   /**
    * Finds schema in given path
    * @param {String} pathName - Dot notation path
-   * @return {Schema~SchemaSettings}
+   * @return {Schema}
    */
   schemaAtPath (pathName) {
     const [path, rest] = pathName.split(/\./)
@@ -487,5 +492,15 @@ export class Schema {
 
   throwError (message, { errors, value } = {}) {
     throw new ValidationError(message, { errors, value, field: this })
+  }
+
+  getDefault (child) {
+    if (this.parent) {
+      return this.parent.getDefault(child ? `${ this.name }.${ child }` : this.name)
+    }
+
+    if (child) {
+      return find(this._defaultValues, child)
+    }
   }
 }
