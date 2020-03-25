@@ -68,6 +68,9 @@ test(`Validating arbitrary objects`, t => {
     middleName: 'Rafael',
     lastName: 'Gonzalez',
     birthday: `6/11/1983`,
+    address: {
+      zip: 305
+    },
     description: ['monkey', 'developer', 'arepa lover']
   }
 
@@ -84,11 +87,12 @@ test(`Validating arbitrary objects`, t => {
   t.true(error instanceof ValidationError)
   t.true(error instanceof Error)
   t.is(error.message, `Data is not valid`)
-  t.is(error.errors.length, 4)
+  t.is(error.errors.length, 5)
   t.is(error.errors[0].message, `Unknown property firstName`)
   t.is(error.errors[1].message, `Unknown property middleName`)
   t.is(error.errors[2].message, `Unknown property lastName`)
-  t.is(error.errors[3].message, `Property name is required`)
+  t.is(error.errors[3].message, `Unknown property address.zip`)
+  t.is(error.errors[4].message, `Property name is required`)
 })
 
 test(`Required properties`, t => {
