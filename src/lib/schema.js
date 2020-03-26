@@ -149,6 +149,9 @@ export class Schema {
   }
 
   static castSettings (obj) {
+    if (obj instanceof Schema) {
+      return obj.settings
+    }
     const settings = Object.assign({}, obj)
     delete settings.type
     return settings
