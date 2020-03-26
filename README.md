@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.1KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>  
 
@@ -34,14 +34,14 @@ for validating & sanitizing JavaScript data schemas.
   - [Transformers](/guide/TRANSFORMERS.md)
   - [Hooks](/guide/README.md#hooks)
   - [Loaders](/guide/README.md#loaders)
-- [JS-Docs](/DOCS.md)
+- [API](/DOCS.md)
 - [License](#license) (MIT)
 
 ## About
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~3.1KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Installation
 
@@ -97,7 +97,7 @@ try {
 
 ## Further reading
 
-I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [js-docs](./DOCS.md)
+I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [API](./DOCS.md) documentation
 respectively.  
 
 Playing with this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen</a> may also be helpful for a
