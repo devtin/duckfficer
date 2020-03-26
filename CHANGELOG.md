@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/devtin/schema-validator/compare/v2.4.6...v2.6.0) (2020-03-26)
+
+
+### Features
+
+* Introducing defaultValues ([aad7c5d](https://github.com/devtin/schema-validator/commit/aad7c5dcd9fb8ece64dea7ff7159daead2d6920e))
+* Introducing property-setting allowNull ([cb2f88f](https://github.com/devtin/schema-validator/commit/cb2f88f9390946da73dd26ee7c285008587b8a4c))
+
+
+### Bug Fixes
+
+* local cast runs before transformer cast ([f8cb15d](https://github.com/devtin/schema-validator/commit/f8cb15d93ef02a1d7a097564c79272b59c7fed34))
+* nested schemas maximum call stack size exceeded error ([f7b0da9](https://github.com/devtin/schema-validator/commit/f7b0da9f389f72708c6104a437192667400b65b3))
+
 ## [2.5.0](https://github.com/devtin/schema-validator/compare/v2.4.5...v2.5.0) (2020-03-23)
 
 
