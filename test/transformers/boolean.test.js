@@ -55,7 +55,13 @@ test('autoCast (default `false`)', t => {
     active: {
       type: Boolean,
       default: false,
-      autoCast: true // has to be enabled
+      autoCast: true, // has to be enabled
+      cast (v) {
+        if (typeof v === 'string' && /no/i.test(v)) {
+          return false
+        }
+        return v
+      }
     }
   })
 
@@ -68,4 +74,6 @@ test('autoCast (default `false`)', t => {
   })
 
   t.true(product.active)
+
+  t.false(ProductType.parse({ name: 'kombucha', active: 'no' }).active)
 })
