@@ -418,12 +418,12 @@ export class Schema {
       v = this.processLoaders(v, transformer.loaders)
     }
 
+    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v })
+
     // run transformer caster
     if (this.settings.autoCast) {
       v = this.runTransformer({ method: 'cast', transformer, payload: v })
     }
-
-    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v })
 
     // run transformer validator
     this.runTransformer({ method: 'validate', transformer, payload: v })
