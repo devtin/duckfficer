@@ -205,8 +205,6 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
   return valid
 }
 
-
-
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   castArray: castArray,
@@ -670,21 +668,16 @@ class Schema {
    * @description Sets the environment up:
    * - Stores the schema locally
    * - Guesses the type of the schema
-   * @param {Schema~TheSchema} schema
+   * @param {Schema~TheSchema|Object} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
+   * @param {Object} [options.defaultValues] - Default values to override the schema with
    * @param {Schema} [options.parent]
    * @param {Caster} [options.cast] - Schema caster
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, parent, validate, cast, settings = {} } = {}) {
-    this._defaultSettings = {
-      required: true,
-      allowNull: false,
-      default: undefined
-    };
-
+  constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings;
 
     this.schema = schema;
@@ -698,6 +691,12 @@ class Schema {
     this.type = Schema.guessType(schema);
     this.currentType = castArray(this.type)[0];
     this.children = [];
+    this._defaultSettings = {
+      required: true,
+      allowNull: false,
+      default: undefined
+    };
+    this._defaultValues = defaultValues;
 
     /**
      * @property {String} type - The schema type. Options vary according to available Transformers. Could be 'Schema'
@@ -715,6 +714,8 @@ class Schema {
     if (this.settings.default !== undefined && this.settings.required) {
       throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
     }
+
+    this._defaultSettings.default = this.getDefault();
   }
 
   get hasChildren () {
@@ -747,6 +748,9 @@ class Schema {
   }
 
   static castSettings (obj) {
+    if (obj instanceof Schema) {
+      return obj.settings
+    }
     const settings = Object.assign({}, obj);
     delete settings.type;
     return settings
@@ -754,7 +758,6 @@ class Schema {
 
   _parseSchema (obj) {
     return Object.keys(obj).map((prop) => {
-      // console.log(`obj[${ prop }]`, /*obj[prop], */Schema.guessType(obj[prop]))
       if (Schema.guessType(obj[prop]) === 'Schema') {
         const schemaClone = Schema.cloneSchema({
           schema: Schema.castSchema(obj[prop]),
@@ -762,9 +765,6 @@ class Schema {
           name: prop,
           parent: this
         });
-        // schemaClone.name = prop
-        // schemaClone.parent = this
-        // schemaClone.settings = this.settings
         return schemaClone
       }
       return new Schema(obj[prop], { name: prop, parent: this })
@@ -832,11 +832,12 @@ class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {} }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues = {} }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
       cloned: true,
+      _defaultValues: defaultValues,
       _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
     });
     if (clonedSchema.children) {
@@ -851,7 +852,7 @@ class Schema {
   /**
    * Finds schema in given path
    * @param {String} pathName - Dot notation path
-   * @return {Schema~SchemaSettings}
+   * @return {Schema}
    */
   schemaAtPath (pathName) {
     const [path, rest] = pathName.split(/\./);
@@ -1016,12 +1017,12 @@ class Schema {
       v = this.processLoaders(v, transformer.loaders);
     }
 
+    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v });
+
     // run transformer caster
     if (this.settings.autoCast) {
       v = this.runTransformer({ method: 'cast', transformer, payload: v });
     }
-
-    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v });
 
     // run transformer validator
     this.runTransformer({ method: 'validate', transformer, payload: v });
@@ -1093,6 +1094,16 @@ class Schema {
 
   throwError (message, { errors, value } = {}) {
     throw new ValidationError(message, { errors, value, field: this })
+  }
+
+  getDefault (child) {
+    if (this.parent) {
+      return this.parent.getDefault(child ? `${ this.name }.${ child }` : this.name)
+    }
+
+    if (child) {
+      return find(this._defaultValues, child)
+    }
   }
 }
 
