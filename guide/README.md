@@ -538,9 +538,11 @@ t.is(error.errors[0].field.fullPath, `picture`)
 - [Schema.parse](/DOCS.md#Schema+parse)
   - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
   - apply specified [transformer](/DOCS.md#Transformers)
-  - runs [cast](/DOCS.md#Caster) hook
-  - runs [validate](/DOCS.md#Validator) hook
-  - runs [parse](/DOCS.md#Parser) hook 
+  - runs local [cast](/DOCS.md#Caster) hook
+  - runs transformer [cast](/DOCS.md#Caster) hook
+  - runs transformer [validate](/DOCS.md#Validator) hook
+  - runs local [validate](/DOCS.md#Validator) hook
+  - runs transformer [parse](/DOCS.md#Parser) hook 
 
 ## Transformers
 
