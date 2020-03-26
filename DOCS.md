@@ -211,7 +211,7 @@ Orchestrates the validation of a data schema
     * [new Schema(schema, [options])](#new_Schema_new)
     * _instance_
         * [.paths](#Schema+paths)
-        * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>SchemaSettings</code>](#Schema..SchemaSettings)
+        * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>Schema</code>](#Schema)
         * [.hasField(fieldName)](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
         * [.parse([v])](#Schema+parse) ⇒ <code>Object</code>
@@ -255,7 +255,7 @@ Sets the environment up:
 
 <a name="Schema+schemaAtPath"></a>
 
-### schema.schemaAtPath(pathName) ⇒ [<code>SchemaSettings</code>](#Schema..SchemaSettings)
+### schema.schemaAtPath(pathName) ⇒ [<code>Schema</code>](#Schema)
 Finds schema in given path
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
