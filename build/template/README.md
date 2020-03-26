@@ -22,7 +22,7 @@ for validating & sanitizing JavaScript data schemas.
   {{ #index }}
   {{{ . }}}
   {{ /index }}
-- [JS-Docs](/DOCS.md)
+- [API](/DOCS.md)
 - [License](#license) (MIT)
 
 ## About
@@ -48,7 +48,7 @@ $ yarn add @devtin/schema-validator
 
 ## Further reading
 
-I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [js-docs](./DOCS.md)
+I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [API](./DOCS.md) documentation
 respectively.  
 
 Playing with this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen</a> may also be helpful for a
