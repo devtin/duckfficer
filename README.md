@@ -16,6 +16,8 @@ for validating & sanitizing JavaScript data schemas.
 
 ## Content
 
+[![Join the chat at https://gitter.im/schema-validator/community](https://badges.gitter.im/schema-validator/community.svg)](https://gitter.im/schema-validator/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 - [About](#about)
 - [Installation](#installation)
 - [At-a-glance](#at-a-glance)
