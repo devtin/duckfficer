@@ -1,5 +1,6 @@
 import { obj2dot } from './obj-2-dot.js'
 import { find } from './find.js'
+import { escapeRegExp } from 'utils/escape-regex.js'
 
 /**
  * @method Utils~render
@@ -23,7 +24,7 @@ import { find } from './find.js'
 export function render (template, obj) {
   const objProps = obj2dot(obj)
   objProps.forEach(prop => {
-    template = template.replace(new RegExp(`{[\\s]*${ prop }[\\s]*}`, 'g'), find(obj, prop))
+    template = template.replace(new RegExp(`{[\\s]*${ prop.split('.').map(escapeRegExp).join('.') }[\\s]*}`, 'g'), find(obj, prop))
   })
   return template
 }

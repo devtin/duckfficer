@@ -257,7 +257,7 @@ export class Schema {
   /**
    * Finds schema in given path
    * @param {String} pathName - Dot notation path
-   * @return {Schema}
+   * @return {Schema|Schema[]}
    */
   schemaAtPath (pathName) {
     const [path, rest] = pathName.split(/\./)
@@ -469,8 +469,11 @@ export class Schema {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/))
       const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined
 
-      sandbox(() => {
-        const val = schema[method](input)
+      sandbox(() => {/*
+        if (!schema[method]) {
+          console.log(method, `not found in ${ pathName }`, schema)
+        }*/
+        const val = schema[method] ? schema[method](input) : undefined
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })
         }
