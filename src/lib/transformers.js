@@ -207,12 +207,37 @@ export const Transformers = {
    * @constant {Transformer} Transformers.Object
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid object] - Default error message thrown
+   * @property {String|Schema} [settings.mapSchema] - When available, parses given object's properties with the given
+   * schema or transformer.
    * @property {Validator} validate - Confirms given value is an object
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
    */
   Object: {
     settings: {
       typeError: `Invalid object`
+    },
+    parse (value) {
+      if (this.settings.mapSchema !== undefined) {
+        Object.keys(value).forEach(name => {
+          const obj = value[name]
+          const schema = this.constructor.castSchema(this.settings.mapSchema)
+          const parser = this.constructor.guessType(schema) === 'Schema'
+            ? this.constructor.cloneSchema({
+              schema,
+              name,
+              settings: schema.settings,
+              parent: this
+            })
+            : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
+              name,
+              parent: this
+            }))
+
+          value[name] = parser.parse(obj)
+        })
+      }
+
+      return value
     },
     validate (value) {
       if (typeof value !== 'object') {

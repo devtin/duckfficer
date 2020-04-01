@@ -522,6 +522,7 @@ key map object that holds the available Transformer's (types) that can be valida
 | --- | --- | --- | --- |
 | settings | <code>Object</code> |  | Default transformer settings |
 | [settings.typeError] | <code>String</code> | <code>Invalid object</code> | Default error message thrown |
+| [settings.mapSchema] | <code>String</code> \| [<code>Schema</code>](#Schema) |  | When available, parses given object's properties with the given schema or transformer. |
 | validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
 
 <a name="Transformers.Promise"></a>
