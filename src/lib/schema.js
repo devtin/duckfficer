@@ -69,7 +69,7 @@ export class Schema {
    * @description Sets the environment up:
    * - Stores the schema locally
    * - Guesses the type of the schema
-   * @param {Schema~TheSchema|Object} schema
+   * @param {Schema~TheSchema|Object|Array} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Object} [options.defaultValues] - Default values to override the schema with
@@ -80,6 +80,10 @@ export class Schema {
    */
   constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings
+
+    if (Array.isArray(schema) && schema.length === 1) {
+      schema = schema[0]
+    }
 
     this.schema = schema
     this.parent = parent

@@ -234,7 +234,7 @@ Sets the environment up:
 
 | Param | Type | Description |
 | --- | --- | --- |
-| schema | [<code>TheSchema</code>](#Schema..TheSchema) \| <code>Object</code> |  |
+| schema | [<code>TheSchema</code>](#Schema..TheSchema) \| <code>Object</code> \| <code>Array</code> |  |
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.defaultValues] | <code>Object</code> | Default values to override the schema with |
