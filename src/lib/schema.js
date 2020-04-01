@@ -237,13 +237,13 @@ export class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues = {} }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
       cloned: true,
-      _defaultValues: defaultValues,
-      _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
+      _defaultValues: defaultValues || schema._defaulValues,
+      _settings: Object.assign({}, schema._settings, settings)
     })
     if (clonedSchema.children) {
       clonedSchema.children = clonedSchema.children.map(theSchema => Schema.cloneSchema({
