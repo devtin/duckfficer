@@ -57,10 +57,17 @@ export const Transformers = {
     parse (value) {
       if (this.settings.arraySchema) {
         value = value.map((value, name) => {
-          return (new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
+          const schema = this.constructor.castSchema(this.settings.arraySchema)
+          const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
+            schema,
+            name,
+            parent: this,
+            settings: schema.settings,
+          }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
             name,
             parent: this
-          }))).parse(value)
+          }))
+          return parser.parse(value)
         })
       }
       return value
