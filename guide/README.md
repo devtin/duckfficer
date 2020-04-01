@@ -528,7 +528,7 @@ t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`th
 
 const error = t.throws(() => UserSchema.parse({ picture: `some pic` }))
 t.is(error.message, `Data is not valid`)
-t.is(error.errors[0].message, `Could not resolve given value type`)
+t.is(error.errors[0].message, `Could not resolve given value type in property picture. Allowed types are Function and Promise`)
 t.is(error.errors[0].field.fullPath, `picture`)
 ```
 

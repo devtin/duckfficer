@@ -767,7 +767,7 @@ let error = t.throws(() => customTransformer.parse({
 }))
 
 t.is(error.message, `Data is not valid`)
-t.is(error.errors[0].message, `Don't know how to resolve Email`)
+t.is(error.errors[0].message, `Don't know how to resolve Email in property email`)
 ```
 
 Creating a custom transformer is as simple as appending the logic into the Transformers object

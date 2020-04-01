@@ -299,7 +299,11 @@ export class Schema {
           }
         })
       }
-      throw new ValidationError(`Invalid object schema`, { errors: unknownFields, value: obj })
+      throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
+        errors: unknownFields,
+        value: obj,
+        field: this
+      })
     }
   }
 
@@ -382,14 +386,14 @@ export class Schema {
         }
       })
       if (!parsed) {
-        this.throwError(`Could not resolve given value type`)
+        this.throwError(`Could not resolve given value type in property ${ this.fullPath }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v })
       }
       return result
     }
     const transformer = Transformers[type]
 
     if (!transformer) {
-      this.throwError(`Don't know how to resolve ${ type }`)
+      this.throwError(`Don't know how to resolve ${ type } in property ${ this.fullPath }`, { value: v })
     }
 
     if (this.settings.default !== undefined && v === undefined) {

@@ -252,7 +252,7 @@ test(`Handles custom data-types`, t => {
   }))
 
   t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Don't know how to resolve Email`)
+  t.is(error.errors[0].message, `Don't know how to resolve Email in property email`)
 
   // Registers a new custom type
   Transformers.Email = {
