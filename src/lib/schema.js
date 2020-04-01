@@ -287,7 +287,6 @@ export class Schema {
    * @throws {Schema~ValidationError}
    */
   structureValidation (obj) {
-    // console.log(`structureValidation`, this.name, this.ownPaths, propertiesRestricted(obj, this.ownPaths), this.type)
     if (!obj || !this.hasChildren) {
       return true
     }

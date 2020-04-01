@@ -475,7 +475,6 @@ const product = Transaction.parse({
 
 t.is(product.payload, payload) // remains untouched
 
-
 const error = t.throws(() => Transaction.parse({
   payload: 'none'
 }))
