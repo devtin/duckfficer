@@ -67,4 +67,36 @@ test(`arraySchema`, t => {
   t.is(error.message, `Data is not valid`)
   t.is(error.errors[0].message, 'Invalid date')
   t.is(error.errors[0].field.fullPath, 'lastAccess.1')
+
+  /**
+   * You can also use custom schemas
+   */
+  const Email = new Schema({
+    type: String,
+    regex: [/^[a-z0-9._]+@[a-z0-9-.]+\.[a-z]{2,}$/i, 'Invalid e-mail address { value }']
+  })
+
+  const Contact = new Schema({
+    name: String,
+    emails: {
+      type: Array,
+      arraySchema: {
+        type: Email
+      }
+    }
+  })
+
+  const error2 = t.throws(() => Contact.parse({
+    name: 'Martin',
+    emails: ['tin@devtin.io', 'gmail.com']
+  }))
+
+  t.is(error2.message, 'Data is not valid')
+  t.is(error2.errors[0].message, 'Invalid e-mail address gmail.com')
+  t.is(error2.errors[0].field.fullPath, `emails.1`)
+
+  t.notThrows(() => Contact.parse({
+    name: 'Martin',
+    emails: ['tin@devtin.io', 'martin@gmail.com']
+  }))
 })
