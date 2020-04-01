@@ -212,7 +212,7 @@ Orchestrates the validation of a data schema
     * _instance_
         * [.paths](#Schema+paths)
         * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>Schema</code>](#Schema)
-        * [.hasField(fieldName)](#Schema+hasField) ⇒ <code>Boolean</code>
+        * [.hasField(fieldName, [deep])](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
         * [.parse([v])](#Schema+parse) ⇒ <code>Object</code>
         * [.processLoaders(v, loaders)](#Schema+processLoaders) ⇒ <code>\*</code>
@@ -266,14 +266,15 @@ Finds schema in given path
 
 <a name="Schema+hasField"></a>
 
-### schema.hasField(fieldName) ⇒ <code>Boolean</code>
+### schema.hasField(fieldName, [deep]) ⇒ <code>Boolean</code>
 Checks whether the schema contains given fieldName
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 
-| Param |
-| --- |
-| fieldName | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| fieldName |  |  |  |
+| [deep] | <code>Boolean</code> | <code>false</code> | whether to validate the path deeply |
 
 <a name="Schema+structureValidation"></a>
 

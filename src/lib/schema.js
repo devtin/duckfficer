@@ -279,10 +279,11 @@ export class Schema {
   /**
    * Checks whether the schema contains given fieldName
    * @param fieldName
+   * @param {Boolean} [deep=false] - whether to validate the path deeply
    * @return {Boolean}
    */
-  hasField (fieldName) {
-    return this.paths.indexOf(fieldName) >= 0
+  hasField (fieldName, deep = false) {
+    return this.paths.indexOf(deep ? fieldName : fieldName.replace(/\..*$/, '')) >= 0
   }
 
   /**
