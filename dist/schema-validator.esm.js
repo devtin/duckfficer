@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v2.6.0
+ * @devtin/schema-validator v2.7.0
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -302,10 +302,17 @@ const Transformers = {
     parse (value) {
       if (this.settings.arraySchema) {
         value = value.map((value, name) => {
-          return (new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
+          const schema = this.constructor.castSchema(this.settings.arraySchema);
+          const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
+            schema,
+            name,
+            parent: this,
+            settings: schema.settings,
+          }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
             name,
             parent: this
-          }))).parse(value)
+          }));
+          return parser.parse(value)
         });
       }
       return value
@@ -445,12 +452,37 @@ const Transformers = {
    * @constant {Transformer} Transformers.Object
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid object] - Default error message thrown
+   * @property {String|Schema} [settings.mapSchema] - When available, parses given object's properties with the given
+   * schema or transformer.
    * @property {Validator} validate - Confirms given value is an object
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
    */
   Object: {
     settings: {
       typeError: `Invalid object`
+    },
+    parse (value) {
+      if (this.settings.mapSchema !== undefined) {
+        Object.keys(value).forEach(name => {
+          const obj = value[name];
+          const schema = this.constructor.castSchema(this.settings.mapSchema);
+          const parser = this.constructor.guessType(schema) === 'Schema'
+            ? this.constructor.cloneSchema({
+              schema,
+              name,
+              settings: schema.settings,
+              parent: this
+            })
+            : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
+              name,
+              parent: this
+            }));
+
+          value[name] = parser.parse(obj);
+        });
+      }
+
+      return value
     },
     validate (value) {
       if (typeof value !== 'object') {
@@ -587,6 +619,14 @@ const Transformers = {
 };
 
 /**
+ * @typedef {Object} PlainValidationError
+ * @property {String} message
+ * @property {*} value
+ * @property {String} [field]
+ * @private
+ */
+
+/**
  * @class Schema~ValidationError
  * @classdesc Thrown by {@link Schema}
  * @property {*} value - Given value
@@ -599,6 +639,23 @@ class ValidationError extends Error {
     this.errors = errors;
     this.value = value;
     this.field = field;
+  }
+
+  /**
+   * @return {PlainValidationError}
+   */
+  toJSON () {
+    const { message, value } = this;
+    const res = {
+      message,
+      value
+    };
+    if (this.field) {
+      Object.assign(res, {
+        field: this.field.fullPath
+      });
+    }
+    return res
   }
 }
 
@@ -664,7 +721,7 @@ class Schema {
    * @description Sets the environment up:
    * - Stores the schema locally
    * - Guesses the type of the schema
-   * @param {Schema~TheSchema|Object} schema
+   * @param {Schema~TheSchema|Object|Array} schema
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Object} [options.defaultValues] - Default values to override the schema with
@@ -675,6 +732,10 @@ class Schema {
    */
   constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings;
+
+    if (Array.isArray(schema) && schema.length === 1) {
+      schema = schema[0];
+    }
 
     this.schema = schema;
     this.parent = parent;
@@ -828,13 +889,13 @@ class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues = {} }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
       parent,
       cloned: true,
-      _defaultValues: defaultValues,
-      _settings: Object.assign({}, /*parent ? parent._settings : {}, */settings)
+      _defaultValues: defaultValues || schema._defaulValues,
+      _settings: Object.assign({}, schema._settings, settings)
     });
     if (clonedSchema.children) {
       clonedSchema.children = clonedSchema.children.map(theSchema => Schema.cloneSchema({
@@ -870,10 +931,11 @@ class Schema {
   /**
    * Checks whether the schema contains given fieldName
    * @param fieldName
+   * @param {Boolean} [deep=false] - whether to validate the path deeply
    * @return {Boolean}
    */
-  hasField (fieldName) {
-    return this.paths.indexOf(fieldName) >= 0
+  hasField (fieldName, deep = false) {
+    return this.paths.indexOf(deep ? fieldName : fieldName.replace(/\..*$/, '')) >= 0
   }
 
   /**
@@ -882,7 +944,6 @@ class Schema {
    * @throws {Schema~ValidationError}
    */
   structureValidation (obj) {
-    // console.log(`structureValidation`, this.name, this.ownPaths, propertiesRestricted(obj, this.ownPaths), this.type)
     if (!obj || !this.hasChildren) {
       return true
     }
@@ -895,7 +956,11 @@ class Schema {
           }
         });
       }
-      throw new ValidationError(`Invalid object schema`, { errors: unknownFields, value: obj })
+      throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
+        errors: unknownFields,
+        value: obj,
+        field: this
+      })
     }
   }
 
@@ -906,6 +971,9 @@ class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v) {
+    // schema-level casting
+    v = this.cast.call(this, v);
+
     if (this.hasChildren) {
       v = this.runChildren(v);
     } else {
@@ -920,13 +988,8 @@ class Schema {
        */
     }
 
-    // perform property-level hooks
-    if (!this.parent) {
-      // final casting / validation (schema-level)
-      v = this.cast.call(this, v);
-      this.validate.call(this, v);
-    }
-
+    // schema-level validation
+    this.validate.call(this, v);
     return v
   }
 
@@ -980,14 +1043,14 @@ class Schema {
         }
       });
       if (!parsed) {
-        this.throwError(`Could not resolve given value type`);
+        this.throwError(`Could not resolve given value type in property ${ this.fullPath }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v });
       }
       return result
     }
     const transformer = Transformers[type];
 
     if (!transformer) {
-      this.throwError(`Don't know how to resolve ${ type }`);
+      this.throwError(`Don't know how to resolve ${ type } in property ${ this.fullPath }`, { value: v });
     }
 
     if (this.settings.default !== undefined && v === undefined) {
