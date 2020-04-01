@@ -310,6 +310,9 @@ export class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v) {
+    // schema-level casting
+    v = this.cast.call(this, v)
+
     if (this.hasChildren) {
       v = this.runChildren(v)
     } else {
@@ -324,13 +327,8 @@ export class Schema {
        */
     }
 
-    // perform property-level hooks
-    if (!this.parent) {
-      // final casting / validation (schema-level)
-      v = this.cast.call(this, v)
-      this.validate.call(this, v)
-    }
-
+    // schema-level validation
+    this.validate.call(this, v)
     return v
   }
 
