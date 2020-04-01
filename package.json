@@ -88,7 +88,7 @@
   "standard-version": {
     "scripts": {
       "prerelease": "npm run lint && npm run build:wcoverage && npm run test",
-      "precommit": "git add -f coverage dist"
+      "precommit": "npm run build && git add -f coverage dist"
     }
   }
 }
