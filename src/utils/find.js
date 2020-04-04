@@ -22,8 +22,8 @@
  * ```
  */
 export function find (obj, path) {
-  const [prop, paths] = path.split(/\./)
-  if (paths && typeof obj[prop] === 'object') {
+  const [prop, ...paths] = Array.isArray(path) ? path : path.split('.')
+  if (paths.length > 0 && typeof obj[prop] === 'object') {
     return find(obj[prop], paths)
   }
   return obj[prop]

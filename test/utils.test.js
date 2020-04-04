@@ -36,6 +36,14 @@ test(`Finds in an object by path`, t => {
       line1: 'Brickell Ave'
     }
   }, 'address.line1'), 'Brickell Ave')
+
+  t.is(Utils.find({
+    address: {
+      zip: {
+        $gt: 33120
+      }
+    }
+  }, 'address.zip.$gt'), 33120)
 })
 
 test(`Renders handlebars kind-of templates`, t => {
@@ -86,14 +94,14 @@ test(`Resolves schema at given path`, t => {
   })
 
   const ClonedAddressSchema = UserSchema.schemaAtPath('address')
-  t.true(ClonedAddressSchema instanceof  Schema)
+  t.true(ClonedAddressSchema instanceof Schema)
   t.deepEqual(ClonedAddressSchema.paths, ['address.street', 'address.zip'])
 
   const BirthdaySchema = UserSchema.schemaAtPath('birthday')
-  t.true(BirthdaySchema instanceof  Schema)
+  t.true(BirthdaySchema instanceof Schema)
   t.deepEqual(BirthdaySchema.paths, ['birthday'])
 
   const AddressZipSchema = UserSchema.schemaAtPath('address.zip')
-  t.true(AddressZipSchema instanceof  Schema)
+  t.true(AddressZipSchema instanceof Schema)
   t.deepEqual(AddressZipSchema.paths, ['zip'])
 })
