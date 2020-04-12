@@ -3,6 +3,8 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @typedef {Function} Validator
  * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
  * @param {*} value - The value being validated
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {void}
  * @throws Schema~ValidationError
  */
@@ -12,6 +14,8 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @desc Synchronous function that performs custom logic possibly customized via settings that could transform given
  * value, throwing a {Schema~ValidationError} when error.
  * @param {*} value - The value being validated
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {*} Resulting value
  * @throws Schema~ValidationError
  */
@@ -21,6 +25,8 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @desc Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
  * original value in case it could not be guessed.
  * @param {*} value - The value being casted
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {*} Resulting value
  */
 

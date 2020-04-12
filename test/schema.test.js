@@ -40,6 +40,69 @@ test(`Validates schemas`, async t => {
   t.is(error.errors[2].field.fullPath, `description`)
 })
 
+test(`Using a state for validation`, t => {
+  /**
+   * A state can be used to extend the validation process of a data object
+   */
+  const UserSchema = new Schema({
+    name: String,
+    email: {
+      type: String,
+      required: false
+    },
+    level: {
+      type: String,
+      validate (v, { state }) {
+        if (v === 'admin' && !state?.user) {
+          this.throwError(`Only authenticated users can set the level to admin`)
+        }
+      }
+    }
+  }, {
+    validate (v, { state }) {
+      if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
+        this.throwError(`Admin users require an email`)
+      }
+    }
+  })
+
+  const error = t.throws(() => UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }))
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
+  t.is(error.errors[0].field.fullPath, 'level')
+
+  const error2 = t.throws(() => UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }, {
+    state: {
+      user: {
+        name: 'system',
+        level: 'admin'
+      }
+    }
+  }))
+
+  t.is(error2.message, 'Admin users require an email')
+
+  t.notThrows(() => {
+    return UserSchema.parse({
+      name: `Martin Rafael Gonzalez`,
+      level: 'admin'
+    }, {
+      state: {
+        user: {
+          name: 'system',
+          level: 'root'
+        }
+      }
+    })
+  })
+})
+
 test('Default value helper', async t => {
   const quantityValidator = new Schema({
     name: 'quantity',
@@ -58,6 +121,34 @@ test('Default value helper (function)', t => {
   })
 
   t.true(quantityValidator.parse() instanceof Date)
+
+  /**
+   * You can also access the state passed via the `parse` method through the default function
+   */
+
+  const user = new Schema({
+    username: String,
+    level: {
+      type: String,
+      default ({ state }) {
+        return state?.user?.level || 'user'
+      }
+    }
+  })
+
+  t.is(user.parse({
+    username: 'devtin'
+  }).level, 'user')
+
+  t.is(user.parse({
+    username: 'devtin'
+  }, {
+    state: {
+      user: {
+        level: 'admin'
+      }
+    }
+  }).level, 'admin')
 })
 
 /**

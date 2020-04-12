@@ -315,18 +315,20 @@ export class Schema {
   /**
    * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
+   * @param {Object} [options]
+   * @param {Object} [options.state] - State to pass through the lifecycle
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v) {
+  parse (v, { state = {} } = {}) {
     // schema-level casting
-    v = this.cast.call(this, v)
+    v = this.cast.call(this, v, { state })
 
     if (this.hasChildren) {
-      v = this.runChildren(v)
+      v = this.runChildren(v, { state })
     } else {
       // console.log(this)
-      v = this.parseProperty(this.type, v)
+      v = this.parseProperty(this.type, v, { state })
 
       /*
       Value here would be:
@@ -337,7 +339,7 @@ export class Schema {
     }
 
     // schema-level validation
-    this.validate.call(this, v)
+    this.validate.call(this, v, { state })
     return v
   }
 
@@ -345,9 +347,10 @@ export class Schema {
    *
    * @param {*} v
    * @param {Schema~SchemaSettings[]} loaders
+   * @param {*} state
    * @return {*}
    */
-  processLoaders (v, loaders) {
+  processLoaders (v, { loaders, state }) {
     // throw new Error(`uya!`)
     forEach(castArray(loaders), loaderSchema => {
       // console.log({ loaderSchema })
@@ -366,13 +369,13 @@ export class Schema {
         })
       }
 
-      v = clone.parseProperty(type, v)
+      v = clone.parseProperty(type, v, { state })
     })
 
     return v
   }
 
-  parseProperty (type, v) {
+  parseProperty (type, v, { state = {} } = {}) {
     if (v === null && this.settings.allowNull) {
       return v
     }
@@ -383,7 +386,7 @@ export class Schema {
       forEach(type, t => {
         try {
           this.currentType = t
-          result = this.parseProperty(t, v)
+          result = this.parseProperty(t, v, { state })
           parsed = true
           return false
         } catch (err) {
@@ -402,7 +405,7 @@ export class Schema {
     }
 
     if (this.settings.default !== undefined && v === undefined) {
-      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, v) : this.settings.default
+      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, { state }) : this.settings.default
     }
 
     if (v === undefined && !this.settings.required) {
@@ -416,30 +419,30 @@ export class Schema {
 
     // run user-level loaders (inception transformers)
     if (this.settings.loaders) {
-      v = this.processLoaders(v, this.settings.loaders) // infinite loop
+      v = this.processLoaders(v, { loaders: this.settings.loaders, state }) // infinite loop
     }
 
     // run transformer-level loaders
     if (transformer.loaders) {
-      v = this.processLoaders(v, transformer.loaders)
+      v = this.processLoaders(v, { loaders: transformer.loaders, state })
     }
 
-    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v })
+    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v, state })
 
     // run transformer caster
     if (this.settings.autoCast) {
-      v = this.runTransformer({ method: 'cast', transformer, payload: v })
+      v = this.runTransformer({ method: 'cast', transformer, payload: v, state })
     }
 
     // run transformer validator
-    this.runTransformer({ method: 'validate', transformer, payload: v })
-    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v })
+    this.runTransformer({ method: 'validate', transformer, payload: v, state })
+    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v, state })
 
     // run transformer parser
-    return this.runTransformer({ method: 'parse', transformer, payload: v })
+    return this.runTransformer({ method: 'parse', transformer, payload: v, state })
   }
 
-  runChildren (obj, { method = 'parse' } = {}) {
+  runChildren (obj, { method = 'parse', state = {} } = {}) {
     if (!this.settings.required && obj === undefined) {
       return
     }
@@ -473,7 +476,7 @@ export class Schema {
         if (!schema[method]) {
           console.log(method, `not found in ${ pathName }`, schema)
         }*/
-        const val = schema[method] ? schema[method](input) : undefined
+        const val = schema[method] ? schema[method](input, { state }) : undefined
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })
         }
@@ -491,15 +494,17 @@ export class Schema {
    * Runs given method found in transformer
    * @param method
    * @param transformer
-   * @param payload
+   * @param {Object} [options]
+   * @param {*} payload
+   * @param {Object} [state]
    * @return {*}
    */
-  runTransformer ({ method, transformer, payload }) {
+  runTransformer ({ method, transformer, payload, state = {} }) {
     if (!transformer[method]) {
       return payload
     }
 
-    return transformer[method].call(this, payload)
+    return transformer[method].call(this, payload, { state })
   }
 
   throwError (message, { errors, value } = {}) {
