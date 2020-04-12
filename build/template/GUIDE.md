@@ -29,15 +29,6 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 
 Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
 
-## Hooks
-
-Hooks extend the schema functionality by allowing to compute custom logic
-during different points of the parsing lifecycle.
-
-{{ #hooks }}
-{{{ . }}}
-{{ /hooks }}
-
 {{ #loaders }}
 {{{ . }}}
 {{ /loaders }}
