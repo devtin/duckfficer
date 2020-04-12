@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/devtin/schema-validator/compare/v2.4.6...v2.8.0) (2020-04-12)
+
+
+### Features
+
+* Introducing state for advanced validation ([7b7f3e0](https://github.com/devtin/schema-validator/commit/7b7f3e06223584ac3f03866b5e40571a07ec0bca))
+* **object-transformer:** Introducing mapSchema ([442e524](https://github.com/devtin/schema-validator/commit/442e524a2e972d0cc77ebe8541cc9b26d24bee51))
+* **ValidationError:** add toJSON method ([aa232d6](https://github.com/devtin/schema-validator/commit/aa232d642234c06c76e08aeb4b407010acfa6b4c))
+* Introducing defaultValues ([e290cbd](https://github.com/devtin/schema-validator/commit/e290cbd4e7d9f6383b0cf4b48bb2262308ccf54e))
+* Introducing property-setting allowNull ([cb2f88f](https://github.com/devtin/schema-validator/commit/cb2f88f9390946da73dd26ee7c285008587b8a4c))
+
+
+### Bug Fixes
+
+* release message ([c89ffa0](https://github.com/devtin/schema-validator/commit/c89ffa0e46dedd20a9024657a624ec2183bca86b))
+* **find:** resolves deep paths ([510943a](https://github.com/devtin/schema-validator/commit/510943a3120b74317ffdb4a26370dd879c036a58))
+* **utils:** find returns given value when no path is passed ([18c087c](https://github.com/devtin/schema-validator/commit/18c087cee0f88c4e8ae91c3c3d32de23081f13eb))
+* escape composed regex patterns ([10786f7](https://github.com/devtin/schema-validator/commit/10786f7e34569656d86317baed8946d2652a8be8))
+* hasField check by default for parent properties ([dafb9d5](https://github.com/devtin/schema-validator/commit/dafb9d5c2721945c1ef82e54569d9eb4910140c2))
+* local cast runs before transformer cast ([b703768](https://github.com/devtin/schema-validator/commit/b7037680f508827dd35ae3aff00473c5927e30bd))
+* multiple schemas must have more than one schema ([6565ebb](https://github.com/devtin/schema-validator/commit/6565ebb544c7f125641e9f81fbd3606d1d4c116a))
+* pass defaultValues to nested schemas ([d487063](https://github.com/devtin/schema-validator/commit/d487063f6f27e7980678ab36ef3be333235b359f))
+* **array-transformer:** arraySchema resolves instances of Schema ([2d4b6fa](https://github.com/devtin/schema-validator/commit/2d4b6fa8b2ba0cc0225d2c5b41ad70d0de5ca7bd))
+* **errors:** expand error messages description ([44c28c2](https://github.com/devtin/schema-validator/commit/44c28c248efe18e7ae0f1faf420a7bb9caa80453))
+* lifecycle hooks ([a87c369](https://github.com/devtin/schema-validator/commit/a87c369b4c1e426abf7b0fe021b5eb6e70eeb95c))
+* nested schemas maximum call stack size exceeded error ([7ee34d8](https://github.com/devtin/schema-validator/commit/7ee34d89c6430cfd1363bfea2767ca23faa817cc))
+
 ## [2.7.0](https://github.com/devtin/schema-validator/compare/v2.4.6...v2.7.0) (2020-04-01)
 
 

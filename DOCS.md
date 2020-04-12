@@ -211,12 +211,12 @@ Orchestrates the validation of a data schema
     * [new Schema(schema, [options])](#new_Schema_new)
     * _instance_
         * [.paths](#Schema+paths)
-        * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>Schema</code>](#Schema)
+        * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>Schema</code>](#Schema) \| [<code>Array.&lt;Schema&gt;</code>](#Schema)
         * [.hasField(fieldName, [deep])](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
-        * [.parse([v])](#Schema+parse) ⇒ <code>Object</code>
-        * [.processLoaders(v, loaders)](#Schema+processLoaders) ⇒ <code>\*</code>
-        * [.runTransformer(method, transformer, payload)](#Schema+runTransformer) ⇒ <code>\*</code>
+        * [.parse([v], [options])](#Schema+parse) ⇒ <code>Object</code>
+        * [.processLoaders(v, loaders, state)](#Schema+processLoaders) ⇒ <code>\*</code>
+        * [.runTransformer(method, transformer, [options], payload, [state])](#Schema+runTransformer) ⇒ <code>\*</code>
     * _static_
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
@@ -255,7 +255,7 @@ Sets the environment up:
 
 <a name="Schema+schemaAtPath"></a>
 
-### schema.schemaAtPath(pathName) ⇒ [<code>Schema</code>](#Schema)
+### schema.schemaAtPath(pathName) ⇒ [<code>Schema</code>](#Schema) \| [<code>Array.&lt;Schema&gt;</code>](#Schema)
 Finds schema in given path
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
@@ -293,7 +293,7 @@ Validates if the given object have a structure valid for the schema in subject
 
 <a name="Schema+parse"></a>
 
-### schema.parse([v]) ⇒ <code>Object</code>
+### schema.parse([v], [options]) ⇒ <code>Object</code>
 Validates schema structure, casts, validates and parses  hooks of every field in the schema
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
@@ -306,29 +306,34 @@ Validates schema structure, casts, validates and parses  hooks of every field in
 | Param | Type | Description |
 | --- | --- | --- |
 | [v] | <code>Object</code> | The object to evaluate |
+| [options] | <code>Object</code> |  |
+| [options.state] | <code>Object</code> | State to pass through the lifecycle |
 
 <a name="Schema+processLoaders"></a>
 
-### schema.processLoaders(v, loaders) ⇒ <code>\*</code>
+### schema.processLoaders(v, loaders, state) ⇒ <code>\*</code>
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 
 | Param | Type |
 | --- | --- |
 | v | <code>\*</code> | 
 | loaders | [<code>Array.&lt;SchemaSettings&gt;</code>](#Schema..SchemaSettings) | 
+| state | <code>\*</code> | 
 
 <a name="Schema+runTransformer"></a>
 
-### schema.runTransformer(method, transformer, payload) ⇒ <code>\*</code>
+### schema.runTransformer(method, transformer, [options], payload, [state]) ⇒ <code>\*</code>
 Runs given method found in transformer
 
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 
-| Param |
-| --- |
-| method | 
-| transformer | 
-| payload | 
+| Param | Type |
+| --- | --- |
+| method |  | 
+| transformer |  | 
+| [options] | <code>Object</code> | 
+| payload | <code>\*</code> | 
+| [state] | <code>Object</code> | 
 
 <a name="Schema.isNested"></a>
 
@@ -616,6 +621,8 @@ Synchronous function that validates that given value is of the expected kind. Th
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being validated |
+| [options] | <code>Object</code> |  |
+| [options.state] | <code>\*</code> | The state passed via the parse function |
 
 <a name="Parser"></a>
 
@@ -633,6 +640,8 @@ value, throwing a {Schema~ValidationError} when error.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being validated |
+| [options] | <code>Object</code> |  |
+| [options.state] | <code>\*</code> | The state passed via the parse function |
 
 <a name="Caster"></a>
 
@@ -646,6 +655,8 @@ original value in case it could not be guessed.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being casted |
+| [options] | <code>Object</code> |  |
+| [options.state] | <code>\*</code> | The state passed via the parse function |
 
 <a name="Transformer"></a>
 

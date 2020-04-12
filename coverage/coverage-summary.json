@@ -1,3 +1,3 @@
-{"total": {"lines":{"total":298,"covered":292,"skipped":0,"pct":97.99},"statements":{"total":305,"covered":299,"skipped":0,"pct":98.03},"functions":{"total":78,"covered":77,"skipped":0,"pct":98.72},"branches":{"total":265,"covered":255,"skipped":0,"pct":96.23}}
-,"/Users/tin/projects/schema-validator/dist/schema-validator.js": {"lines":{"total":298,"covered":292,"skipped":0,"pct":97.99},"functions":{"total":78,"covered":77,"skipped":0,"pct":98.72},"statements":{"total":305,"covered":299,"skipped":0,"pct":98.03},"branches":{"total":265,"covered":255,"skipped":0,"pct":96.23}}
+{"total": {"lines":{"total":300,"covered":294,"skipped":0,"pct":98},"statements":{"total":307,"covered":301,"skipped":0,"pct":98.05},"functions":{"total":79,"covered":78,"skipped":0,"pct":98.73},"branches":{"total":277,"covered":261,"skipped":0,"pct":94.22}}
+,"/Users/tin/projects/schema-validator/dist/schema-validator.js": {"lines":{"total":300,"covered":294,"skipped":0,"pct":98},"functions":{"total":79,"covered":78,"skipped":0,"pct":98.73},"statements":{"total":307,"covered":301,"skipped":0,"pct":98.05},"branches":{"total":277,"covered":261,"skipped":0,"pct":94.22}}
 }

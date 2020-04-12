@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v2.7.0
+ * @devtin/schema-validator v2.8.0
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -74,11 +74,11 @@ function obj2dot (obj, { parent = '', separator = '.' } = {}) {
  * ```
  */
 function find (obj, path) {
-  const [prop, paths] = path.split(/\./);
-  if (paths && typeof obj[prop] === 'object') {
+  const [prop, ...paths] = Array.isArray(path) ? path : path.split('.');
+  if (paths.length > 0 && typeof obj[prop] === 'object') {
     return find(obj[prop], paths)
   }
-  return obj[prop]
+  return prop ? obj[prop] : obj
 }
 
 /**
@@ -93,6 +93,11 @@ function forEach(arr, cb) {
       break
     }
   }
+}
+
+// from https://stackoverflow.com/a/3561711/1064165
+function escapeRegExp(s) {
+  return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 /**
@@ -117,12 +122,13 @@ function forEach(arr, cb) {
 function render (template, obj) {
   const objProps = obj2dot(obj);
   objProps.forEach(prop => {
-    template = template.replace(new RegExp(`{[\\s]*${ prop }[\\s]*}`, 'g'), find(obj, prop));
+    template = template.replace(new RegExp(`{[\\s]*${ prop.split('.').map(escapeRegExp).join('.') }[\\s]*}`, 'g'), find(obj, prop));
   });
   return template
 }
 
 function getSubProperties (properties, parent) {
+  parent = parent.split('.').map(escapeRegExp).join('.');
   const pattern = new RegExp(`^${ parent }\\.`);
   return properties.filter(prop => pattern.test(prop)).map(prop => prop.replace(pattern, ''))
 }
@@ -178,7 +184,7 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
   if (valid) {
     forEach(Object.keys(obj), property => {
       if (typeof obj[property] === 'object' && !Array.isArray(obj[property])) {
-        const propMatch = new RegExp(`^${ property }\\.(.+)$`);
+        const propMatch = new RegExp(`^${ escapeRegExp(property) }\\.(.+)$`);
         let defaultApproved = properties.indexOf(property) >= 0;
         const childProps = properties
           .filter((v) => {
@@ -248,6 +254,8 @@ function castThrowable (value, error) {
  * @typedef {Function} Validator
  * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
  * @param {*} value - The value being validated
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {void}
  * @throws Schema~ValidationError
  */
@@ -257,6 +265,8 @@ function castThrowable (value, error) {
  * @desc Synchronous function that performs custom logic possibly customized via settings that could transform given
  * value, throwing a {Schema~ValidationError} when error.
  * @param {*} value - The value being validated
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {*} Resulting value
  * @throws Schema~ValidationError
  */
@@ -266,6 +276,8 @@ function castThrowable (value, error) {
  * @desc Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
  * original value in case it could not be guessed.
  * @param {*} value - The value being casted
+ * @param {Object} [options]
+ * @param {*} [options.state] - The state passed via the parse function
  * @return {*} Resulting value
  */
 
@@ -909,7 +921,7 @@ class Schema {
   /**
    * Finds schema in given path
    * @param {String} pathName - Dot notation path
-   * @return {Schema}
+   * @return {Schema|Schema[]}
    */
   schemaAtPath (pathName) {
     const [path, rest] = pathName.split(/\./);
@@ -967,18 +979,20 @@ class Schema {
   /**
    * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
+   * @param {Object} [options]
+   * @param {Object} [options.state] - State to pass through the lifecycle
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v) {
+  parse (v, { state = {} } = {}) {
     // schema-level casting
-    v = this.cast.call(this, v);
+    v = this.cast.call(this, v, { state });
 
     if (this.hasChildren) {
-      v = this.runChildren(v);
+      v = this.runChildren(v, { state });
     } else {
       // console.log(this)
-      v = this.parseProperty(this.type, v);
+      v = this.parseProperty(this.type, v, { state });
 
       /*
       Value here would be:
@@ -989,7 +1003,7 @@ class Schema {
     }
 
     // schema-level validation
-    this.validate.call(this, v);
+    this.validate.call(this, v, { state });
     return v
   }
 
@@ -997,9 +1011,10 @@ class Schema {
    *
    * @param {*} v
    * @param {Schema~SchemaSettings[]} loaders
+   * @param {*} state
    * @return {*}
    */
-  processLoaders (v, loaders) {
+  processLoaders (v, { loaders, state }) {
     // throw new Error(`uya!`)
     forEach(castArray(loaders), loaderSchema => {
       // console.log({ loaderSchema })
@@ -1018,13 +1033,13 @@ class Schema {
         });
       }
 
-      v = clone.parseProperty(type, v);
+      v = clone.parseProperty(type, v, { state });
     });
 
     return v
   }
 
-  parseProperty (type, v) {
+  parseProperty (type, v, { state = {} } = {}) {
     if (v === null && this.settings.allowNull) {
       return v
     }
@@ -1035,7 +1050,7 @@ class Schema {
       forEach(type, t => {
         try {
           this.currentType = t;
-          result = this.parseProperty(t, v);
+          result = this.parseProperty(t, v, { state });
           parsed = true;
           return false
         } catch (err) {
@@ -1054,7 +1069,7 @@ class Schema {
     }
 
     if (this.settings.default !== undefined && v === undefined) {
-      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, v) : this.settings.default;
+      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, { state }) : this.settings.default;
     }
 
     if (v === undefined && !this.settings.required) {
@@ -1068,30 +1083,30 @@ class Schema {
 
     // run user-level loaders (inception transformers)
     if (this.settings.loaders) {
-      v = this.processLoaders(v, this.settings.loaders); // infinite loop
+      v = this.processLoaders(v, { loaders: this.settings.loaders, state }); // infinite loop
     }
 
     // run transformer-level loaders
     if (transformer.loaders) {
-      v = this.processLoaders(v, transformer.loaders);
+      v = this.processLoaders(v, { loaders: transformer.loaders, state });
     }
 
-    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v });
+    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v, state });
 
     // run transformer caster
     if (this.settings.autoCast) {
-      v = this.runTransformer({ method: 'cast', transformer, payload: v });
+      v = this.runTransformer({ method: 'cast', transformer, payload: v, state });
     }
 
     // run transformer validator
-    this.runTransformer({ method: 'validate', transformer, payload: v });
-    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v });
+    this.runTransformer({ method: 'validate', transformer, payload: v, state });
+    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v, state });
 
     // run transformer parser
-    return this.runTransformer({ method: 'parse', transformer, payload: v })
+    return this.runTransformer({ method: 'parse', transformer, payload: v, state })
   }
 
-  runChildren (obj, { method = 'parse' } = {}) {
+  runChildren (obj, { method = 'parse', state = {} } = {}) {
     if (!this.settings.required && obj === undefined) {
       return
     }
@@ -1121,8 +1136,11 @@ class Schema {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/));
       const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined;
 
-      sandbox(() => {
-        const val = schema[method](input);
+      sandbox(() => {/*
+        if (!schema[method]) {
+          console.log(method, `not found in ${ pathName }`, schema)
+        }*/
+        const val = schema[method] ? schema[method](input, { state }) : undefined;
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val });
         }
@@ -1140,15 +1158,17 @@ class Schema {
    * Runs given method found in transformer
    * @param method
    * @param transformer
-   * @param payload
+   * @param {Object} [options]
+   * @param {*} payload
+   * @param {Object} [state]
    * @return {*}
    */
-  runTransformer ({ method, transformer, payload }) {
+  runTransformer ({ method, transformer, payload, state = {} }) {
     if (!transformer[method]) {
       return payload
     }
 
-    return transformer[method].call(this, payload)
+    return transformer[method].call(this, payload, { state })
   }
 
   throwError (message, { errors, value } = {}) {
