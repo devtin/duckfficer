@@ -44,6 +44,8 @@ test(`Finds in an object by path`, t => {
       }
     }
   }, 'address.zip.$gt'), 33120)
+
+  t.is(Utils.find(33120, ''), 33120)
 })
 
 test(`Renders handlebars kind-of templates`, t => {

@@ -26,5 +26,5 @@ export function find (obj, path) {
   if (paths.length > 0 && typeof obj[prop] === 'object') {
     return find(obj[prop], paths)
   }
-  return obj[prop]
+  return prop ? obj[prop] : obj
 }
