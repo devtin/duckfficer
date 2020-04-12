@@ -17,6 +17,11 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 - [Nesting schemas](/guide/README.md#nesting-schemas)
 - [Initial settings](/guide/README.md#initial-settings)
 - [Multiple types](/guide/README.md#multiple-types)
+- [Custom casting (property cast)](/guide/README.md#custom-casting-property-cast)
+- [Custom validation (property validate)](/guide/README.md#custom-validation-property-validate)
+- [Post-casting (casting at schema-level)](/guide/README.md#post-casting-casting-at-schema-level)
+- [Post-validating (validating at schema-level))](/guide/README.md#post-validating-validating-at-schema-level)
+- [Using a state for validation](/guide/README.md#using-a-state-for-validation)
 - [Life-cycle](/guide/README.md#life-cycle)
 - [Transformers](/guide/TRANSFORMERS.md)
   - [Array](/guide/TRANSFORMERS.md#array)
@@ -30,7 +35,6 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
   - [Set](/guide/TRANSFORMERS.md#set)
   - [String](/guide/TRANSFORMERS.md#string)
   - [Custom](/guide/TRANSFORMERS.md#custom)
-- [Hooks](/guide/README.md#hooks)
 - [Loaders](/guide/README.md#loaders)
 
 ## Creating a schema
@@ -532,28 +536,7 @@ t.is(error.errors[0].message, `Could not resolve given value type in property pi
 t.is(error.errors[0].field.fullPath, `picture`)
 ```
 
-
-## Life-cycle
-
-- [Schema.parse](/DOCS.md#Schema+parse)
-  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
-  - apply specified [transformer](/DOCS.md#Transformers)
-  - runs local [cast](/DOCS.md#Caster) hook
-  - runs transformer [cast](/DOCS.md#Caster) hook
-  - runs transformer [validate](/DOCS.md#Validator) hook
-  - runs local [validate](/DOCS.md#Validator) hook
-  - runs transformer [parse](/DOCS.md#Parser) hook 
-
-## Transformers
-
-Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
-
-## Hooks
-
-Hooks extend the schema functionality by allowing to compute custom logic
-during different points of the parsing lifecycle.
-
-### property cast
+## Custom casting (property cast)
 
 
 
@@ -592,7 +575,7 @@ t.notThrows(() => {
 t.is(product.id, 123)
 ```
 
-### property validate
+## Custom validation (property validate)
 
 
 
@@ -628,7 +611,7 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
 ```
 
-### schema cast
+## Post-casting (casting at schema-level)
 
 ```js
 const ProductSchema = new Schema({
@@ -660,7 +643,7 @@ t.truthy(product)
 t.is(product.price, 5.99)
 ```
 
-### schema validate
+## Post-validating (validating at schema-level))
 
 ```js
 const ProductSchema = new Schema({
@@ -684,6 +667,94 @@ const error = t.throws(() => ProductSchema.parse({
 
 t.is(error.message, `Product deprecated`)
 ```
+
+## Using a state for validation
+
+
+
+A state can be used to extend the validation process of a data object
+
+```js
+const UserSchema = new Schema({
+  name: String,
+  email: {
+    type: String,
+    required: false
+  },
+  level: {
+    type: String,
+    validate (v, { state }) {
+      if (v === 'admin' && !state?.user) {
+        this.throwError(`Only authenticated users can set the level to admin`)
+      }
+    }
+  }
+}, {
+  validate (v, { state }) {
+    if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
+      this.throwError(`Admin users require an email`)
+    }
+  }
+})
+
+const error = t.throws(() => UserSchema.parse({
+  name: `Martin Rafael Gonzalez`,
+  level: 'admin'
+}))
+t.is(error.message, 'Data is not valid')
+t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
+t.is(error.errors[0].field.fullPath, 'level')
+
+const error2 = t.throws(() => UserSchema.parse({
+  name: `Martin Rafael Gonzalez`,
+  level: 'admin'
+}, {
+  state: {
+    user: {
+      name: 'system',
+      level: 'admin'
+    }
+  }
+}))
+
+t.is(error2.message, 'Admin users require an email')
+
+t.notThrows(() => {
+  return UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }, {
+    state: {
+      user: {
+        name: 'system',
+        level: 'root'
+      }
+    }
+  })
+})
+```
+
+
+## Life-cycle
+
+- [Schema.parse](/DOCS.md#Schema+parse)
+  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
+  - apply specified [transformer](/DOCS.md#Transformers)
+  - runs local [cast](/DOCS.md#Caster) hook
+  - runs transformer [cast](/DOCS.md#Caster) hook
+  - runs transformer [validate](/DOCS.md#Validator) hook
+  - runs local [validate](/DOCS.md#Validator) hook
+  - runs transformer [parse](/DOCS.md#Parser) hook 
+
+## Transformers
+
+Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
+
+## Hooks
+
+Hooks extend the schema functionality by allowing to compute custom logic
+during different points of the parsing lifecycle.
+
 
 ## Loaders
 
