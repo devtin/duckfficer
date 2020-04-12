@@ -476,3 +476,190 @@ test(`Multiple types`, t => {
   t.is(error.errors[0].message, `Could not resolve given value type in property picture. Allowed types are Function and Promise`)
   t.is(error.errors[0].field.fullPath, `picture`)
 })
+
+test(`Custom casting (property cast)`, t => {
+  /**
+   * The [cast](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
+   * extra casting logic.
+   */
+
+  const ProductSchema = new Schema({
+    id: {
+      type: Number,
+      cast (v) {
+        if (typeof v === 'string' && /^#/.test(v)) {
+          return parseInt(v.replace(/^#/, ''))
+        }
+      }
+    },
+    name: String
+  })
+
+  const error = t.throws(() => {
+    return ProductSchema.parse({
+      id: '123',
+      name: 'Kombucha'
+    })
+  })
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Invalid number')
+
+  let product
+  t.notThrows(() => {
+    product = ProductSchema.parse({
+      id: '#123',
+      name: 'Kombucha'
+    })
+  })
+  t.is(product.id, 123)
+})
+
+test(`Custom validation (property validate)`, t => {
+  /**
+   * The [validate](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
+   * extra validation logic.
+   */
+
+  const ProductSchema = new Schema({
+    id: Number,
+    created: {
+      type: Date,
+      validate (date) {
+        if (Date.parse(date) < Date.parse('2019/1/1')) {
+          throw new Error(`Orders prior 2019 have been archived`)
+        }
+      }
+    },
+    name: String
+  })
+
+  t.notThrows(() => ProductSchema.parse({
+    id: 123,
+    created: '2020/2/1',
+    name: 'Kombucha'
+  }))
+
+  const error = t.throws(() => ProductSchema.parse({
+    id: 123,
+    created: '2018/12/1',
+    name: 'Kombucha'
+  }))
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
+})
+
+test(`Post-casting (casting at schema-level)`, t => {
+  const ProductSchema = new Schema({
+      id: Number,
+      name: String,
+      price: Number
+    },
+    {
+      cast (v) {
+        const month = new Date().getMonth() + 1
+        if (/avocado/i.test(v.name) && !(month >= 5 && month <= 8)) {
+          v.price += 2 // 2$ extra avocado out of season
+        }
+
+        return v
+      }
+    })
+
+  let product
+  t.notThrows(() => {
+    product = ProductSchema.parse({
+      id: 321,
+      name: 'Hass Avocados',
+      price: 3.99
+    })
+  })
+
+  t.truthy(product)
+  t.is(product.price, 5.99)
+})
+
+test(`Post-validating (validating at schema-level))`, t => {
+  const ProductSchema = new Schema({
+      id: Number,
+      name: String,
+      price: Number
+    },
+    {
+      validate (v) {
+        if (v.id < 200) {
+          throw new Error(`Product deprecated`)
+        }
+      }
+    })
+
+  const error = t.throws(() => ProductSchema.parse({
+    id: 123,
+    name: 'Kombucha Green',
+    price: 3
+  }))
+
+  t.is(error.message, `Product deprecated`)
+})
+
+test(`Using a state for validation`, t => {
+  /**
+   * A state can be used to extend the validation process of a data object
+   */
+  const UserSchema = new Schema({
+    name: String,
+    email: {
+      type: String,
+      required: false
+    },
+    level: {
+      type: String,
+      validate (v, { state }) {
+        if (v === 'admin' && !state?.user) {
+          this.throwError(`Only authenticated users can set the level to admin`)
+        }
+      }
+    }
+  }, {
+    validate (v, { state }) {
+      if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
+        this.throwError(`Admin users require an email`)
+      }
+    }
+  })
+
+  const error = t.throws(() => UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }))
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
+  t.is(error.errors[0].field.fullPath, 'level')
+
+  const error2 = t.throws(() => UserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }, {
+    state: {
+      user: {
+        name: 'system',
+        level: 'admin'
+      }
+    }
+  }))
+
+  t.is(error2.message, 'Admin users require an email')
+
+  t.notThrows(() => {
+    return UserSchema.parse({
+      name: `Martin Rafael Gonzalez`,
+      level: 'admin'
+    }, {
+      state: {
+        user: {
+          name: 'system',
+          level: 'root'
+        }
+      }
+    })
+  })
+})

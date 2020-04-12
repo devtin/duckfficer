@@ -40,7 +40,7 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       })
 
     const transformersIndex = Object.keys(Transformers).map(t => `- [${ t }](/guide/TRANSFORMERS.md#${ _.kebabCase(t) })`)
-    const additionalIndex = [`- [Life-cycle](/guide/README.md#life-cycle)`, `- [Transformers](/guide/TRANSFORMERS.md)`, `- [Hooks](/guide/README.md#hooks)`, `- [Loaders](/guide/README.md#loaders)`]
+    const additionalIndex = [`- [Life-cycle](/guide/README.md#life-cycle)`, `- [Transformers](/guide/TRANSFORMERS.md)`, `- [Loaders](/guide/README.md#loaders)`]
 
     const indexWithTransformers = index.slice()
 
@@ -51,8 +51,6 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
 
     const guide = await avaTestsToMd(tests, mdOptions)
 
-    // const hooks = avaTestsToMd(await parseAvaFile('array'))
-    const hooks = await avaTestsToMd(await parseAvaFile(locateTest(`features/hooks.test.js`)), { headingLevel: mdOptions.headingLevel + 1 })
     const loaders = await avaTestsToMd(await parseAvaFile(locateTest(`features/loaders.test.js`)), mdOptions)
     const transformers = []
 
@@ -66,7 +64,6 @@ parseAvaFile(path.join(__dirname, '../test/features/schema.test.js'))
       guide,
       transformers,
       transformersIndex,
-      hooks,
       loaders,
       libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.iife.js.gz')).size / 1024) * 10) / 10 }KB`,
       shields: [
