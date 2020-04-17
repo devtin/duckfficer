@@ -750,12 +750,6 @@ t.notThrows(() => {
 
 Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
 
-## Hooks
-
-Hooks extend the schema functionality by allowing to compute custom logic
-during different points of the parsing lifecycle.
-
-
 ## Loaders
 
 
