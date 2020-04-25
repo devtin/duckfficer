@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Schema, Transformers } from '../../'
+import { Schema, Transformers } from '../../../.'
 
 test(`Custom`, t => {
   /**

@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Schema, ValidationError } from '../../'
+import { Schema, ValidationError } from '../../../.'
 
 test(`BigInt`, t => {
   /**
