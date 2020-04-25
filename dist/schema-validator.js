@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v2.8.2
+ * @devtin/schema-validator v2.8.3
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -260,6 +260,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
+ * @this {SchemaValidator}
  * @return {void}
  * @throws Schema~ValidationError
  */
@@ -271,6 +272,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
+ * @this {SchemaValidator}
  * @return {*} Resulting value
  * @throws Schema~ValidationError
  */
@@ -282,6 +284,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being casted
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
+ * @this {SchemaValidator}
  * @return {*} Resulting value
  */
 
