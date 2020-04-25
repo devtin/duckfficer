@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers } from '../../'
 
-test(`Built-in cast (provided by types / transformers)`, t => {
+test(`Built-in cast (provided by types or transformers)`, t => {
   /**
    * Many transformers provide a casting logic available when setting `autoCast` equaled to `true`.
    */

@@ -11,19 +11,7 @@
 <p align="center">
 Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
-</p>  
-
-## Content
-
-- [About](#about)
-- [Installation](#installation)
-- [At-a-glance](#at-a-glance)
-- [Guide](./guide/README.md)
-  {{ #index }}
-  {{{ . }}}
-  {{ /index }}
-- [API](/DOCS.md)
-- [License](#license) (MIT)
+</p>
 
 ## About
 
@@ -31,10 +19,20 @@ Tired of performing duck-type validation while sharing data-schema across differ
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
 this light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
+## Content
+
+- [Installation](#installation)
+- [At-a-glance](#at-a-glance)
+{{ #index }}
+{{{ . }}}
+{{ /index }}
+- [API](/DOCS.md)
+- [License](#license) (MIT)
+
 ## Installation
 
 ```sh
-$ npm install @devtin/schema-validator
+$ npm i @devtin/schema-validator
 # or
 $ yarn add @devtin/schema-validator
 ```
@@ -46,13 +44,7 @@ $ yarn add @devtin/schema-validator
 ```
 
 
-## Further reading
-
-I would suggest having a look at the [guide](./guide/README.md) for advanced usage and at the [API](./DOCS.md) documentation
-respectively.  
-
-Playing with this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen</a> may also be helpful for a
-quick overview.
+{{{ guide }}}
 
 * * *
 

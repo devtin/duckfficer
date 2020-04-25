@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers } from '../../'
 
-test(`Built-in validation (provided by types / transformers)`, t => {
+test(`Built-in validation (provided by types or transformers)`, t => {
   /**
    * A wide variety of type-validators are provided built-in many of them with extra-helpers to enhance the validation
    * logic. Refer to the [Types](#types) section below for available type validators and helpers.

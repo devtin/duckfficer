@@ -166,7 +166,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   })
 })
 
-test(`LifeCycle / Error Handling`, t => {
+test(`Error-handling and LifeCycle`, t => {
   /**
    * Below we are gonna dive into the schema-validation life-cycle for a better understanding of the tool.
    */

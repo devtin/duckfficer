@@ -617,6 +617,7 @@ Synchronous function that validates that given value is of the expected kind. Th
 
 - Schema~ValidationError
 
+**this**: <code>{SchemaValidator}</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -636,6 +637,7 @@ value, throwing a {Schema~ValidationError} when error.
 
 - Schema~ValidationError
 
+**this**: <code>{SchemaValidator}</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -651,6 +653,7 @@ original value in case it could not be guessed.
 
 **Kind**: global typedef  
 **Returns**: <code>\*</code> - Resulting value  
+**this**: <code>{SchemaValidator}</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |

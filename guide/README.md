@@ -8,20 +8,16 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 **Index**
 
 - [Creating a schema](/guide/README.md#creating-a-schema)
-- [Validating arbitrary objects](/guide/README.md#validating-arbitrary-objects)
-- [Required properties](/guide/README.md#required-properties)
-- [Optional properties](/guide/README.md#optional-properties)
+- [Validating and sanitizing arbitrary objects](/guide/README.md#validating-and-sanitizing-arbitrary-objects)
+- [LifeCycle / Error Handling](/guide/README.md#life-cycle-error-handling)
+- [Required and optional values](/guide/README.md#required-and-optional-values)
 - [Default values](/guide/README.md#default-values)
-- [Auto-casting](/guide/README.md#auto-casting)
-- [Allowing null values](/guide/README.md#allowing-null-values)
+- [Null values](/guide/README.md#null-values)
 - [Nesting schemas](/guide/README.md#nesting-schemas)
-- [Initial settings](/guide/README.md#initial-settings)
 - [Multiple types](/guide/README.md#multiple-types)
-- [Custom casting (property cast)](/guide/README.md#custom-casting-property-cast)
-- [Custom validation (property validate)](/guide/README.md#custom-validation-property-validate)
-- [Post-casting (casting at schema-level)](/guide/README.md#post-casting-casting-at-schema-level)
-- [Post-validating (validating at schema-level))](/guide/README.md#post-validating-validating-at-schema-level)
-- [Using a state for validation](/guide/README.md#using-a-state-for-validation)
+- [Auto-casting](/guide/README.md#auto-casting)
+- [Loaders](/guide/README.md#loaders)
+- [Overriding initial settings](/guide/README.md#overriding-initial-settings)
 - [Life-cycle](/guide/README.md#life-cycle)
 - [Transformers](/guide/TRANSFORMERS.md)
   - [Array](/guide/TRANSFORMERS.md#array)
@@ -41,20 +37,29 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 
 
 
-In order to check the data integrity of an object, a schema is created defining the expected
-structure of the desired object.
+In order to check the data integrity of an object, a schema defining the expected structure of the desired object
+needs to be created.
 
 ```js
 const UserSchema = new Schema({
-  name: String,
-  birthday: Date,
+  // advanced type definition
+  name: {
+    // defining the type
+    type: String,
+    // we could add additional settings here
+  },
+  // short-hand type definition
+  birthday: Date, // => { type: Date }
   description: Array
 })
 ```
 
-The created schema has a method called `parse`. This method is used to
-(optionally) cast, validate and parse arbitrary objects, returning a newly created schema-compliant object. See the
-[Schema](/DOCS.md#Schema) class docs for more information.
+The instance of the created schema has a method called `parse`. We use this method in order to perform structure
+validation, casting and type-validation of arbitrary objects. The method `parse` receives as the first
+argument an arbitrary object that will be casted and validated against the defined schema. The parse function will
+return a newly created schema-compliant object.
+
+See the [Schema](/DOCS.md#Schema) class docs for more information.
 
 ```js
 t.true(typeof UserSchema.parse === 'function')
@@ -75,7 +80,7 @@ t.deepEqual(safeObject, arbitraryObject)
 t.true(safeObject !== arbitraryObject)
 ```
 
-Returned object-properties can now be accessed safely since the object was validated to be schema-compliant.
+Returned object-properties can now be safely accessed since the object was validated to be schema-compliant.
 
 ```js
 t.truthy(safeObject)
@@ -85,7 +90,7 @@ t.is(safeObject.birthday.getFullYear(), 1983)
 t.is(safeObject.description.length, 3)
 ```
 
-## Validating arbitrary objects
+## Validating and sanitizing arbitrary objects
 
 
 
@@ -99,7 +104,7 @@ const UserSchema = new Schema({
 })
 ```
 
-Think of an *arbitrary object* as one coming from an unreliable source, i.e. retrieved through a POST request;
+Think of an *arbitrary object* as one coming from an unreliable source, i.e. passed in an http request;
 or maybe retrieved by a manual input from a terminal application.
 
 ```js
@@ -122,7 +127,7 @@ Following validation will result in an error since the arbitrary object does not
 these 3 unknown properties, plus the property `name` (expected by the defined schema) is also missing.
 
 ```js
-const error = t.throws(() => UserSchema.parse(arbitraryObject))
+let error = t.throws(() => UserSchema.parse(arbitraryObject))
 
 t.true(error instanceof ValidationError)
 t.true(error instanceof Error)
@@ -135,12 +140,222 @@ t.is(error.errors[3].message, `Unknown property address.zip`)
 t.is(error.errors[4].message, `Property name is required`)
 ```
 
-## Required properties
+A custom `state` can be passed to extend the validation process.
+
+```js
+const AnotherUserSchema = new Schema({
+  name: String,
+  email: {
+    type: String,
+    required: false
+  },
+  level: {
+    type: String,
+    validate (v, { state }) {
+      if (v === 'admin' && !state?.user) {
+        this.throwError(`Only authenticated users can set the level to admin`)
+      }
+    }
+  }
+}, {
+  validate (v, { state }) {
+    if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
+      this.throwError(`Admin users require an email`)
+    }
+  }
+})
+
+error = t.throws(() => AnotherUserSchema.parse({
+  name: `Martin Rafael Gonzalez`,
+  level: 'admin'
+}))
+t.is(error.message, 'Data is not valid')
+t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
+t.is(error.errors[0].field.fullPath, 'level')
+
+error = t.throws(() => AnotherUserSchema.parse({
+  name: `Martin Rafael Gonzalez`,
+  level: 'admin'
+}, {
+  state: {
+    user: {
+      name: 'system',
+      level: 'admin'
+    }
+  }
+}))
+
+t.is(error.message, 'Admin users require an email')
+
+t.notThrows(() => {
+  return AnotherUserSchema.parse({
+    name: `Martin Rafael Gonzalez`,
+    level: 'admin'
+  }, {
+    state: {
+      user: {
+        name: 'system',
+        level: 'root'
+      }
+    }
+  })
+})
+```
+
+## LifeCycle / Error Handling
 
 
 
-A schema defines the structure and data-type expected by an arbitrary object.
-All properties are required by default.
+Below we are gonna dive into the schema-validation life-cycle for a better understanding of the tool.
+
+```js
+  // debugging setup
+let arbitraryObject
+let error
+const lifeCycle = []
+let passedState = { someStateProp: true }
+
+const hook = ({ levelName, hookName }) => {
+  return function (value, { state }) {
+    t.is(state, passedState)
+
+    let label = `${ levelName }-level`
+
+    if (this.fullPath) {
+      label = `->${ this.fullPath }(${ label })`
+    }
+
+    lifeCycle.push(`${ label } ${ hookName } hook`)
+    return value
+  }
+}
+
+const cast = hook({ levelName: 'property', hookName: 'cast' })
+const validate = hook({ levelName: 'property', hookName: 'validate' })
+```
+
+The schema below will trace most of the library's flow life-cycle.
+
+```js
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    // property-level cast hook (optional)
+    cast,
+    // property-level validation hook (optional)
+    validate
+  },
+  birthday: {
+    type: 'Birthday',
+    cast,
+    validate
+  },
+  phoneNumber: {
+    type: Number,
+    cast,
+    validate
+  }
+}, {
+  // schema-level cast hook (optional)
+  cast: hook({ levelName: 'schema', hookName: 'cast' }),
+  // schema-level validate hook (optional)
+  validate: hook({ levelName: 'schema', hookName: 'validate' })
+})
+
+arbitraryObject = {
+  somePropertyNotDefinedInTheSchema: ':)',
+  birthday: '6/11/1983',
+  phoneNumber: '123'
+}
+
+error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+
+t.is(error.message, `Data is not valid`)
+t.is(error.errors.length, 4)
+```
+
+Throws an error when the given `arbitraryObject` structure does not comply with the given schema structure.
+
+```js
+t.is(error.errors[0].message, `Unknown property somePropertyNotDefinedInTheSchema`)
+t.is(error.errors[0].field, undefined) // the field does not exists in our schema
+```
+
+Throws an error when missing required values.
+
+```js
+t.is(error.errors[1].message, `Property name is required`)
+t.is(error.errors[1].field.fullPath, 'name')
+```
+
+Throws an error if defined type is not registered.
+
+```js
+t.is(error.errors[2].message, `Don't know how to resolve Birthday in property birthday`)
+t.is(error.errors[2].field.fullPath, `birthday`)
+```
+
+Also throws an error when types don't match.
+
+```js
+t.is(error.errors[3].message, `Invalid number`)
+t.is(error.errors[3].field.fullPath, `phoneNumber`)
+
+t.deepEqual(lifeCycle, [
+  'schema-level cast hook',
+  '->phoneNumber(property-level) cast hook'
+])
+```
+
+Let's register a transformer named Birthday and try again with valid data!
+
+```js
+Transformers.Birthday = {
+  settings: {
+    autoCast: true
+  },
+  loaders: [{ type: Date, autoCast: true }],
+  // will trace all of the type-level hooks!
+  cast: hook({ levelName: 'type', hookName: 'cast' }),
+  validate: hook({ levelName: 'type', hookName: 'validate' }),
+  parse: hook({ levelName: 'type', hookName: 'parse' })
+}
+
+arbitraryObject = {
+  name: 'Martin',
+  birthday: '6/11/1983',
+  phoneNumber: 123
+}
+
+// resetting lifecycle trace
+lifeCycle.length = 0
+
+t.notThrows(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+```
+
+Below we can clearly see the life-cycle of the validation process.
+
+```js
+t.deepEqual(lifeCycle, [
+  'schema-level cast hook',
+  '->name(property-level) cast hook',
+  '->name(property-level) validate hook',
+  '->birthday(property-level) cast hook',
+  '->birthday(type-level) cast hook',
+  '->birthday(type-level) validate hook',
+  '->birthday(property-level) validate hook',
+  '->birthday(type-level) parse hook',
+  '->phoneNumber(property-level) cast hook',
+  '->phoneNumber(property-level) validate hook',
+  'schema-level validate hook'
+])
+```
+
+## Required and optional values
+
+
+
+All properties in a Schema are required by default.
 
 ```js
 const ProductSchema = new Schema({
@@ -163,12 +378,7 @@ t.is(error.errors.length, 1)
 t.is(error.errors[0].message, `Property category is required`)
 ```
 
-## Optional properties
-
-
-
-A schema is created below with an optional-property named `age`.
-The property-setting `required` set to `false` is what enables this feature.
+In order to make a property optional we must pass the flag `required` set to `false`
 
 ```js
 const ContactSchema = new Schema({
@@ -205,7 +415,7 @@ Whenever `age` is present, the validation will ensure it is a `Number`, though.
 
 ```js
 let contact2
-const error = t.throws(() => {
+error = t.throws(() => {
   contact2 = ContactSchema.parse({
     name: 'Papo',
     email: 'sandy@papo.com',
@@ -237,7 +447,7 @@ t.deepEqual(contact2, {
 
 
 
-Default values are meant to be used when an arbitrary object misses the value of the property in subject.
+Default values are meant to be used whenever an arbitrary object misses the value of the property in subject.
 
 ```js
 const ContactSchema = new Schema({
@@ -250,7 +460,7 @@ const ContactSchema = new Schema({
 ```
 
 When a property is assigned with a `default` value, it is implicitly treated as an optional property (`required`
-equaled to `false`). See [optional properties](#optional-properties) for more information.
+equaled to `false`). See [Required and optional values](#required-and-optional-values) for more information.
 
 ```js
 const error = t.throws(() => new Schema({
@@ -278,7 +488,7 @@ t.deepEqual(sanitized, {
 ```
 
 A default value could also be a function. Refer to the [SchemaSettings](/DOCS.md#schemaschemasettings--object) docs
-for more information.
+for more information. The function will receive a object with optionally the state passed during parse.
 
 ```js
 const UserSchema = new Schema({
@@ -320,6 +530,7 @@ const SomeSchema = new Schema({
   phoneNumber: Number,
   subscribe: Boolean
 }, { defaultValues })
+
 const parsed = SomeSchema.parse({
   name: 'Martin',
   address: {
@@ -327,78 +538,13 @@ const parsed = SomeSchema.parse({
   },
   phoneNumber: 3051234567
 })
+
 t.is(parsed.address.state, 'Florida')
 t.is(parsed.address.zip, 33129)
 t.is(parsed.subscribe, true)
 ```
 
-## Auto-casting
-
-
-
-Most transformers provide an option for auto-casting. When property-setting `autoCast` equals `true`
-(depending on the transformer) it may try to resolve given arbitrary value into the expected one.
-
-For example, the [Date](#date) transformer will try to cast values given as `String`'s into a proper `Date`, if possible.
-The [Number](#number) transformer as well: will try to resolve those `String`'s that look like a number and convert them into
-a proper `Number`.
-
-```js
-const UserSchema = new Schema({
-  name: String,
-  birthday: Date,
-  kids: {
-    type: Number,
-    autoCast: true
-  }
-})
-
-let Olivia
-
-t.notThrows(() => {
-  Olivia = UserSchema.parse({
-    name: 'Olivia',
-    birthday: '8/31/2019',
-    kids: '0'
-  })
-})
-
-t.true(Olivia.birthday instanceof Date)
-t.is(typeof Olivia.kids, 'number')
-```
-
-**Turning off auto-casting**
-
-Now, when a strict validation is required, this feature can be turned off.
-
-```js
-const StrictUserSchema = new Schema({
-  name: String,
-  birthday: {
-    type: Date,
-    autoCast: false
-  },
-  kids: {
-    type: Number,
-    autoCast: false
-  }
-})
-
-const error = t.throws(() => StrictUserSchema.parse({
-  name: 'Martin',
-  birthday: '6/11/1983',
-  kids: '1'
-}))
-
-t.is(error.message, 'Data is not valid')
-t.is(error.errors.length, 2)
-t.is(error.errors[0].message, `Invalid date`)
-t.is(error.errors[0].field.fullPath, `birthday`)
-t.is(error.errors[1].message, `Invalid number`)
-t.is(error.errors[1].field.fullPath, `kids`)
-```
-
-## Allowing null values
+## Null values
 
 
 
@@ -490,36 +636,6 @@ t.notThrows(() => UserSchema.parse({
 }))
 ```
 
-## Initial settings
-
-```js
-const SomeSchema = new Schema({
-  name: String
-})
-
-const error1 = t.throws(() => SomeSchema.parse(undefined))
-t.is(error1.message, `Data is not valid`)
-t.is(error1.errors[0].message, `Property name is required`)
-```
-
-We can override the initial settings of our schema
-
-```js
-const SomeOptionalSchema = new Schema({
-    name: String
-  },
-  {
-    settings: {
-      required: false
-    }
-  })
-
-t.notThrows(() => SomeOptionalSchema.parse(undefined))
-const error2 = t.throws(() => SomeOptionalSchema.parse({}))
-t.is(error2.message, `Data is not valid`)
-t.is(error2.errors[0].message, `Property name is required`)
-```
-
 ## Multiple types
 
 ```js
@@ -536,219 +652,71 @@ t.is(error.errors[0].message, `Could not resolve given value type in property pi
 t.is(error.errors[0].field.fullPath, `picture`)
 ```
 
-## Custom casting (property cast)
+## Auto-casting
 
 
 
-The [cast](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
-extra casting logic.
+Most transformers provide an option for auto-casting. When property-setting `autoCast` equals `true`
+(depending on the transformer) it may try to resolve given arbitrary value into the expected one.
 
-```js
-const ProductSchema = new Schema({
-  id: {
-    type: Number,
-    cast (v) {
-      if (typeof v === 'string' && /^#/.test(v)) {
-        return parseInt(v.replace(/^#/, ''))
-      }
-    }
-  },
-  name: String
-})
-
-const error = t.throws(() => {
-  return ProductSchema.parse({
-    id: '123',
-    name: 'Kombucha'
-  })
-})
-t.is(error.message, 'Data is not valid')
-t.is(error.errors[0].message, 'Invalid number')
-
-let product
-t.notThrows(() => {
-  product = ProductSchema.parse({
-    id: '#123',
-    name: 'Kombucha'
-  })
-})
-t.is(product.id, 123)
-```
-
-## Custom validation (property validate)
-
-
-
-The [validate](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
-extra validation logic.
-
-```js
-const ProductSchema = new Schema({
-  id: Number,
-  created: {
-    type: Date,
-    validate (date) {
-      if (Date.parse(date) < Date.parse('2019/1/1')) {
-        throw new Error(`Orders prior 2019 have been archived`)
-      }
-    }
-  },
-  name: String
-})
-
-t.notThrows(() => ProductSchema.parse({
-  id: 123,
-  created: '2020/2/1',
-  name: 'Kombucha'
-}))
-
-const error = t.throws(() => ProductSchema.parse({
-  id: 123,
-  created: '2018/12/1',
-  name: 'Kombucha'
-}))
-t.is(error.message, 'Data is not valid')
-t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
-```
-
-## Post-casting (casting at schema-level)
-
-```js
-const ProductSchema = new Schema({
-    id: Number,
-    name: String,
-    price: Number
-  },
-  {
-    cast (v) {
-      const month = new Date().getMonth() + 1
-      if (/avocado/i.test(v.name) && !(month >= 5 && month <= 8)) {
-        v.price += 2 // 2$ extra avocado out of season
-      }
-
-      return v
-    }
-  })
-
-let product
-t.notThrows(() => {
-  product = ProductSchema.parse({
-    id: 321,
-    name: 'Hass Avocados',
-    price: 3.99
-  })
-})
-
-t.truthy(product)
-t.is(product.price, 5.99)
-```
-
-## Post-validating (validating at schema-level))
-
-```js
-const ProductSchema = new Schema({
-    id: Number,
-    name: String,
-    price: Number
-  },
-  {
-    validate (v) {
-      if (v.id < 200) {
-        throw new Error(`Product deprecated`)
-      }
-    }
-  })
-
-const error = t.throws(() => ProductSchema.parse({
-  id: 123,
-  name: 'Kombucha Green',
-  price: 3
-}))
-
-t.is(error.message, `Product deprecated`)
-```
-
-## Using a state for validation
-
-
-
-A state can be used to extend the validation process of a data object
+For example, the [Date](#date) transformer will try to cast values given as `String`'s into a proper `Date`, if possible.
+The [Number](#number) transformer as well: will try to resolve those `String`'s that look like a number and convert them into
+a proper `Number`.
 
 ```js
 const UserSchema = new Schema({
   name: String,
-  email: {
-    type: String,
-    required: false
-  },
-  level: {
-    type: String,
-    validate (v, { state }) {
-      if (v === 'admin' && !state?.user) {
-        this.throwError(`Only authenticated users can set the level to admin`)
-      }
-    }
-  }
-}, {
-  validate (v, { state }) {
-    if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
-      this.throwError(`Admin users require an email`)
-    }
+  birthday: Date,
+  kids: {
+    type: Number,
+    autoCast: true
   }
 })
 
-const error = t.throws(() => UserSchema.parse({
-  name: `Martin Rafael Gonzalez`,
-  level: 'admin'
-}))
-t.is(error.message, 'Data is not valid')
-t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
-t.is(error.errors[0].field.fullPath, 'level')
-
-const error2 = t.throws(() => UserSchema.parse({
-  name: `Martin Rafael Gonzalez`,
-  level: 'admin'
-}, {
-  state: {
-    user: {
-      name: 'system',
-      level: 'admin'
-    }
-  }
-}))
-
-t.is(error2.message, 'Admin users require an email')
+let Olivia
 
 t.notThrows(() => {
-  return UserSchema.parse({
-    name: `Martin Rafael Gonzalez`,
-    level: 'admin'
-  }, {
-    state: {
-      user: {
-        name: 'system',
-        level: 'root'
-      }
-    }
+  Olivia = UserSchema.parse({
+    name: 'Olivia',
+    birthday: '8/31/2019',
+    kids: '0'
   })
 })
+
+t.true(Olivia.birthday instanceof Date)
+t.is(typeof Olivia.kids, 'number')
 ```
 
+**Turning off auto-casting**
 
-## Life-cycle
+Now, when a strict validation is required, this feature can be turned off.
 
-- [Schema.parse](/DOCS.md#Schema+parse)
-  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
-  - apply specified [transformer](/DOCS.md#Transformers)
-  - runs local [cast](/DOCS.md#Caster) hook
-  - runs transformer [cast](/DOCS.md#Caster) hook
-  - runs transformer [validate](/DOCS.md#Validator) hook
-  - runs local [validate](/DOCS.md#Validator) hook
-  - runs transformer [parse](/DOCS.md#Parser) hook 
+```js
+const StrictUserSchema = new Schema({
+  name: String,
+  birthday: {
+    type: Date,
+    autoCast: false
+  },
+  kids: {
+    type: Number,
+    autoCast: false
+  }
+})
 
-## Transformers
+const error = t.throws(() => StrictUserSchema.parse({
+  name: 'Martin',
+  birthday: '6/11/1983',
+  kids: '1'
+}))
 
-Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
+t.is(error.message, 'Data is not valid')
+t.is(error.errors.length, 2)
+t.is(error.errors[0].message, `Invalid date`)
+t.is(error.errors[0].field.fullPath, `birthday`)
+t.is(error.errors[1].message, `Invalid number`)
+t.is(error.errors[1].field.fullPath, `kids`)
+```
 
 ## Loaders
 
@@ -785,6 +753,53 @@ t.notThrows(() => {
 t.truthy(product)
 t.is(product.id, '#123')
 ```
+
+## Overriding initial settings
+
+```js
+const SomeSchema = new Schema({
+  name: String
+})
+
+const error1 = t.throws(() => SomeSchema.parse(undefined))
+t.is(error1.message, `Data is not valid`)
+t.is(error1.errors[0].message, `Property name is required`)
+```
+
+We can override the initial settings of our schema
+
+```js
+const SomeOptionalSchema = new Schema({
+    name: String
+  },
+  {
+    settings: {
+      required: false
+    }
+  })
+
+t.notThrows(() => SomeOptionalSchema.parse(undefined))
+const error2 = t.throws(() => SomeOptionalSchema.parse({}))
+t.is(error2.message, `Data is not valid`)
+t.is(error2.errors[0].message, `Property name is required`)
+```
+
+
+## Life-cycle
+
+- [Schema.parse](/DOCS.md#Schema+parse)
+  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
+  - apply specified [transformer](/DOCS.md#Transformers)
+  - runs local [cast](/DOCS.md#Caster) hook
+  - runs transformer [cast](/DOCS.md#Caster) hook
+  - runs transformer [validate](/DOCS.md#Validator) hook
+  - runs local [validate](/DOCS.md#Validator) hook
+  - runs transformer [parse](/DOCS.md#Parser) hook 
+
+## Transformers
+
+Transformers have their own section. See [TRANSFORMERS.md](./TRANSFORMERS.md)
+
 
 * * *
 
