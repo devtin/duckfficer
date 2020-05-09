@@ -76,7 +76,7 @@ parseAvaFile(fromFeatures('schema.test.js'))
     const guide = avaTestsToMd(schema.concat(validation).concat(casting), mdOptions) + `\n\n## Types\n\n` + transformers.join(`\n\n`)
     const payload = {
       guide,
-      libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.iife.js.gz')).size / 1024) * 10) / 10 }KB`,
+      libSize: `${ Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.umd.js.gz')).size / 1024) * 10) / 10 }KB`,
       shields: [
         '<a href="https://www.npmjs.com/package/@devtin/schema-validator" target="_blank"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>',
         CoverageShield.getShield(), // test coverage
