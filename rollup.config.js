@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import alias from 'rollup-plugin-alias'
 import { name, version, author, license } from './package.json'
-import minify from 'rollup-plugin-babel-minify'
+import { terser } from 'rollup-plugin-terser'
 
 const fromSrc = (...paths) => {
   return path.join(__dirname, 'src', ...paths)
@@ -81,9 +81,6 @@ export default [
         banner
       }
     ],
-    plugins: plugins.concat(minify({
-      comments: false,
-      bannerNewLine: true
-    }))
+    plugins: plugins.concat(terser())
   }
 ]
