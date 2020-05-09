@@ -11,54 +11,9 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3.4KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.5KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>
-
-## About
-
-Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
-JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3.4KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
-
-## Content
-
-- [Installation](#installation)
-- [At-a-glance](#at-a-glance)
-- **Schema**
-  - [Creating a schema](#creating-a-schema)
-  - [Validating and sanitizing arbitrary objects](#validating-and-sanitizing-arbitrary-objects)
-  - [Error-handling and LifeCycle](#error-handling-and-life-cycle)
-  - [Required and optional values](#required-and-optional-values)
-  - [Default values](#default-values)
-  - [Null values](#null-values)
-  - [Nesting schemas](#nesting-schemas)
-  - [Multiple types](#multiple-types)
-  - [Auto-casting](#auto-casting)
-  - [Loaders](#loaders)
-  - [Overriding initial settings](#overriding-initial-settings)
-- **Validation**
-  - [Built-in validation (provided by types or transformers)](#built-in-validation-provided-by-types-or-transformers)
-  - [Custom property validation hook (provided at schema-setting level)](#custom-property-validation-hook-provided-at-schema-setting-level)
-  - [Custom value validation hook (provided at schema level)](#custom-value-validation-hook-provided-at-schema-level)
-- **Casting (sanitation)**
-  - [Built-in cast (provided by types or transformers)](#built-in-cast-provided-by-types-or-transformers)
-  - [Custom property-cast hook (provided at schema-setting level)](#custom-property-cast-hook-provided-at-schema-setting-level)
-  - [Custom value cast hook (provided at schema level)](#custom-value-cast-hook-provided-at-schema-level)
-- **Types (transformers)**
-  - [Array](#array)
-  - [BigInt](#big-int)
-  - [Boolean](#boolean)
-  - [Date](#date)
-  - [Function](#function)
-  - [Number](#number)
-  - [Object](#object)
-  - [Promise](#promise)
-  - [Set](#set)
-  - [String](#string)
-  - [Custom](#custom)
-- [API](/DOCS.md)
-- [License](#license) (MIT)
 
 ## Installation
 
@@ -110,6 +65,51 @@ try {
 }
 
 ```
+
+<a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">Codepen playground.</a>
+
+## About
+
+Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
+JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
+this light-weight library (~3.5KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+
+## Content
+
+- **Schema**
+  - [Creating a schema](#creating-a-schema)
+  - [Validating and sanitizing arbitrary objects](#validating-and-sanitizing-arbitrary-objects)
+  - [Error-handling and LifeCycle](#error-handling-and-life-cycle)
+  - [Required and optional values](#required-and-optional-values)
+  - [Default values](#default-values)
+  - [Null values](#null-values)
+  - [Nesting schemas](#nesting-schemas)
+  - [Multiple types](#multiple-types)
+  - [Auto-casting](#auto-casting)
+  - [Loaders](#loaders)
+  - [Overriding initial settings](#overriding-initial-settings)
+- **Validation**
+  - [Built-in validation (provided by types or transformers)](#built-in-validation-provided-by-types-or-transformers)
+  - [Custom property validation hook (provided at schema-setting level)](#custom-property-validation-hook-provided-at-schema-setting-level)
+  - [Custom value validation hook (provided at schema level)](#custom-value-validation-hook-provided-at-schema-level)
+- **Casting (sanitation)**
+  - [Built-in cast (provided by types or transformers)](#built-in-cast-provided-by-types-or-transformers)
+  - [Custom property-cast hook (provided at schema-setting level)](#custom-property-cast-hook-provided-at-schema-setting-level)
+  - [Custom value cast hook (provided at schema level)](#custom-value-cast-hook-provided-at-schema-level)
+- **Types (transformers)**
+  - [Array](#array)
+  - [BigInt](#big-int)
+  - [Boolean](#boolean)
+  - [Date](#date)
+  - [Function](#function)
+  - [Number](#number)
+  - [Object](#object)
+  - [Promise](#promise)
+  - [Set](#set)
+  - [String](#string)
+  - [Custom](#custom)
+- [API](/DOCS.md)
+- [License](#license) (MIT)
 
 
 ## Creating a schema
@@ -1037,8 +1037,10 @@ const ProductSchema = new Schema({
     // schema-level cast hook
     cast (v, { state }) {
       t.is(state, givenState)
+      /*
       const month = new Date().getMonth() + 1
-      if (/avocado/i.test(v.name) && !(month >= 5 && month <= 8)) {
+      */
+      if (/avocado/i.test(v.name)/* && !(month >= 5 && month <= 8)*/) {
         v.price += 2 // 2$ extra avocado out of season
       }
 

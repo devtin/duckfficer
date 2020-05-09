@@ -13,22 +13,6 @@ Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br
 for validating & sanitizing JavaScript data schemas.
 </p>
 
-## About
-
-Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
-JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.
-
-## Content
-
-- [Installation](#installation)
-- [At-a-glance](#at-a-glance)
-{{ #index }}
-{{{ . }}}
-{{ /index }}
-- [API](/DOCS.md)
-- [License](#license) (MIT)
-
 ## Installation
 
 ```sh
@@ -42,6 +26,22 @@ $ yarn add @devtin/schema-validator
 ```js
 {{{ at-a-glance }}}
 ```
+
+Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen playground</a>.
+
+## About
+
+Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
+JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
+this light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.
+
+## Content
+
+{{ #index }}
+{{{ . }}}
+{{ /index }}
+- [API](/DOCS.md)
+- [License](#license) (MIT)
 
 
 {{{ guide }}}
