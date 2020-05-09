@@ -66,7 +66,7 @@ try {
 
 ```
 
-<a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">Codepen playground.</a>
+Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" target="_blank">codepen playground</a>.
 
 ## About
 
