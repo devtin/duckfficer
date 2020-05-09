@@ -77,8 +77,10 @@ test(`Custom value cast hook (provided at schema level)`, t => {
       // schema-level cast hook
       cast (v, { state }) {
         t.is(state, givenState)
+        /*
         const month = new Date().getMonth() + 1
-        if (/avocado/i.test(v.name) && !(month >= 5 && month <= 8)) {
+        */
+        if (/avocado/i.test(v.name)/* && !(month >= 5 && month <= 8)*/) {
           v.price += 2 // 2$ extra avocado out of season
         }
 
