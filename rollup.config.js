@@ -74,9 +74,10 @@ export default [
     input: 'src/schema-validator.js',
     output: [
       {
-        file: `dist/schema-validator.iife.js`,
-        format: 'iife',
-        name: 'SchemaValidator',
+        file: `dist/schema-validator.umd.js`,
+        format: 'umd',
+        extend: true,
+        name: 'default',
         banner
       }
     ],
