@@ -5,7 +5,7 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {void}
  * @throws Schema~ValidationError
  */
@@ -17,7 +17,7 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {*} Resulting value
  * @throws Schema~ValidationError
  */
@@ -29,7 +29,7 @@ import { castThrowable } from 'utils/cast-throwable.js'
  * @param {*} value - The value being casted
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {*} Resulting value
  */
 
