@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3.5KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.6KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>
 
@@ -72,7 +72,7 @@ Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" 
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3.5KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~3.6KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Content
 
@@ -1482,6 +1482,59 @@ t.notThrows(() => {
 
 t.is(contact.user, 'tin')
 t.is(contact.age, 36)
+```
+
+### min (minimum value)
+
+```js
+const NewNumber = new Schema({
+  type: Number,
+  min: 0
+})
+
+const err = t.throws(() => NewNumber.parse(-0.1))
+t.is(err.message, 'minimum accepted value is 0')
+
+t.is(NewNumber.parse(0), 0)
+```
+
+### max (maximum value)
+
+```js
+const NewNumber = new Schema({
+  type: Number,
+  max: 100
+})
+
+const err = t.throws(() => NewNumber.parse(100.1))
+t.is(err.message, 'maximum accepted value is 100')
+t.is(NewNumber.parse(100), 100)
+```
+
+### decimalPlaces (maximum number of decimal places)
+
+```js
+const NewNumber = new Schema({
+  type: Number,
+  decimalPlaces: 2
+})
+
+t.is(NewNumber.parse(11.123), 11.12)
+t.is(NewNumber.parse(12.345), 12.35)
+```
+
+### integer (accepts only integers)
+
+```js
+const NewNumber = new Schema({
+  type: Number,
+  integer: true
+})
+
+const error = t.throws(() => NewNumber.parse(11.123))
+t.is(error.message, 'Invalid integer')
+
+t.is(NewNumber.parse(11), 11)
 ```
 
 ### autoCast (default `false`)
