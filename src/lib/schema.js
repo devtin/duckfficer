@@ -322,7 +322,7 @@ export class Schema {
    */
   parse (v, { state = {} } = {}) {
     // schema-level casting
-    v = this.cast.call(this, v, { state })
+    v = this.cast(v, { state })
 
     if (this.hasChildren) {
       v = this.runChildren(v, { state })

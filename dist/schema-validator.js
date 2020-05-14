@@ -260,7 +260,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {void}
  * @throws Schema~ValidationError
  */
@@ -272,7 +272,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {*} Resulting value
  * @throws Schema~ValidationError
  */
@@ -284,7 +284,7 @@ function castThrowable (value, error) {
  * @param {*} value - The value being casted
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
- * @this {SchemaValidator}
+ * @this {Schema}
  * @return {*} Resulting value
  */
 
@@ -448,6 +448,9 @@ const Transformers = {
    * @constant {Transformer} Transformers.Number
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid number] - Default error message thrown
+   * @property {String} [settings.minError=minimum accepted value is { value }] - Error message thrown for minimum values
+   * @property {String} [settings.maxError=maximum accepted value is { value }] - Error message thrown for maximum values
+   * @property {String} [settings.integerError=Invalid integer]
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast `String`'s with numeric values.
    * @property {Caster} cast - Tries to cast given value into a `Number`
    * @property {Validator} validate - Validates given value is a `Number`
@@ -456,6 +459,13 @@ const Transformers = {
   Number: {
     settings: {
       typeError: `Invalid number`,
+      minError: `minimum accepted value is { value }`,
+      maxError: `maximum accepted value is { value }`,
+      integerError: `Invalid integer`,
+      min: undefined,
+      max: undefined,
+      integer: false,
+      decimalPlaces: undefined,
       autoCast: false
     },
     cast (value) {
@@ -465,6 +475,25 @@ const Transformers = {
       if (typeof value !== 'number' || isNaN(value)) {
         this.throwError(Transformers.Number.settings.typeError, { value });
       }
+
+      if (this.settings.integer && !Number.isInteger(value)) {
+        this.throwError(Transformers.Number.settings.integerError, { value });
+      }
+
+      if (this.settings.min !== undefined && value < this.settings.min) {
+        this.throwError(Transformers.Number.settings.minError, { value: this.settings.min });
+      }
+
+      if (this.settings.max !== undefined && value > this.settings.max) {
+        this.throwError(Transformers.Number.settings.maxError, { value: this.settings.max });
+      }
+    },
+    parse (v) {
+      if (this.settings.decimalPlaces !== undefined) {
+        const decimalFactor = Math.pow(10, this.settings.decimalPlaces);
+        return Math.round(v * decimalFactor) / decimalFactor
+      }
+      return v
     }
   },
   /**
@@ -993,7 +1022,7 @@ class Schema {
    */
   parse (v, { state = {} } = {}) {
     // schema-level casting
-    v = this.cast.call(this, v, { state });
+    v = this.cast(v, { state });
 
     if (this.hasChildren) {
       v = this.runChildren(v, { state });
