@@ -356,6 +356,7 @@ export const Transformers = {
    * @property {Number|ValueError} [settings.maxlength] - Optional maximum length
    * @property {RegExp|ValueError} [settings.regex] - Optional RegExp to match against given string
    * @property {Boolean} [settings.lowercase] - Optionally convert input string into lowercase
+   * @property {Boolean} [settings.uppercase] - Optionally convert input string into uppercase
    * @property {Caster} cast - Basically checks if a value is an object and this object has the method `toString`. If so,
    * calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value
    * was returned by the method.
@@ -369,7 +370,8 @@ export const Transformers = {
       enumError: `Unknown enum option { value }`,
       enum: [],
       autoCast: false,
-      lowercase: false
+      lowercase: false,
+      uppercase: false
     },
     cast (v) {
       if (v && Object.hasOwnProperty.call(v, 'toString') && typeof v.toString === 'function' && v.toString() !== '[object Object]') {
@@ -413,6 +415,9 @@ export const Transformers = {
     parse (v) {
       if (this.settings.lowercase) {
         v = v.toLowerCase()
+      }
+      if (this.settings.uppercase) {
+        v = v.toUpperCase()
       }
       return v
     }

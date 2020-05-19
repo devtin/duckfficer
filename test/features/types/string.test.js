@@ -132,3 +132,14 @@ test(`lowercase`, t => {
   })
   t.is(mySchema.parse('ADMIN'), 'admin')
 })
+
+test(`uppercase`, t => {
+  /**
+   * Optionally transforms input string into uppercase
+   */
+  const mySchema = new Schema({
+    type: String,
+    uppercase: true
+  })
+  t.is(mySchema.parse('en'), 'EN')
+})
