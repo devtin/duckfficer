@@ -352,9 +352,9 @@ export const Transformers = {
    * @property {String} [settings.enumError=Invalid enum option { value }] - Default error message thrown
    * @property {String[]} [settings.enum] - Whether to restrict allowed values to given sample.
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast objects with method `toString`.
-   * @property {(Number|ValueError)} [settings.minlength] - Optional minimum length
-   * @property {(Number|ValueError)} [settings.maxlength] - Optional maximum length
-   * @property {(RegExp|ValueError)} [settings.regex] - Optional RegExp to match against given string
+   * @property {Number|ValueError} [settings.minlength] - Optional minimum length
+   * @property {Number|ValueError} [settings.maxlength] - Optional maximum length
+   * @property {RegExp|ValueError} [settings.regex] - Optional RegExp to match against given string
    * @property {Caster} cast - Basically checks if a value is an object and this object has the method `toString`. If so,
    * calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value
    * was returned by the method.
