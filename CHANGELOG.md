@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/devtin/schema-validator/compare/v2.8.5...v2.9.0) (2020-05-19)
+
+
+### Features
+
+* **number:** introduces `integer`, `min`, `max` & `decimalPlaces` opt ([6c645f5](https://github.com/devtin/schema-validator/commit/6c645f5865b9b2a274af8ee87684e4400a4749fe)), closes [#35](https://github.com/devtin/schema-validator/issues/35)
+* **string:** lowercase filter ([62c83b8](https://github.com/devtin/schema-validator/commit/62c83b8df7d3e14d0b5b661f16cb403091e4b126))
+* **string:** uppercase filter ([9aa063a](https://github.com/devtin/schema-validator/commit/9aa063a620544ba28268490b66471cc8ebc720bd))
+
 ### [2.8.5](https://github.com/devtin/schema-validator/compare/v2.8.4...v2.8.5) (2020-05-09)
 
 ### [2.8.4](https://github.com/devtin/schema-validator/compare/v2.8.3...v2.8.4) (2020-05-09)

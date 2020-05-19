@@ -584,6 +584,8 @@ key map object that holds the available Transformer's (types) that can be valida
 | [settings.minlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional minimum length |
 | [settings.maxlength] | <code>Number</code> \| [<code>ValueError</code>](#ValueError) |  | Optional maximum length |
 | [settings.regex] | <code>RegExp</code> \| [<code>ValueError</code>](#ValueError) |  | Optional RegExp to match against given string |
+| [settings.lowercase] | <code>Boolean</code> |  | Optionally convert input string into lowercase |
+| [settings.uppercase] | <code>Boolean</code> |  | Optionally convert input string into uppercase |
 | cast | [<code>Caster</code>](#Caster) |  | Basically checks if a value is an object and this object has the method `toString`. If so, calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value was returned by the method. |
 | validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `String`. Additionally, performs built-in validations: minlength, maxlength and regex. |
 

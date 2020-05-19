@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3.6KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.7KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>
 
@@ -72,7 +72,7 @@ Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" 
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3.6KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~3.7KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Content
 
@@ -1947,6 +1947,34 @@ const mySchema = new Schema({
 const error = t.throws(() => mySchema.parse({ topping: 'potatoes' }))
 t.is(error.errors[0].message, 'Unknown enum option potatoes')
 t.notThrows(() => mySchema.parse({ topping: 'ham' }))
+```
+
+### lowercase
+
+
+
+Optionally transforms input string into lowercase
+
+```js
+const mySchema = new Schema({
+  type: String,
+  lowercase: true
+})
+t.is(mySchema.parse('ADMIN'), 'admin')
+```
+
+### uppercase
+
+
+
+Optionally transforms input string into uppercase
+
+```js
+const mySchema = new Schema({
+  type: String,
+  uppercase: true
+})
+t.is(mySchema.parse('en'), 'EN')
 ```
 
 ## Custom
