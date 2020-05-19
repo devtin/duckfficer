@@ -121,3 +121,14 @@ test(`enum`, t => {
   t.is(error.errors[0].message, 'Unknown enum option potatoes')
   t.notThrows(() => mySchema.parse({ topping: 'ham' }))
 })
+
+test(`lowercase`, t => {
+  /**
+   * Optionally transforms input string into lowercase
+   */
+  const mySchema = new Schema({
+    type: String,
+    lowercase: true
+  })
+  t.is(mySchema.parse('ADMIN'), 'admin')
+})
