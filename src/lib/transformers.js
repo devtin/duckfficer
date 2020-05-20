@@ -190,6 +190,33 @@ export const Transformers = {
     }
   },
   /**
+   * @constant {Transformer} Transformers.Map
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid map] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=true] - Whether to auto-cast `Object`'s into `Map`'s.
+   * @property {Caster} cast - Casts `Object` into `Map`
+   * @property {Validator} validate - Validates given values is a `Map`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+   */
+  Map: {
+    settings: {
+      typeError: `Invalid map`,
+      autoCast: true
+    },
+    cast (value) {
+      if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Map)) {
+        value = new Map(Object.entries(value))
+      }
+
+      return value
+    },
+    validate (value) {
+      if (!(value instanceof Map)) {
+        this.throwError(Transformers.Map.settings.typeError, { value })
+      }
+    }
+  },
+  /**
    * @constant {Transformer} Transformers.Number
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid number] - Default error message thrown

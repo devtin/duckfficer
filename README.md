@@ -102,6 +102,7 @@ this light-weight library (~3.7KB minified + gzipped) for validating & sanitizin
   - [Boolean](#boolean)
   - [Date](#date)
   - [Function](#function)
+  - [Map](#map)
   - [Number](#number)
   - [Object](#object)
   - [Promise](#promise)
@@ -877,6 +878,7 @@ t.deepEqual(Object.keys(Transformers), [
   'Boolean',
   'Date',
   'Function',
+  'Map',
   'Number',
   'Object',
   'Promise',
@@ -1449,6 +1451,35 @@ const error = t.throws(() => ProductType.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors.length, 1)
 t.is(error.errors[0].message, 'Invalid function')
+```
+
+## Map
+
+
+
+Validates [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) values
+
+```js
+const MapSchema = new Schema({
+  type: Map,
+  autoCast: false
+})
+
+const error = t.throws(() => MapSchema.parse({ hello: true }))
+t.is(error.message, 'Invalid map')
+```
+
+### autoCast (default `true`)
+
+```js
+const MapSchema = new Schema({
+  type: Map
+})
+
+const parsed = MapSchema.parse({ hello: true })
+t.true(parsed instanceof Map)
+t.true(parsed.get('hello'))
+t.false(Object.hasOwnProperty.call(parsed, 'hello'))
 ```
 
 ## Number

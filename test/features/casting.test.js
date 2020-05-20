@@ -12,6 +12,7 @@ test(`Built-in cast (provided by types or transformers)`, t => {
     'BigInt',
     'Boolean',
     'Date',
+    'Map',
     'Number',
     'Promise',
     'Set',

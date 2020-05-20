@@ -13,6 +13,7 @@ test(`Built-in validation (provided by types or transformers)`, t => {
     'Boolean',
     'Date',
     'Function',
+    'Map',
     'Number',
     'Object',
     'Promise',
