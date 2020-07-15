@@ -612,17 +612,29 @@ test(`Nesting schemas`, t => {
 })
 
 test(`Multiple types`, t => {
+  let error
+  const FnSchema = new Schema([Function, Promise])
+
+  t.notThrows(() => FnSchema.parse(() => {}))
+  t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve(`this`))))
+
+  error = t.throws(() => FnSchema.parse(`some pic` ))
+  t.is(error.message, `Could not resolve given value type. Allowed types are Function and Promise`)
+
   const UserSchema = new Schema({
-    picture: [Function, Promise]
+    name: String,
+    age: [String, Number]
   })
 
   t.notThrows(() => UserSchema.parse({ picture () {} }))
   t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`this`)) }))
 
-  const error = t.throws(() => UserSchema.parse({ picture: `some pic` }))
+  error = t.throws(() => UserSchema.parse({
+    name: 'Ana',
+    age: new Date('6/18/2020')
+  }))
   t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Could not resolve given value type in property picture. Allowed types are Function and Promise`)
-  t.is(error.errors[0].field.fullPath, `picture`)
+  t.is(error.errors[0].message, `Could not resolve given value type in property age. Allowed types are String and Number`)
 })
 
 test(`Auto-casting`, t => {
