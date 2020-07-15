@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
-    "@pleasure-js/docs": "^1.0.1-beta",
+    "@pleasure-js/docs": "^1.2.1-beta",
     "ava": "^3.10.1",
     "babel-eslint": "^10.1.0",
     "bluebird": "^3.7.2",
