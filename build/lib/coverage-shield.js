@@ -6,7 +6,9 @@ class CoverageShield {
     const coverageResult = require(file)
     let pct = []
     Object.keys(coverageResult.total).forEach(prop => {
-      pct.push(coverageResult.total[prop].pct)
+      if (prop === 'statements') {
+        pct.push(coverageResult.total[prop].pct)
+      }
     })
     return pct.reduce((a, b) => {
       return a + b
