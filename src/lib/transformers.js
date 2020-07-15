@@ -223,6 +223,10 @@ export const Transformers = {
    * @property {String} [settings.minError=minimum accepted value is { value }] - Error message thrown for minimum values
    * @property {String} [settings.maxError=maximum accepted value is { value }] - Error message thrown for maximum values
    * @property {String} [settings.integerError=Invalid integer]
+   * @property {String} [settings.min] - Minimum value accepted
+   * @property {String} [settings.max] - Maximum value accepted
+   * @property {String} [settings.integer] - Whether to only accept integers or not
+   * @property {String} [settings.decimalPlaces] - Maximum decimal places to display
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast `String`'s with numeric values.
    * @property {Caster} cast - Tries to cast given value into a `Number`
    * @property {Validator} validate - Validates given value is a `Number`
