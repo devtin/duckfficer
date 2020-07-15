@@ -7,7 +7,7 @@ const Promise = require('bluebird')
 const CoverageShield = require('./lib/coverage-shield.js')
 const { Transformers: TheTransformers } = require('../')
 
-const mdOptions = { headingLevel: 2 }
+const mdOptions = { headingLevel: 2, htmlTitle: true }
 const fromFeatures = (...paths) => {
   return path.join(__dirname, '../test/features', ...paths)
 }
@@ -23,7 +23,7 @@ parseAvaFile(fromFeatures('schema.test.js'))
 
     const parseTransformer = async name => {
       return (await Promise.map(await parseAvaFile(locateTest(`features/types/${ name }.test.js`)), async (test, index) => {
-        return avaTestToMd(test, { headingLevel: index === 0 ? mdOptions.headingLevel : mdOptions.headingLevel + 1 })
+        return avaTestToMd(test, { htmlTitle: true, headingLevel: index === 0 ? mdOptions.headingLevel : mdOptions.headingLevel + 1 })
       })).join(`\n\n`)
     }
 

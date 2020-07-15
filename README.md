@@ -113,7 +113,9 @@ this light-weight library (~3.7KB minified + gzipped) for validating & sanitizin
 - [License](#license) (MIT)
 
 
-## Creating a schema
+<a name="creating-a-schema"></a>
+
+<h2>Creating a schema</h2>
 
 
 
@@ -170,7 +172,9 @@ t.is(safeObject.birthday.getFullYear(), 1983)
 t.is(safeObject.description.length, 3)
 ```
 
-## Validating and sanitizing arbitrary objects
+<a name="validating-and-sanitizing-arbitrary-objects"></a>
+
+<h2>Validating and sanitizing arbitrary objects</h2>
 
 
 
@@ -299,7 +303,9 @@ t.notThrows(() => {
 })
 ```
 
-## Error-handling and LifeCycle
+<a name="error-handling-and-life-cycle"></a>
+
+<h2>Error-handling and LifeCycle</h2>
 
 
 
@@ -455,7 +461,9 @@ t.deepEqual(lifeCycle, [
 ])
 ```
 
-## Required and optional values
+<a name="required-and-optional-values"></a>
+
+<h2>Required and optional values</h2>
 
 
 
@@ -547,7 +555,9 @@ t.deepEqual(contact2, {
 })
 ```
 
-## Default values
+<a name="default-values"></a>
+
+<h2>Default values</h2>
 
 
 
@@ -648,7 +658,9 @@ t.is(parsed.address.zip, 33129)
 t.is(parsed.subscribe, true)
 ```
 
-## Null values
+<a name="null-values"></a>
+
+<h2>Null values</h2>
 
 
 
@@ -670,7 +682,9 @@ const NullSchema = new Schema({
 t.is(NullSchema.parse(null), null)
 ```
 
-## Nesting schemas
+<a name="nesting-schemas"></a>
+
+<h2>Nesting schemas</h2>
 
 
 
@@ -740,7 +754,9 @@ t.notThrows(() => UserSchema.parse({
 }))
 ```
 
-## Multiple types
+<a name="multiple-types"></a>
+
+<h2>Multiple types</h2>
 
 ```js
 let error
@@ -779,7 +795,9 @@ t.is(error.message, `Data is not valid`)
 t.is(error.errors[0].message, `Could not resolve given value type in property age. Allowed types are String and Number`)
 ```
 
-## Auto-casting
+<a name="auto-casting"></a>
+
+<h2>Auto-casting</h2>
 
 
 
@@ -845,7 +863,9 @@ t.is(error.errors[1].message, `Invalid number`)
 t.is(error.errors[1].field.fullPath, `kids`)
 ```
 
-## Loaders
+<a name="loaders"></a>
+
+<h2>Loaders</h2>
 
 
 
@@ -881,7 +901,9 @@ t.truthy(product)
 t.is(product.id, '#123')
 ```
 
-## Overriding initial settings
+<a name="overriding-initial-settings"></a>
+
+<h2>Overriding initial settings</h2>
 
 ```js
 const SomeSchema = new Schema({
@@ -911,7 +933,9 @@ t.is(error2.message, `Data is not valid`)
 t.is(error2.errors[0].message, `Property name is required`)
 ```
 
-## Built-in validation (provided by types or transformers)
+<a name="built-in-validation-provided-by-types-or-transformers"></a>
+
+<h2>Built-in validation (provided by types or transformers)</h2>
 
 
 
@@ -934,7 +958,9 @@ t.deepEqual(Object.keys(Transformers), [
 ])
 ```
 
-## Custom property validation hook (provided at schema-setting level)
+<a name="custom-property-validation-hook-provided-at-schema-setting-level"></a>
+
+<h2>Custom property validation hook (provided at schema-setting level)</h2>
 
 
 
@@ -973,7 +999,9 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
 ```
 
-## Custom value validation hook (provided at schema level)
+<a name="custom-value-validation-hook-provided-at-schema-level"></a>
+
+<h2>Custom value validation hook (provided at schema level)</h2>
 
 ```js
 const ProductSchema = new Schema({
@@ -1003,7 +1031,9 @@ const error = t.throws(() => ProductSchema.parse({
 t.is(error.message, `Product deprecated`)
 ```
 
-## Built-in cast (provided by types or transformers)
+<a name="built-in-cast-provided-by-types-or-transformers"></a>
+
+<h2>Built-in cast (provided by types or transformers)</h2>
 
 
 
@@ -1024,7 +1054,9 @@ t.deepEqual(Object.keys(Transformers).filter(transformerName => {
 ])
 ```
 
-## Custom property-cast hook (provided at schema-setting level)
+<a name="custom-property-cast-hook-provided-at-schema-setting-level"></a>
+
+<h2>Custom property-cast hook (provided at schema-setting level)</h2>
 
 
 
@@ -1070,7 +1102,9 @@ t.notThrows(() => {
 t.is(product.id, 123)
 ```
 
-## Custom value cast hook (provided at schema level)
+<a name="custom-value-cast-hook-provided-at-schema-level"></a>
+
+<h2>Custom value cast hook (provided at schema level)</h2>
 
 
 
@@ -1116,7 +1150,9 @@ t.is(product.price, 5.99)
 
 ## Types
 
-## Array
+<a name="array"></a>
+
+<h2>Array</h2>
 
 
 
@@ -1151,7 +1187,9 @@ t.is(error.errors[0].message, 'Invalid array')
 t.is(error.errors[0].field.fullPath, 'category')
 ```
 
-### arraySchema
+<a name="array-schema"></a>
+
+<h3>arraySchema</h3>
 
 
 
@@ -1223,7 +1261,9 @@ t.notThrows(() => Contact.parse({
 }))
 ```
 
-## BigInt
+<a name="big-int"></a>
+
+<h2>BigInt</h2>
 
 
 
@@ -1256,7 +1296,9 @@ t.is(contact.user, 'tin')
 t.is(contact.id, 1n)
 ```
 
-### autoCast (default `false`)
+<a name="auto-cast-default-false"></a>
+
+<h3>autoCast (default `false`)</h3>
 
 
 
@@ -1307,7 +1349,9 @@ t.is(error.errors[0].message, 'Invalid bigint')
 t.is(error.errors[0].field.fullPath, 'id')
 ```
 
-## Boolean
+<a name="boolean"></a>
+
+<h2>Boolean</h2>
 
 
 
@@ -1352,7 +1396,9 @@ t.truthy(product2)
 t.false(product2.active)
 ```
 
-### autoCast (default `false`)
+<a name="auto-cast-default-false"></a>
+
+<h3>autoCast (default `false`)</h3>
 
 
 
@@ -1388,7 +1434,9 @@ t.true(product.active)
 t.false(ProductType.parse({ name: 'kombucha', active: 'no' }).active)
 ```
 
-## Date
+<a name="date"></a>
+
+<h2>Date</h2>
 
 
 
@@ -1417,7 +1465,9 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid date')
 ```
 
-### autoCast (default `true`)
+<a name="auto-cast-default-true"></a>
+
+<h3>autoCast (default `true`)</h3>
 
 
 
@@ -1473,7 +1523,9 @@ t.is(error2.errors[0].message, 'Invalid date')
 t.is(error2.errors[0].field.fullPath, 'birthday')
 ```
 
-## Function
+<a name="function"></a>
+
+<h2>Function</h2>
 
 ```js
 const ProductType = new Schema({
@@ -1501,7 +1553,9 @@ t.is(error.errors.length, 1)
 t.is(error.errors[0].message, 'Invalid function')
 ```
 
-## Map
+<a name="map"></a>
+
+<h2>Map</h2>
 
 
 
@@ -1517,7 +1571,9 @@ const error = t.throws(() => MapSchema.parse({ hello: true }))
 t.is(error.message, 'Invalid map')
 ```
 
-### autoCast (default `true`)
+<a name="auto-cast-default-true"></a>
+
+<h3>autoCast (default `true`)</h3>
 
 ```js
 const MapSchema = new Schema({
@@ -1530,7 +1586,9 @@ t.true(parsed.get('hello'))
 t.false(Object.hasOwnProperty.call(parsed, 'hello'))
 ```
 
-## Number
+<a name="number"></a>
+
+<h2>Number</h2>
 
 
 
@@ -1563,7 +1621,9 @@ t.is(contact.user, 'tin')
 t.is(contact.age, 36)
 ```
 
-### min (minimum value)
+<a name="min-minimum-value"></a>
+
+<h3>min (minimum value)</h3>
 
 ```js
 const NewNumber = new Schema({
@@ -1577,7 +1637,9 @@ t.is(err.message, 'minimum accepted value is 0')
 t.is(NewNumber.parse(0), 0)
 ```
 
-### max (maximum value)
+<a name="max-maximum-value"></a>
+
+<h3>max (maximum value)</h3>
 
 ```js
 const NewNumber = new Schema({
@@ -1590,7 +1652,9 @@ t.is(err.message, 'maximum accepted value is 100')
 t.is(NewNumber.parse(100), 100)
 ```
 
-### decimalPlaces (maximum number of decimal places)
+<a name="decimal-places-maximum-number-of-decimal-places"></a>
+
+<h3>decimalPlaces (maximum number of decimal places)</h3>
 
 ```js
 const NewNumber = new Schema({
@@ -1602,7 +1666,9 @@ t.is(NewNumber.parse(11.123), 11.12)
 t.is(NewNumber.parse(12.345), 12.35)
 ```
 
-### integer (accepts only integers)
+<a name="integer-accepts-only-integers"></a>
+
+<h3>integer (accepts only integers)</h3>
 
 ```js
 const NewNumber = new Schema({
@@ -1616,7 +1682,9 @@ t.is(error.message, 'Invalid integer')
 t.is(NewNumber.parse(11), 11)
 ```
 
-### autoCast (default `false`)
+<a name="auto-cast-default-false"></a>
+
+<h3>autoCast (default `false`)</h3>
 
 
 
@@ -1667,7 +1735,9 @@ t.is(error.errors[0].message, 'Invalid number')
 t.is(error.errors[0].field.fullPath, 'age')
 ```
 
-## Object
+<a name="object"></a>
+
+<h2>Object</h2>
 
 ```js
 const Transaction = new Schema({
@@ -1705,7 +1775,9 @@ t.is(error.errors[0].message, 'Invalid object') // => Invalid date
 t.is(error.errors[0].field.fullPath, 'payload')
 ```
 
-### mapSchema
+<a name="map-schema"></a>
+
+<h3>mapSchema</h3>
 
 
 
@@ -1765,7 +1837,9 @@ t.notThrows(() => Contact.parse({
 }))
 ```
 
-## Promise
+<a name="promise"></a>
+
+<h2>Promise</h2>
 
 ```js
 const UserType = new Schema({
@@ -1795,7 +1869,9 @@ t.is(error.errors[0].message, 'Invalid Promise')
 t.is(error.errors[0].field.fullPath, 'picture')
 ```
 
-### autoCast (default `false`)
+<a name="auto-cast-default-false"></a>
+
+<h3>autoCast (default `false`)</h3>
 
 ```js
 const UserType = new Schema({
@@ -1833,7 +1909,9 @@ t.notThrows(() => UserType.parse({
 }))
 ```
 
-## Set
+<a name="set"></a>
+
+<h2>Set</h2>
 
 ```js
 const ProductType = new Schema({
@@ -1860,7 +1938,9 @@ t.is(error.errors[0].message, 'Invalid set')
 t.is(error.errors[0].field.fullPath, 'category')
 ```
 
-### autoCast (default `true`)
+<a name="auto-cast-default-true"></a>
+
+<h3>autoCast (default `true`)</h3>
 
 ```js
 const ProductType = new Schema({
@@ -1889,7 +1969,9 @@ t.is(error.errors[0].message, 'Invalid set')
 t.is(error.errors[0].field.fullPath, 'category')
 ```
 
-## String
+<a name="string"></a>
+
+<h2>String</h2>
 
 
 
@@ -1906,7 +1988,9 @@ t.is(error.errors[0].message, 'Invalid string')
 t.is(error.errors[0].field.fullPath, 'name')
 ```
 
-### autoCast (default `false`)
+<a name="auto-cast-default-false"></a>
+
+<h3>autoCast (default `false`)</h3>
 
 
 
@@ -1931,7 +2015,9 @@ const user = nameSchema.parse({
 t.is(user.name, 'Some name')
 ```
 
-### minlength
+<a name="minlength"></a>
+
+<h3>minlength</h3>
 
 
 
@@ -1955,7 +2041,9 @@ t.is(error.errors[0].field.fullPath, `name`)
 t.notThrows(() => nameSchema.parse({ name: 'Martin' }), `Martin`)
 ```
 
-### maxlength
+<a name="maxlength"></a>
+
+<h3>maxlength</h3>
 
 
 
@@ -1978,7 +2066,9 @@ t.is(error.errors[0].message, `Invalid maxlength`)
 t.notThrows(() => lastNameSchema.parse({ lastName: 'Gonzalez' }))
 ```
 
-### regex
+<a name="regex"></a>
+
+<h3>regex</h3>
 
 
 
@@ -2014,7 +2104,9 @@ t.is(error2.message, `Data is not valid`)
 t.is(error2.errors[0].message, `lowercase only`)
 ```
 
-### enum
+<a name="enum"></a>
+
+<h3>enum</h3>
 
 ```js
 const mySchema = new Schema({
@@ -2028,7 +2120,9 @@ t.is(error.errors[0].message, 'Unknown enum option potatoes')
 t.notThrows(() => mySchema.parse({ topping: 'ham' }))
 ```
 
-### lowercase
+<a name="lowercase"></a>
+
+<h3>lowercase</h3>
 
 
 
@@ -2042,7 +2136,9 @@ const mySchema = new Schema({
 t.is(mySchema.parse('ADMIN'), 'admin')
 ```
 
-### uppercase
+<a name="uppercase"></a>
+
+<h3>uppercase</h3>
 
 
 
@@ -2056,7 +2152,9 @@ const mySchema = new Schema({
 t.is(mySchema.parse('en'), 'EN')
 ```
 
-## Custom
+<a name="custom"></a>
+
+<h2>Custom</h2>
 
 
 
