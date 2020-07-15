@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/devtin/schema-validator/compare/v2.9.0...v3.0.0) (2020-07-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* validates the structure of the payload prior validating the data type
+
+### Features
+
+* validates the structure of the payload prior validating the data type ([067a451](https://github.com/devtin/schema-validator/commit/067a4515afaf12eb173f3f826f856d435dd99a92))
+* **type:** add Map type ([92d649d](https://github.com/devtin/schema-validator/commit/92d649d92c9e90ca0f89efaf714d7d7fe86712c6))
+
+
+### Bug Fixes
+
+* multiple type error description ([07d3e36](https://github.com/devtin/schema-validator/commit/07d3e3633ed7d870a585dcd457c68ddce246fd76))
+
 ## [2.9.0](https://github.com/devtin/schema-validator/compare/v2.8.5...v2.9.0) (2020-05-19)
 
 

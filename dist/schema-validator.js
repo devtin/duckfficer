@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v2.9.0
+ * @devtin/schema-validator v3.0.0
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -445,12 +445,43 @@ const Transformers = {
     }
   },
   /**
+   * @constant {Transformer} Transformers.Map
+   * @property {Object} settings - Default transformer settings
+   * @property {String} [settings.typeError=Invalid map] - Default error message thrown
+   * @property {Boolean} [settings.autoCast=true] - Whether to auto-cast `Object`'s into `Map`'s.
+   * @property {Caster} cast - Casts `Object` into `Map`
+   * @property {Validator} validate - Validates given values is a `Map`
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+   */
+  Map: {
+    settings: {
+      typeError: `Invalid map`,
+      autoCast: true
+    },
+    cast (value) {
+      if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Map)) {
+        value = new Map(Object.entries(value));
+      }
+
+      return value
+    },
+    validate (value) {
+      if (!(value instanceof Map)) {
+        this.throwError(Transformers.Map.settings.typeError, { value });
+      }
+    }
+  },
+  /**
    * @constant {Transformer} Transformers.Number
    * @property {Object} settings - Default transformer settings
    * @property {String} [settings.typeError=Invalid number] - Default error message thrown
    * @property {String} [settings.minError=minimum accepted value is { value }] - Error message thrown for minimum values
    * @property {String} [settings.maxError=maximum accepted value is { value }] - Error message thrown for maximum values
    * @property {String} [settings.integerError=Invalid integer]
+   * @property {String} [settings.min] - Minimum value accepted
+   * @property {String} [settings.max] - Maximum value accepted
+   * @property {String} [settings.integer] - Whether to only accept integers or not
+   * @property {String} [settings.decimalPlaces] - Maximum decimal places to display
    * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast `String`'s with numeric values.
    * @property {Caster} cast - Tries to cast given value into a `Number`
    * @property {Validator} validate - Validates given value is a `Number`
@@ -937,14 +968,14 @@ class Schema {
   get paths () {
     const foundPaths = [];
 
+    this.name && foundPaths.push(this.name);
+
     if (this.hasChildren) {
       this.children.forEach(({ paths }) => {
         paths.forEach(path => {
           foundPaths.push((this.name ? `${ this.name }.` : '') + path);
         });
       });
-    } else {
-      foundPaths.push(this.name);
     }
 
     return foundPaths
@@ -1002,21 +1033,34 @@ class Schema {
   /**
    * Validates if the given object have a structure valid for the schema in subject
    * @param {Object} obj - The object to evaluate
-   * @throws {Schema~ValidationError}
+   * @throws {Schema~ValidationError} when the object does not match the schema
    */
   structureValidation (obj) {
     if (!obj || !this.hasChildren) {
-      return true
+      return
     }
+
+    const unknownFields = [];
     if (!propertiesRestricted(obj, this.ownPaths)) {
-      const unknownFields = [];
       if (obj) {
         obj2dot(obj).forEach(field => {
           if (!this.hasField(field)) {
-            unknownFields.push(new Error(`Unknown property ${ field }`));
+            unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`));
           }
         });
       }
+    }
+
+    this.ownPaths.forEach((path) => {
+      try {
+        this.schemaAtPath(path).structureValidation(obj[path]);
+      } catch(err) {
+        const { errors } = err;
+        unknownFields.push(...errors);
+      }
+    });
+
+    if (unknownFields.length > 0) {
       throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
         errors: unknownFields,
         value: obj,
@@ -1034,6 +1078,9 @@ class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v, { state = {} } = {}) {
+    if (!this.parent) {
+      this.structureValidation(v);
+    }
     // schema-level casting
     v = this.cast(v, { state });
 
@@ -1107,7 +1154,7 @@ class Schema {
         }
       });
       if (!parsed) {
-        this.throwError(`Could not resolve given value type in property ${ this.fullPath }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v });
+        this.throwError(`Could not resolve given value type${ this.fullPath ? ' in property ' + this.fullPath : '' }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v });
       }
       return result
     }
@@ -1179,8 +1226,6 @@ class Schema {
       }
     };
 
-    sandbox(() => this.structureValidation(obj));
-
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/));
       const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined;
@@ -1189,7 +1234,7 @@ class Schema {
         if (!schema[method]) {
           console.log(method, `not found in ${ pathName }`, schema)
         }*/
-        const val = schema[method] ? schema[method](input, { state }) : undefined;
+        const val = schema[method](input, { state });
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val });
         }
@@ -1212,7 +1257,7 @@ class Schema {
    * @param {Object} [state]
    * @return {*}
    */
-  runTransformer ({ method, transformer, payload, state = {} }) {
+  runTransformer ({ method, transformer, payload, state }) {
     if (!transformer[method]) {
       return payload
     }

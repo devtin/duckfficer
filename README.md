@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://www.npmjs.com/package/@devtin/schema-validator" target="_blank"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>
-<a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-97%25-green" alt="Coverage 97%"></a>
+<a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-100%25-green" alt="Coverage 100%"></a>
 <a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/test/badge.svg"></a>
 <a href="https://gitter.im/schema-validator/community"><img src="https://badges.gitter.im/schema-validator/community.svg"></a>
 <a href="http://opensource.org/licenses" target="_blank"><img src="http://img.shields.io/badge/License-MIT-brightgreen.svg"></a>
@@ -204,20 +204,37 @@ Above's object `arbitraryObject` contains properties that do not exist in the sc
 `middleName` and `lastName`, are not defined in the schema.
 
 Following validation will result in an error since the arbitrary object does not match the schema: it contains
-these 3 unknown properties, plus the property `name` (expected by the defined schema) is also missing.
+these 3 unknown properties. The schema validator will first perform a structure validation making sure the payload
+structure matches the provided schema structure, prior performing any type validation / further logic.
+
+Even when the property `name` (expected by the defined schema) is also missing, it won't be reported since the
+payload's schema structure doest not match the provided one.
 
 ```js
 let error = t.throws(() => UserSchema.parse(arbitraryObject))
 
 t.true(error instanceof ValidationError)
 t.true(error instanceof Error)
-t.is(error.message, `Data is not valid`)
-t.is(error.errors.length, 5)
+t.is(error.message, `Invalid object schema`)
+t.is(error.errors.length, 4)
 t.is(error.errors[0].message, `Unknown property firstName`)
 t.is(error.errors[1].message, `Unknown property middleName`)
 t.is(error.errors[2].message, `Unknown property lastName`)
 t.is(error.errors[3].message, `Unknown property address.zip`)
-t.is(error.errors[4].message, `Property name is required`)
+```
+
+When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
+then proceed with further validations...
+
+```js
+error = t.throws(() => UserSchema.parse({
+  birthday: `6/11/1983`,
+  description: ['monkey', 'developer', 'arepa lover']
+}))
+
+t.is(error.message, `Data is not valid`)
+t.is(error.errors.length, 1)
+t.is(error.errors[0].message, `Property name is required`)
 ```
 
 A custom `state` can be passed to extend the validation process.
@@ -350,8 +367,9 @@ arbitraryObject = {
 
 error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
-t.is(error.message, `Data is not valid`)
-t.is(error.errors.length, 4)
+t.is(error.message, `Invalid object schema`)
+t.is(error.errors.length, 1)
+t.is(error.errors[0].message, 'Unknown property somePropertyNotDefinedInTheSchema')
 ```
 
 Throws an error when the given `arbitraryObject` structure does not comply with the given schema structure.
@@ -364,22 +382,28 @@ t.is(error.errors[0].field, undefined) // the field does not exists in our schem
 Throws an error when missing required values.
 
 ```js
-t.is(error.errors[1].message, `Property name is required`)
-t.is(error.errors[1].field.fullPath, 'name')
+error = t.throws(() => UserSchema.parse({
+  // name: 'Martin',
+  birthday: '6/11/1983',
+  phoneNumber: '123'
+}, { state: passedState }))
+
+t.is(error.errors[0].message, `Property name is required`)
+t.is(error.errors[0].field.fullPath, 'name')
 ```
 
 Throws an error if defined type is not registered.
 
 ```js
-t.is(error.errors[2].message, `Don't know how to resolve Birthday in property birthday`)
-t.is(error.errors[2].field.fullPath, `birthday`)
+t.is(error.errors[1].message, `Don't know how to resolve Birthday in property birthday`)
+t.is(error.errors[1].field.fullPath, `birthday`)
 ```
 
 Also throws an error when types don't match.
 
 ```js
-t.is(error.errors[3].message, `Invalid number`)
-t.is(error.errors[3].field.fullPath, `phoneNumber`)
+t.is(error.errors[2].message, `Invalid number`)
+t.is(error.errors[2].field.fullPath, `phoneNumber`)
 
 t.deepEqual(lifeCycle, [
   'schema-level cast hook',
@@ -704,7 +728,7 @@ const error2 = t.throws(() => UserSchema.parse({
 t.is(error2.errors[0].message, 'Property address.line1 is required')
 t.is(error2.errors[0].field.fullPath, 'address.line1')
 
-t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address.line1', 'address.line2', 'address.zip'])
+t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address', 'address.line1', 'address.line2', 'address.zip'])
 
 t.notThrows(() => UserSchema.parse({
   name: 'Martin',
@@ -719,17 +743,40 @@ t.notThrows(() => UserSchema.parse({
 ## Multiple types
 
 ```js
+let error
+const FnSchema = new Schema([Function, Promise])
+
+t.notThrows(() => FnSchema.parse(() => {}))
+t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve(`this`))))
+
+error = t.throws(() => FnSchema.parse(`some pic` ))
+t.is(error.message, `Could not resolve given value type. Allowed types are Function and Promise`)
+
 const UserSchema = new Schema({
-  picture: [Function, Promise]
+  name: String,
+  age: [String, Number]
 })
 
-t.notThrows(() => UserSchema.parse({ picture () {} }))
-t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`this`)) }))
+const martin = UserSchema.parse({
+  name: 'Martin',
+  age: '12'
+})
 
-const error = t.throws(() => UserSchema.parse({ picture: `some pic` }))
+t.is(martin.age, '12')
+
+const olivia = UserSchema.parse({
+  name: 'Olivia',
+  age: 0.9
+})
+
+t.is(olivia.age, 0.9)
+
+error = t.throws(() => UserSchema.parse({
+  name: 'Ana',
+  age: new Date('6/18/2020')
+}))
 t.is(error.message, `Data is not valid`)
-t.is(error.errors[0].message, `Could not resolve given value type in property picture. Allowed types are Function and Promise`)
-t.is(error.errors[0].field.fullPath, `picture`)
+t.is(error.errors[0].message, `Could not resolve given value type in property age. Allowed types are String and Number`)
 ```
 
 ## Auto-casting
@@ -969,6 +1016,7 @@ t.deepEqual(Object.keys(Transformers).filter(transformerName => {
   'BigInt',
   'Boolean',
   'Date',
+  'Map',
   'Number',
   'Promise',
   'Set',

@@ -284,7 +284,7 @@ Validates if the given object have a structure valid for the schema in subject
 **Kind**: instance method of [<code>Schema</code>](#Schema)  
 **Throws**:
 
-- [<code>ValidationError</code>](#Schema..ValidationError) 
+- [<code>ValidationError</code>](#Schema..ValidationError) when the object does not match the schema
 
 
 | Param | Type | Description |
@@ -531,6 +531,10 @@ key map object that holds the available Transformer's (types) that can be valida
 | [settings.minError] | <code>String</code> | <code>minimum accepted value is { value }</code> | Error message thrown for minimum values |
 | [settings.maxError] | <code>String</code> | <code>maximum accepted value is { value }</code> | Error message thrown for maximum values |
 | [settings.integerError] | <code>String</code> | <code>Invalid integer</code> |  |
+| [settings.min] | <code>String</code> |  | Minimum value accepted |
+| [settings.max] | <code>String</code> |  | Maximum value accepted |
+| [settings.integer] | <code>String</code> |  | Whether to only accept integers or not |
+| [settings.decimalPlaces] | <code>String</code> |  | Maximum decimal places to display |
 | [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast `String`'s with numeric values. |
 | cast | [<code>Caster</code>](#Caster) |  | Tries to cast given value into a `Number` |
 | validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `Number` |
