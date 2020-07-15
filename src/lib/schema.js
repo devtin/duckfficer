@@ -490,7 +490,7 @@ export class Schema {
         if (!schema[method]) {
           console.log(method, `not found in ${ pathName }`, schema)
         }*/
-        const val = schema[method] ? schema[method](input, { state }) : undefined
+        const val = schema[method](input, { state })
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })
         }
@@ -513,7 +513,7 @@ export class Schema {
    * @param {Object} [state]
    * @return {*}
    */
-  runTransformer ({ method, transformer, payload, state = {} }) {
+  runTransformer ({ method, transformer, payload, state }) {
     if (!transformer[method]) {
       return payload
     }

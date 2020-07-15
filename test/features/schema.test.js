@@ -626,8 +626,19 @@ test(`Multiple types`, t => {
     age: [String, Number]
   })
 
-  t.notThrows(() => UserSchema.parse({ picture () {} }))
-  t.notThrows(() => UserSchema.parse({ picture: new Promise(resolve => resolve(`this`)) }))
+  const martin = UserSchema.parse({
+    name: 'Martin',
+    age: '12'
+  })
+
+  t.is(martin.age, '12')
+
+  const olivia = UserSchema.parse({
+    name: 'Olivia',
+    age: 0.9
+  })
+
+  t.is(olivia.age, 0.9)
 
   error = t.throws(() => UserSchema.parse({
     name: 'Ana',

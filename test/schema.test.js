@@ -349,3 +349,38 @@ test(`Handles custom data-types`, t => {
     email: 'marting.dc@gmail.com'
   }))
 })
+
+test(`Checks whether contains a field or not`, t => {
+  const SampleSchema = new Schema({
+    anObj: {
+      withSomeProp: Boolean
+    },
+    someProp: Boolean
+  })
+
+  t.true(SampleSchema.hasField('anObj.unExistentProp'))
+  t.true(SampleSchema.hasField('anObj'))
+  t.false(SampleSchema.hasField('anObj.unExistentProp', true))
+})
+
+test(`parseProperty`, t => {
+  const user = new Schema({
+    type: 'String'
+  })
+  t.is(user.parseProperty('String', 'Hello'), 'Hello')
+})
+
+test(`runChildren`, t => {
+  t.deepEqual(new Schema({
+    type: 'String'
+  }).runChildren('Hello'), {})
+
+  t.deepEqual(new Schema({
+    type: 'String'
+  }).runChildren('Hello', { method: 'unknown' }), {})
+})
+
+test(`multiple types with only one item`, t => {
+  const singleSchema = new Schema([String])
+  t.is(singleSchema.parse('Martin'), 'Martin')
+})

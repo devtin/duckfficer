@@ -27,3 +27,19 @@ test(`All error throwing transformers must throw a ValidationError`, t => {
     }
   })
 })
+
+test(`Converts errors toJSON`, t => {
+  const field = new Schema({
+    type: String
+  }, {
+    name: 'somePath'
+  })
+
+  const error = new ValidationError('Some error', {
+    field
+  }).toJSON()
+
+  t.truthy(field)
+  t.is(error.message, 'Some error')
+  t.is(error.field, 'somePath')
+})
