@@ -88,20 +88,37 @@ test(`Validating and sanitizing arbitrary objects`, t => {
    * `middleName` and `lastName`, are not defined in the schema.
    *
    * Following validation will result in an error since the arbitrary object does not match the schema: it contains
-   * these 3 unknown properties, plus the property `name` (expected by the defined schema) is also missing.
+   * these 3 unknown properties. The schema validator will first perform a structure validation making sure the payload
+   * structure matches the provided schema structure, prior performing any type validation / further logic.
+   *
+   * Even when the property `name` (expected by the defined schema) is also missing, it won't be reported since the
+   * payload's schema structure doest not match the provided one.
    */
 
   let error = t.throws(() => UserSchema.parse(arbitraryObject))
 
   t.true(error instanceof ValidationError)
   t.true(error instanceof Error)
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors.length, 5)
+  t.is(error.message, `Invalid object schema`)
+  t.is(error.errors.length, 4)
   t.is(error.errors[0].message, `Unknown property firstName`)
   t.is(error.errors[1].message, `Unknown property middleName`)
   t.is(error.errors[2].message, `Unknown property lastName`)
   t.is(error.errors[3].message, `Unknown property address.zip`)
-  t.is(error.errors[4].message, `Property name is required`)
+
+  /**
+   * When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
+   * then proceed with further validations...
+   */
+
+  error = t.throws(() => UserSchema.parse({
+    birthday: `6/11/1983`,
+    description: ['monkey', 'developer', 'arepa lover']
+  }))
+
+  t.is(error.message, `Data is not valid`)
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, `Property name is required`)
 
   /**
    * A custom `state` can be passed to extend the validation process.
@@ -232,8 +249,9 @@ test(`Error-handling and LifeCycle`, t => {
 
   error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors.length, 4)
+  t.is(error.message, `Invalid object schema`)
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, 'Unknown property somePropertyNotDefinedInTheSchema')
 
   /**
    * Throws an error when the given `arbitraryObject` structure does not comply with the given schema structure.
@@ -246,22 +264,28 @@ test(`Error-handling and LifeCycle`, t => {
    * Throws an error when missing required values.
    */
 
-  t.is(error.errors[1].message, `Property name is required`)
-  t.is(error.errors[1].field.fullPath, 'name')
+  error = t.throws(() => UserSchema.parse({
+    // name: 'Martin',
+    birthday: '6/11/1983',
+    phoneNumber: '123'
+  }, { state: passedState }))
+
+  t.is(error.errors[0].message, `Property name is required`)
+  t.is(error.errors[0].field.fullPath, 'name')
 
   /**
    * Throws an error if defined type is not registered.
    */
 
-  t.is(error.errors[2].message, `Don't know how to resolve Birthday in property birthday`)
-  t.is(error.errors[2].field.fullPath, `birthday`)
+  t.is(error.errors[1].message, `Don't know how to resolve Birthday in property birthday`)
+  t.is(error.errors[1].field.fullPath, `birthday`)
 
   /**
    * Also throws an error when types don't match.
    */
 
-  t.is(error.errors[3].message, `Invalid number`)
-  t.is(error.errors[3].field.fullPath, `phoneNumber`)
+  t.is(error.errors[2].message, `Invalid number`)
+  t.is(error.errors[2].field.fullPath, `phoneNumber`)
 
   t.deepEqual(lifeCycle, [
     'schema-level cast hook',
@@ -575,7 +599,7 @@ test(`Nesting schemas`, t => {
   t.is(error2.errors[0].message, 'Property address.line1 is required')
   t.is(error2.errors[0].field.fullPath, 'address.line1')
 
-  t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address.line1', 'address.line2', 'address.zip'])
+  t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address', 'address.line1', 'address.line2', 'address.zip'])
 
   t.notThrows(() => UserSchema.parse({
     name: 'Martin',

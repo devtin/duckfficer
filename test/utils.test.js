@@ -97,7 +97,7 @@ test(`Resolves schema at given path`, t => {
 
   const ClonedAddressSchema = UserSchema.schemaAtPath('address')
   t.true(ClonedAddressSchema instanceof Schema)
-  t.deepEqual(ClonedAddressSchema.paths, ['address.street', 'address.zip'])
+  t.deepEqual(ClonedAddressSchema.paths, ['address', 'address.street', 'address.zip'])
 
   const BirthdaySchema = UserSchema.schemaAtPath('birthday')
   t.true(BirthdaySchema instanceof Schema)

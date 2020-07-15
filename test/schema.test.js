@@ -1,12 +1,35 @@
 import test from 'ava'
 import { Schema, Utils, Transformers, ValidationError } from '../'
 
+test(`Validates the schema of the payload matches the defined schema`, t => {
+  const address = new Schema({
+    line1: String,
+    zip: Number
+  })
+
+  const user = new Schema({
+    name: String,
+    address
+  })
+
+  const err = t.throws(() => user.parse({
+    name: 'Martin',
+    address: {
+      line2: 'unit #1111'
+    }
+  }))
+
+  t.is(err.message, 'Invalid object schema')
+  t.is(err.errors.length, 1)
+  t.is(err.errors[0].message, 'Unknown property address.line2')
+})
+
 /**
  * Checks the integrity of an object by ensuring it contains only the expected properties and that
  * these properties are of the expected type. To do so, we need to create a schema:
  */
 
-test(`Validates schemas`, async t => {
+test(`Validates the provided types against the defined schema`, async t => {
   const UserSchema = new Schema({
     name: String,
     birthday: Date,
@@ -197,7 +220,7 @@ test(`Validates and sanitizes schemas`, t => {
     category: 'shopping'
   })) // since there is no `category` field in the schema
 
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, `Invalid object schema`)
 
   let post
   t.notThrows(() => {

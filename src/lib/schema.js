@@ -224,14 +224,14 @@ export class Schema {
   get paths () {
     const foundPaths = []
 
+    this.name && foundPaths.push(this.name)
+
     if (this.hasChildren) {
       this.children.forEach(({ paths }) => {
         paths.forEach(path => {
           foundPaths.push((this.name ? `${ this.name }.` : '') + path)
         })
       })
-    } else {
-      foundPaths.push(this.name)
     }
 
     return foundPaths
@@ -289,21 +289,34 @@ export class Schema {
   /**
    * Validates if the given object have a structure valid for the schema in subject
    * @param {Object} obj - The object to evaluate
-   * @throws {Schema~ValidationError}
+   * @throws {Schema~ValidationError} when the object does not match the schema
    */
   structureValidation (obj) {
     if (!obj || !this.hasChildren) {
-      return true
+      return
     }
+
+    const unknownFields = []
     if (!propertiesRestricted(obj, this.ownPaths)) {
-      const unknownFields = []
       if (obj) {
         obj2dot(obj).forEach(field => {
           if (!this.hasField(field)) {
-            unknownFields.push(new Error(`Unknown property ${ field }`))
+            unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`))
           }
         })
       }
+    }
+
+    this.ownPaths.forEach((path) => {
+      try {
+        this.schemaAtPath(path).structureValidation(obj[path])
+      } catch(err) {
+        const { errors } = err
+        unknownFields.push(...errors)
+      }
+    })
+
+    if (unknownFields.length > 0) {
       throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
         errors: unknownFields,
         value: obj,
@@ -321,6 +334,9 @@ export class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v, { state = {} } = {}) {
+    if (!this.parent) {
+      this.structureValidation(v)
+    }
     // schema-level casting
     v = this.cast(v, { state })
 
@@ -394,7 +410,7 @@ export class Schema {
         }
       })
       if (!parsed) {
-        this.throwError(`Could not resolve given value type in property ${ this.fullPath }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v })
+        this.throwError(`Could not resolve given value type${ this.fullPath ? ' in property ' + this.fullPath : '' }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v })
       }
       return result
     }
@@ -465,8 +481,6 @@ export class Schema {
         }
       }
     }
-
-    sandbox(() => this.structureValidation(obj))
 
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/))
