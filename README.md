@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3.7KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.8KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>
 
@@ -72,7 +72,7 @@ Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" 
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3.7KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~3.8KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Content
 

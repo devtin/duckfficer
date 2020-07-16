@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.0.1
+ * @devtin/schema-validator v3.0.2
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -1044,7 +1044,10 @@ class Schema {
     if (!propertiesRestricted(obj, this.ownPaths)) {
       if (obj) {
         obj2dot(obj).forEach(field => {
-          if (!this.hasField(field)) {
+          if (
+            this.hasChildren &&
+            !this.hasField(field)
+          ) {
             unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`));
           }
         });
@@ -1069,6 +1072,19 @@ class Schema {
     }
   }
 
+  fullCast (v, { state }) {
+    v = this.cast(v, { state });
+    if (typeof v === 'object' && v && this.hasChildren) {
+      this.children.forEach(child => {
+        const parsedValue = child.fullCast(v[child.name], { state });
+        if (parsedValue !== undefined) {
+          v[child.name] = child.fullCast(v[child.name], { state });
+        }
+      });
+    }
+    return v
+  }
+
   /**
    * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
@@ -1078,11 +1094,13 @@ class Schema {
    * @throws {ValidationError} when given object does not meet the schema
    */
   parse (v, { state = {} } = {}) {
+    // schema-level casting
+    // todo: cast children schemas
+    v = this.fullCast(v, { state });
+
     if (!this.parent) {
       this.structureValidation(v);
     }
-    // schema-level casting
-    v = this.cast(v, { state });
 
     if (this.hasChildren) {
       v = this.runChildren(v, { state });
