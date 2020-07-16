@@ -42,7 +42,7 @@
     "test:unit": "npm run test src/**/*.unit.js",
     "test:browser": "cp dist/schema-validator.umd.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "npm run lint && npm run build:wcoverage && npm run test && echo 'Looks good for a release!'",
-    "release": "standard-version -a --branch next",
+    "release": "standard-version -a",
     "postpublish": "git push && git push --tags",
     "coverage": "nyc --reporter=json-summary --reporter=lcov npm run test"
   },
