@@ -300,7 +300,13 @@ export class Schema {
     if (!propertiesRestricted(obj, this.ownPaths)) {
       if (obj) {
         obj2dot(obj).forEach(field => {
-          if (!this.hasField(field)) {
+          if (
+            !(
+              Schema.guessType(this.type) === 'Object' ||
+              Schema.guessType(this.type) === 'Schema'
+            ) &&
+            !this.hasField(field)
+          ) {
             unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`))
           }
         })
