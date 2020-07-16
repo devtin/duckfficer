@@ -260,6 +260,8 @@ test(`Error-handling and LifeCycle`, t => {
   t.is(error.errors[0].message, `Unknown property somePropertyNotDefinedInTheSchema`)
   t.is(error.errors[0].field, undefined) // the field does not exists in our schema
 
+  lifeCycle.length = 0
+
   /**
    * Throws an error when missing required values.
    */
