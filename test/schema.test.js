@@ -384,3 +384,35 @@ test(`multiple types with only one item`, t => {
   const singleSchema = new Schema([String])
   t.is(singleSchema.parse('Martin'), 'Martin')
 })
+
+test(`performs fullCast of a schema with nested schemas`, t => {
+  const address = new Schema({
+    street: String,
+    zip: {
+      type: Number,
+      required: false
+    }
+  }, {
+    cast (v) {
+      if (typeof v === 'string') {
+        return {
+          street: v
+        }
+      }
+      return v
+    }
+  })
+  const user = new Schema({
+    name: String,
+    address
+  })
+  t.deepEqual(user.fullCast({
+    name: 'Martin',
+    address: 'Brickell ave'
+  }, {}), {
+    name: 'Martin',
+    address: {
+      street: 'Brickell ave'
+    }
+  })
+})
