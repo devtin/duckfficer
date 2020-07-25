@@ -36,7 +36,7 @@ function getSubProperties (properties, parent) {
  */
 
 export function propertiesRestricted (obj, properties, { strict = false } = {}) {
-  if (typeof obj !== 'object') {
+  if (typeof obj !== 'object' || obj === null) {
     return false
   }
 
