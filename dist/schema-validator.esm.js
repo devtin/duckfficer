@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.0.2
+ * @devtin/schema-validator v3.0.3
  * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
  * MIT
  */
@@ -162,7 +162,7 @@ function getSubProperties (properties, parent) {
  */
 
 function propertiesRestricted (obj, properties, { strict = false } = {}) {
-  if (typeof obj !== 'object') {
+  if (typeof obj !== 'object' || obj === null) {
     return false
   }
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.3](https://github.com/devtin/schema-validator/compare/v3.0.2...v3.0.3) (2020-07-25)
+
+
+### Bug Fixes
+
+* parsing undefined paths with `null` value (solves [#41](https://github.com/devtin/schema-validator/issues/41)) ([637bc08](https://github.com/devtin/schema-validator/commit/637bc08902e932cf084bdaf2fe7a008795d790f5))
+
 ### [3.0.2](https://github.com/devtin/schema-validator/compare/v3.0.1...v3.0.2) (2020-07-16)
 
 
