@@ -147,8 +147,8 @@ See the [Schema](/DOCS.md#Schema) class docs for more information.
 t.true(typeof UserSchema.parse === 'function')
 
 const arbitraryObject = {
-  name: `Martin Rafael Gonzalez`,
-  birthday: new Date('6/11/1983'),
+  name: `Martin Rafael`,
+  birthday: new Date('11/11/1999'),
   description: ['monkey', 'developer', 'arepa lover']
 }
 
@@ -166,9 +166,9 @@ Returned object-properties can now be safely accessed since the object was valid
 
 ```js
 t.truthy(safeObject)
-t.is(safeObject.name, `Martin Rafael Gonzalez`)
+t.is(safeObject.name, `Martin Rafael`)
 t.true(safeObject.birthday instanceof Date)
-t.is(safeObject.birthday.getFullYear(), 1983)
+t.is(safeObject.birthday.getFullYear(), 1999)
 t.is(safeObject.description.length, 3)
 ```
 
@@ -194,9 +194,8 @@ or maybe retrieved by a manual input from a terminal application.
 ```js
 const arbitraryObject = {
   firstName: 'Martin',
-  middleName: 'Rafael',
-  lastName: 'Gonzalez',
-  birthday: `6/11/1983`,
+  lastName: 'Rafael',
+  birthday: `11/11/1999`,
   address: {
     zip: 305
   },
@@ -220,11 +219,10 @@ let error = t.throws(() => UserSchema.parse(arbitraryObject))
 t.true(error instanceof ValidationError)
 t.true(error instanceof Error)
 t.is(error.message, `Invalid object schema`)
-t.is(error.errors.length, 4)
+t.is(error.errors.length, 3)
 t.is(error.errors[0].message, `Unknown property firstName`)
-t.is(error.errors[1].message, `Unknown property middleName`)
-t.is(error.errors[2].message, `Unknown property lastName`)
-t.is(error.errors[3].message, `Unknown property address.zip`)
+t.is(error.errors[1].message, `Unknown property lastName`)
+t.is(error.errors[2].message, `Unknown property address.zip`)
 ```
 
 When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
@@ -232,7 +230,7 @@ then proceed with further validations...
 
 ```js
 error = t.throws(() => UserSchema.parse({
-  birthday: `6/11/1983`,
+  birthday: `11/11/1999`,
   description: ['monkey', 'developer', 'arepa lover']
 }))
 
@@ -267,7 +265,7 @@ const AnotherUserSchema = new Schema({
 })
 
 error = t.throws(() => AnotherUserSchema.parse({
-  name: `Martin Rafael Gonzalez`,
+  name: `Martin Rafael`,
   level: 'admin'
 }))
 t.is(error.message, 'Data is not valid')
@@ -275,7 +273,7 @@ t.is(error.errors[0].message, 'Only authenticated users can set the level to adm
 t.is(error.errors[0].field.fullPath, 'level')
 
 error = t.throws(() => AnotherUserSchema.parse({
-  name: `Martin Rafael Gonzalez`,
+  name: `Martin Rafael`,
   level: 'admin'
 }, {
   state: {
@@ -290,7 +288,7 @@ t.is(error.message, 'Admin users require an email')
 
 t.notThrows(() => {
   return AnotherUserSchema.parse({
-    name: `Martin Rafael Gonzalez`,
+    name: `Martin Rafael`,
     level: 'admin'
   }, {
     state: {
@@ -367,7 +365,7 @@ const UserSchema = new Schema({
 
 arbitraryObject = {
   somePropertyNotDefinedInTheSchema: ':)',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   phoneNumber: '123'
 }
 
@@ -392,7 +390,7 @@ Throws an error when missing required values.
 ```js
 error = t.throws(() => UserSchema.parse({
   // name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   phoneNumber: '123'
 }, { state: passedState }))
 
@@ -435,7 +433,7 @@ Transformers.Birthday = {
 
 arbitraryObject = {
   name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   phoneNumber: 123
 }
 
@@ -719,14 +717,14 @@ const UserSchema = new Schema({
 
 const user = UserSchema.parse({
   name: 'Martin',
-  birthday: '6/11/1983'
+  birthday: '11/11/1999'
 })
 
 t.truthy(user)
 
 const error1 = t.throws(() => UserSchema.parse({
   name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   address: null
 }))
 
@@ -735,7 +733,7 @@ t.is(error1.errors[0].field.fullPath, 'address.line1')
 
 const error2 = t.throws(() => UserSchema.parse({
   name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   address: {
     zip: 33129
   }
@@ -748,7 +746,7 @@ t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address', 'address.line1', '
 
 t.notThrows(() => UserSchema.parse({
   name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   address: {
     line1: 'Brickell Ave',
     zip: 33129
@@ -853,7 +851,7 @@ const StrictUserSchema = new Schema({
 
 const error = t.throws(() => StrictUserSchema.parse({
   name: 'Martin',
-  birthday: '6/11/1983',
+  birthday: '11/11/1999',
   kids: '1'
 }))
 
@@ -977,7 +975,7 @@ const ProductSchema = new Schema({
     validate (date, { state }) {
       t.is(state, givenState)
       if (Date.parse(date) < Date.parse('2019/1/1')) {
-        throw new Error(`Orders prior 2019 have been archived`)
+        this.throwError(`Orders prior 2019 have been archived`)
       }
     }
   },
@@ -999,6 +997,7 @@ const error = t.throws(() => ProductSchema.parse({
 }, { state: givenState }))
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
+t.is(error.errors[0].field.fullPath, 'created')
 ```
 
 <a name="custom-value-validation-hook-provided-at-schema-level"></a>
@@ -1015,7 +1014,7 @@ const ProductSchema = new Schema({
     validate (v, { state }) {
       t.is(state, givenState)
       if (v.id < 200) {
-        throw new Error(`Product deprecated`)
+        this.throwError(`Product deprecated`)
       }
     }
   })
@@ -1212,7 +1211,7 @@ const Log = new Schema({
 
 const tinLog = Log.parse({
   user: 'tin',
-  lastAccess: ['6/11/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
+  lastAccess: ['6/10/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
 })
 
 t.true(Array.isArray(tinLog.lastAccess))
@@ -1222,7 +1221,7 @@ t.true(tinLog.lastAccess[1] instanceof Date)
 
 const error = t.throws(() => Log.parse({
   user: 'tin',
-  lastAccess: ['6/11/1983', 'What is love?']
+  lastAccess: ['11/11/1999', 'What is love?']
 }))
 
 t.is(error.message, `Data is not valid`)
@@ -1454,7 +1453,7 @@ let contact
 t.notThrows(() => {
   contact = dateValidator.parse({
     name: 'Martin',
-    birthday: new Date('6/11/1983')
+    birthday: new Date('11/11/1999')
   })
 })
 
@@ -1485,7 +1484,7 @@ let contact
 t.notThrows(() => {
   contact = dateValidator.parse({
     name: 'Martin',
-    birthday: '6/11/1983' // this is a string originally
+    birthday: '11/11/1999' // this is a string originally
   })
 })
 
@@ -1517,7 +1516,7 @@ const dateValidator2 = new Schema({
 })
 const error2 = t.throws(() => dateValidator2.parse({
   name: 'Martin',
-  birthday: '6/11/1983'
+  birthday: '11/11/1999'
 }))
 
 t.is(error2.message, 'Data is not valid')
@@ -2065,7 +2064,7 @@ t.is(error.message, `Data is not valid`)
 t.is(error.errors[0].message, `Invalid maxlength`)
 // t.is(error.errors[0].message, `Looking for a custom error message?`)
 
-t.notThrows(() => lastNameSchema.parse({ lastName: 'Gonzalez' }))
+t.notThrows(() => lastNameSchema.parse({ lastName: 'Rafael' }))
 ```
 
 <a name="regex"></a>

@@ -1,6 +1,6 @@
 /*!
- * @devtin/schema-validator v3.0.3
- * (c) 2019-2020 Martin Rafael Gonzalez <tin@devtin.io>
+ * @devtin/schema-validator v3.0.4
+ * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
 /**
