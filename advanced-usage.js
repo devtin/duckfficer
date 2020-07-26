@@ -39,8 +39,8 @@ Transformers.UserId = {
 const Martin = User.parse({
   name: 'Martin',
   address: {
-    zip: 33129,
-    street: 'Brickell Av'
+    zip: 305,
+    street: 'Brickell'
   }
 })
 
@@ -51,8 +51,8 @@ console.log(Martin.hasOwnProperty('created')) // => true
 console.log(UUIDPattern.test(Martin.id)) // => true
 console.log(Martin.name) // => Martin
 console.log(Martin.address.state) // => Florida
-console.log(Martin.address.zip) // => 33129
-console.log(Martin.address.street) // => Brickell Av
+console.log(Martin.address.zip) // => 305
+console.log(Martin.address.street) // => Brickell
 console.log(Martin.created instanceof Date) // => true
 
 try {
