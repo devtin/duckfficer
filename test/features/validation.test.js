@@ -35,7 +35,7 @@ test(`Custom property validation hook (provided at schema-setting level)`, t => 
       validate (date, { state }) {
         t.is(state, givenState)
         if (Date.parse(date) < Date.parse('2019/1/1')) {
-          throw new Error(`Orders prior 2019 have been archived`)
+          this.throwError(`Orders prior 2019 have been archived`)
         }
       }
     },
@@ -57,6 +57,7 @@ test(`Custom property validation hook (provided at schema-setting level)`, t => 
   }, { state: givenState }))
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Orders prior 2019 have been archived')
+  t.is(error.errors[0].field.fullPath, 'created')
 })
 
 test(`Custom value validation hook (provided at schema level)`, t => {
@@ -69,7 +70,7 @@ test(`Custom value validation hook (provided at schema level)`, t => {
       validate (v, { state }) {
         t.is(state, givenState)
         if (v.id < 200) {
-          throw new Error(`Product deprecated`)
+          this.throwError(`Product deprecated`)
         }
       }
     })

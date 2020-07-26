@@ -58,7 +58,7 @@ console.log(Martin.created instanceof Date) // => true
 try {
   User.parse({
     id: '123',
-    name: 'Martin Rafael Gonzalez'
+    name: 'Martin Rafael'
   })
 } catch (err) {
   console.log(err instanceof Error) // => true

@@ -37,13 +37,13 @@ test(`Validates the provided types against the defined schema`, async t => {
   })
 
   const Martin = UserSchema.parse({
-    name: `Martin Rafael Gonzalez`,
-    birthday: new Date('6/11/1983'),
+    name: `Martin Rafael`,
+    birthday: new Date('11/11/1999'),
     description: ['monkey', 'developer', 'arepa lover']
   })
 
-  t.is(Martin.name, `Martin Rafael Gonzalez`)
-  t.is(Martin.birthday.getFullYear(), 1983)
+  t.is(Martin.name, `Martin Rafael`)
+  t.is(Martin.birthday.getFullYear(), 1999)
   t.is(Martin.description.length, 3)
 
   const error = t.throws(() => UserSchema.parse({
@@ -145,7 +145,7 @@ test(`autoCasting`, t => {
     type: Date
   })
 
-  t.true(DOB.parse('6/11/1983') instanceof Date)
+  t.true(DOB.parse('11/11/1999') instanceof Date)
 
   const qtty = new Schema({
     name: 'quantity',
@@ -172,9 +172,9 @@ test(`autoCasting`, t => {
     autoCast: false
   })
 
-  t.notThrows(() => DateSchema.parse(new Date('6/11/1983 23:11 GMT-0400')))
+  t.notThrows(() => DateSchema.parse(new Date('11/11/1999 23:11 GMT-0400')))
 
-  error = t.throws(() => DateSchema.parse('6/11/1983'))
+  error = t.throws(() => DateSchema.parse('11/11/1999'))
   t.is(error.message, `Invalid date`)
 })
 
@@ -276,7 +276,7 @@ test(`Validates full nested schemas`, t => {
   t.notThrows(() => UserValidator.parse({
     name: 'Martin',
     email: 'marting.dc@gmail.com',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     address: {
       city: 'Miami',
       zip: 33129,

@@ -23,7 +23,7 @@ console.log(tinLog.lastAccess[1] instanceof Date) // => true
 try {
   Log.parse({
     user: 'tin',
-    lastAccess: ['6/11/1983', 'What is love?']
+    lastAccess: ['11/11/1999', 'What is love?']
   })
 } catch (err) {
   console.log(err.message) // => Data is not valid

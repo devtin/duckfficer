@@ -14,7 +14,7 @@ test(`Date`, t => {
   t.notThrows(() => {
     contact = dateValidator.parse({
       name: 'Martin',
-      birthday: new Date('6/11/1983')
+      birthday: new Date('11/11/1999')
     })
   })
 
@@ -40,7 +40,7 @@ test('autoCast (default `true`)', t => {
   t.notThrows(() => {
     contact = dateValidator.parse({
       name: 'Martin',
-      birthday: '6/11/1983' // this is a string originally
+      birthday: '11/11/1999' // this is a string originally
     })
   })
 
@@ -70,7 +70,7 @@ test('autoCast (default `true`)', t => {
   })
   const error2 = t.throws(() => dateValidator2.parse({
     name: 'Martin',
-    birthday: '6/11/1983'
+    birthday: '11/11/1999'
   }))
 
   t.is(error2.message, 'Data is not valid')

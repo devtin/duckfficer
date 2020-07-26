@@ -45,21 +45,3 @@ console.log(s.parse({
   }
 }))
 */
-
-console.log(s.parse({
-  name: 'Martin',
-  papo: null,
-  address: {
-    line1: '2451',
-    zip: 33129,
-  }
-}))
-
-console.log(s.parse({
-  name: 'Martin',
-  papo: null,
-  address: {
-    line1: '2451',
-    zip: 33129,
-  }
-}))

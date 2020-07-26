@@ -31,8 +31,8 @@ test(`Creating a schema`, async t => {
   t.true(typeof UserSchema.parse === 'function')
 
   const arbitraryObject = {
-    name: `Martin Rafael Gonzalez`,
-    birthday: new Date('6/11/1983'),
+    name: `Martin Rafael`,
+    birthday: new Date('11/11/1999'),
     description: ['monkey', 'developer', 'arepa lover']
   }
 
@@ -50,9 +50,9 @@ test(`Creating a schema`, async t => {
    */
 
   t.truthy(safeObject)
-  t.is(safeObject.name, `Martin Rafael Gonzalez`)
+  t.is(safeObject.name, `Martin Rafael`)
   t.true(safeObject.birthday instanceof Date)
-  t.is(safeObject.birthday.getFullYear(), 1983)
+  t.is(safeObject.birthday.getFullYear(), 1999)
   t.is(safeObject.description.length, 3)
 })
 
@@ -74,9 +74,8 @@ test(`Validating and sanitizing arbitrary objects`, t => {
 
   const arbitraryObject = {
     firstName: 'Martin',
-    middleName: 'Rafael',
-    lastName: 'Gonzalez',
-    birthday: `6/11/1983`,
+    lastName: 'Rafael',
+    birthday: `11/11/1999`,
     address: {
       zip: 305
     },
@@ -100,11 +99,10 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   t.true(error instanceof ValidationError)
   t.true(error instanceof Error)
   t.is(error.message, `Invalid object schema`)
-  t.is(error.errors.length, 4)
+  t.is(error.errors.length, 3)
   t.is(error.errors[0].message, `Unknown property firstName`)
-  t.is(error.errors[1].message, `Unknown property middleName`)
-  t.is(error.errors[2].message, `Unknown property lastName`)
-  t.is(error.errors[3].message, `Unknown property address.zip`)
+  t.is(error.errors[1].message, `Unknown property lastName`)
+  t.is(error.errors[2].message, `Unknown property address.zip`)
 
   /**
    * When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
@@ -112,7 +110,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
    */
 
   error = t.throws(() => UserSchema.parse({
-    birthday: `6/11/1983`,
+    birthday: `11/11/1999`,
     description: ['monkey', 'developer', 'arepa lover']
   }))
 
@@ -147,7 +145,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   })
 
   error = t.throws(() => AnotherUserSchema.parse({
-    name: `Martin Rafael Gonzalez`,
+    name: `Martin Rafael`,
     level: 'admin'
   }))
   t.is(error.message, 'Data is not valid')
@@ -155,7 +153,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   t.is(error.errors[0].field.fullPath, 'level')
 
   error = t.throws(() => AnotherUserSchema.parse({
-    name: `Martin Rafael Gonzalez`,
+    name: `Martin Rafael`,
     level: 'admin'
   }, {
     state: {
@@ -170,7 +168,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
 
   t.notThrows(() => {
     return AnotherUserSchema.parse({
-      name: `Martin Rafael Gonzalez`,
+      name: `Martin Rafael`,
       level: 'admin'
     }, {
       state: {
@@ -243,7 +241,7 @@ test(`Error-handling and LifeCycle`, t => {
 
   arbitraryObject = {
     somePropertyNotDefinedInTheSchema: ':)',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     phoneNumber: '123'
   }
 
@@ -268,7 +266,7 @@ test(`Error-handling and LifeCycle`, t => {
 
   error = t.throws(() => UserSchema.parse({
     // name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     phoneNumber: '123'
   }, { state: passedState }))
 
@@ -311,7 +309,7 @@ test(`Error-handling and LifeCycle`, t => {
 
   arbitraryObject = {
     name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     phoneNumber: 123
   }
 
@@ -576,14 +574,14 @@ test(`Nesting schemas`, t => {
 
   const user = UserSchema.parse({
     name: 'Martin',
-    birthday: '6/11/1983'
+    birthday: '11/11/1999'
   })
 
   t.truthy(user)
 
   const error1 = t.throws(() => UserSchema.parse({
     name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     address: null
   }))
 
@@ -592,7 +590,7 @@ test(`Nesting schemas`, t => {
 
   const error2 = t.throws(() => UserSchema.parse({
     name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     address: {
       zip: 33129
     }
@@ -605,7 +603,7 @@ test(`Nesting schemas`, t => {
 
   t.notThrows(() => UserSchema.parse({
     name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     address: {
       line1: 'Brickell Ave',
       zip: 33129
@@ -702,7 +700,7 @@ test(`Auto-casting`, t => {
 
   const error = t.throws(() => StrictUserSchema.parse({
     name: 'Martin',
-    birthday: '6/11/1983',
+    birthday: '11/11/1999',
     kids: '1'
   }))
 

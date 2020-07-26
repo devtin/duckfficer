@@ -75,7 +75,7 @@ test(`maxlength`, async t => {
   t.is(error.errors[0].message, `Invalid maxlength`)
   // t.is(error.errors[0].message, `Looking for a custom error message?`)
 
-  t.notThrows(() => lastNameSchema.parse({ lastName: 'Gonzalez' }))
+  t.notThrows(() => lastNameSchema.parse({ lastName: 'Rafael' }))
 })
 
 test('regex', async t => {

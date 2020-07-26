@@ -51,7 +51,7 @@ test(`arraySchema`, t => {
 
   const tinLog = Log.parse({
     user: 'tin',
-    lastAccess: ['6/11/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
+    lastAccess: ['6/10/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
   })
 
   t.true(Array.isArray(tinLog.lastAccess))
@@ -61,7 +61,7 @@ test(`arraySchema`, t => {
 
   const error = t.throws(() => Log.parse({
     user: 'tin',
-    lastAccess: ['6/11/1983', 'What is love?']
+    lastAccess: ['11/11/1999', 'What is love?']
   }))
 
   t.is(error.message, `Data is not valid`)
