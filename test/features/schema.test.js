@@ -712,6 +712,47 @@ test(`Auto-casting`, t => {
   t.is(error.errors[1].field.fullPath, `kids`)
 })
 
+test(`Virtuals (getters / setters)`, t => {
+  const User = new Schema({
+    firstName: String,
+    lastName: String,
+    get fullName () {
+      return this.firstName + ' ' + this.lastName
+    },
+    set fullName (v) {
+      const [firstName, lastName] = v.split(/\s+/)
+      this.firstName = firstName
+      this.lastName = lastName
+    },
+    address: {
+      line1: String,
+      line2: String,
+      zip: Number,
+      get fullAddress () {
+        return  `${this.line1} / ${this.line2} / ${this.zip}`
+      }
+    }
+  })
+
+  const me = User.parse({
+    firstName: 'Martin',
+    lastName: 'Rafael',
+    address: {
+      line1: 'Brickell',
+      line2: 'Ave',
+      zip: 33129
+    }
+  })
+
+  t.is(me.fullName, 'Martin Rafael')
+  t.is(me.address.fullAddress, 'Brickell / Ave / 33129')
+
+  me.fullName = 'Pedro Perez'
+
+  t.is(me.firstName, 'Pedro')
+  t.is(me.lastName, 'Perez')
+})
+
 test(`Loaders`, t => {
   /**
    * Loaders can be seen as a way of piping transformers.

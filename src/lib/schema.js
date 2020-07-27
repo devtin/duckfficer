@@ -102,6 +102,12 @@ export class Schema {
       default: undefined
     }
     this._defaultValues = defaultValues
+    /**
+     * @typedef {Object} virtual
+     * @property {Function} get
+     * @property {Function} set
+     */
+    this.virtuals = []
 
     /**
      * @property {String} type - The schema type. Options vary according to available Transformers. Could be 'Schema'
@@ -163,17 +169,27 @@ export class Schema {
 
   _parseSchema (obj) {
     return Object.keys(obj).map((prop) => {
+      const objDesc = Object.getOwnPropertyDescriptor(obj, prop)
+
+      if (typeof objDesc.get === 'function' || typeof objDesc.set === 'function') {
+        this.virtuals.push({
+          path: prop,
+          getter: objDesc.get,
+          setter: objDesc.set
+        })
+        return
+      }
+
       if (Schema.guessType(obj[prop]) === 'Schema') {
-        const schemaClone = Schema.cloneSchema({
+        return Schema.cloneSchema({
           schema: Schema.castSchema(obj[prop]),
           settings: Schema.castSettings(obj[prop]),
           name: prop,
           parent: this
         })
-        return schemaClone
       }
       return new Schema(obj[prop], { name: prop, parent: this })
-    })
+    }).filter(Boolean)
   }
 
   /**
@@ -374,6 +390,14 @@ export class Schema {
 
     // schema-level validation
     this.validate.call(this, v, { state })
+
+    // append virtuals
+    this.virtuals.forEach(({path, getter, setter})  => {
+      Object.defineProperties(v, {
+        [path]: { get: getter, set: setter }
+      });
+    })
+
     return v
   }
 
