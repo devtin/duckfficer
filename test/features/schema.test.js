@@ -751,6 +751,12 @@ test(`Virtuals (getters / setters)`, t => {
 
   t.is(me.firstName, 'Pedro')
   t.is(me.lastName, 'Perez')
+
+  const error = t.throws(() => {
+    me.address.fullAddress = 'papo'
+  })
+
+  t.is(error.message, 'Cannot set property fullAddress of #<Object> which has only a getter')
 })
 
 test(`Loaders`, t => {
