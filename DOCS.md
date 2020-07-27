@@ -37,6 +37,8 @@ original value in case it could not be guessed.</p>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
 <dd><p>A transformer holds the logic of instantiating a data type (casting, validation and parsing).</p>
 </dd>
+<dt><a href="#virtual">virtual</a> : <code>Object</code></dt>
+<dd></dd>
 </dl>
 
 <a name="Utils"></a>
@@ -701,6 +703,17 @@ A transformer holds the logic of instantiating a data type (casting, validation 
 | [parse] | [<code>Parser</code>](#Parser) | Parser function |
 | [validate] | [<code>Validator</code>](#Validator) | Validator function |
 | [loaders] | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
+
+<a name="virtual"></a>
+
+## virtual : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| get | <code>function</code> | 
+| set | <code>function</code> | 
 
 
 * * *

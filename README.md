@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~3.8KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~3.9KB minified + gzipped)<br>
 for validating & sanitizing JavaScript data schemas.
 </p>
 
@@ -72,7 +72,7 @@ Have a look at this <a href="https://codepen.io/tin_r/pen/PoqwLMb?editors=0011" 
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~3.8KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~3.9KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## Content
 
@@ -86,6 +86,7 @@ this light-weight library (~3.8KB minified + gzipped) for validating & sanitizin
   - [Nesting schemas](#nesting-schemas)
   - [Multiple types](#multiple-types)
   - [Auto-casting](#auto-casting)
+  - [Virtuals (getters / setters)](#virtuals-getters-setters)
   - [Loaders](#loaders)
   - [Overriding initial settings](#overriding-initial-settings)
 - **Validation**
@@ -861,6 +862,51 @@ t.is(error.errors[0].message, `Invalid date`)
 t.is(error.errors[0].field.fullPath, `birthday`)
 t.is(error.errors[1].message, `Invalid number`)
 t.is(error.errors[1].field.fullPath, `kids`)
+```
+
+<a name="virtuals-getters-setters"></a>
+
+<h2>Virtuals (getters / setters)</h2>
+
+```js
+const User = new Schema({
+  firstName: String,
+  lastName: String,
+  get fullName () {
+    return this.firstName + ' ' + this.lastName
+  },
+  set fullName (v) {
+    const [firstName, lastName] = v.split(/\s+/)
+    this.firstName = firstName
+    this.lastName = lastName
+  },
+  address: {
+    line1: String,
+    line2: String,
+    zip: Number,
+    get fullAddress () {
+      return  `${this.line1} / ${this.line2} / ${this.zip}`
+    }
+  }
+})
+
+const me = User.parse({
+  firstName: 'Martin',
+  lastName: 'Rafael',
+  address: {
+    line1: 'Brickell',
+    line2: 'Ave',
+    zip: 33129
+  }
+})
+
+t.is(me.fullName, 'Martin Rafael')
+t.is(me.address.fullAddress, 'Brickell / Ave / 33129')
+
+me.fullName = 'Pedro Perez'
+
+t.is(me.firstName, 'Pedro')
+t.is(me.lastName, 'Perez')
 ```
 
 <a name="loaders"></a>

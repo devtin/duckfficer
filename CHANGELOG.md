@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/devtin/schema-validator/compare/v3.0.4...v3.1.0) (2020-07-27)
+
+
+### Features
+
+* introducing virtuals (getters / setters) ([72e11e3](https://github.com/devtin/schema-validator/commit/72e11e31cc67e9b61743355bf550b1ea27c89be5))
+
 ### [3.0.4](https://github.com/devtin/schema-validator/compare/v3.0.3...v3.0.4) (2020-07-26)
 
 ### [3.0.3](https://github.com/devtin/schema-validator/compare/v3.0.2...v3.0.3) (2020-07-25)
