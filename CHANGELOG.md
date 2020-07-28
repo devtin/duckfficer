@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.1](https://github.com/devtin/schema-validator/compare/v3.1.0...v3.1.1) (2020-07-28)
+
+
+### Bug Fixes
+
+* **virtuals:** only append virtuals when value is a non-nullish value ([c9badcc](https://github.com/devtin/schema-validator/commit/c9badccdf226eed51cd6000c7583d5fe695ba2a4))
+
 ## [3.1.0](https://github.com/devtin/schema-validator/compare/v3.0.4...v3.1.0) (2020-07-27)
 
 
