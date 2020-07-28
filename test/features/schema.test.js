@@ -341,89 +341,95 @@ test(`Required and optional values`, t => {
   /**
    * All properties in a Schema are required by default.
    */
-  const ProductSchema = new Schema({
-    name: String,
-    stock: Number,
-    category: Array
+  const AddressSchema = new Schema({
+    line1: String,
+    line2: String,
+    zip: Number
   })
 
-  /**
-   * Whenever a required property is missing, an error is thrown.
-   */
+    /**
+     * Whenever a required property is missing, an error is thrown.
+     */
 
-  let error = t.throws(() => ProductSchema.parse({
-    name: 'Kombucha',
-    stock: 11
-  }))
+    let error = t.throws(() => AddressSchema.parse({
+      line1: 'Brickell',
+      line2: 'Ave'
+    }))
 
-  t.is(error.message, 'Data is not valid')
-  t.is(error.errors.length, 1)
-  t.is(error.errors[0].message, `Property category is required`)
+    t.is(error.message, 'Data is not valid')
+    t.is(error.errors.length, 1)
+    t.is(error.errors[0].message, `Property zip is required`)
 
-  /**
-   * In order to make a property optional we must pass the flag `required` set to `false`
-   */
+    /**
+     * In order to make a property optional we must pass the flag `required` set to `false`
+     */
 
-  const ContactSchema = new Schema({
-    name: String,
-    email: String,
-    age: {
-      type: Number,
-      required: false // property `age` is optional
-    }
-  })
-
-  /**
-   * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
-   */
-
-  let contact
-  t.notThrows(() => {
-    contact = ContactSchema.parse({
-      name: 'Martin',
-      email: 'tin@devtin.io'
+    const ContactSchemaO = new Schema({
+      name: String,
+      email: String,
+      age: {
+        type: Number,
+        required: false // property `age` is optional
+      },
+      address: {
+        type: AddressSchema,
+        required: false
+      }
     })
-  })
+    const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
 
-  t.notThrows(() => {
-    contact = ContactSchema.parse({
-      name: 'Martin',
-      email: 'tin@devtin.io',
-      age: undefined
+    /**
+     * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
+     */
+
+    t.notThrows(() => {
+      ContactSchema.parse({
+        name: 'Martin',
+        email: 'tin@devtin.io'
+      })
     })
-  })
 
-  /**
-   * Whenever `age` is present, the validation will ensure it is a `Number`, though.
-   */
-
-  let contact2
-  error = t.throws(() => {
-    contact2 = ContactSchema.parse({
-      name: 'Papo',
-      email: 'sandy@papo.com',
-      age: `I don't know.`
+    t.notThrows(() => {
+      ContactSchema.parse({
+        name: 'Martin',
+        email: 'tin@devtin.io',
+        age: undefined,
+        address: undefined
+      })
     })
-  })
 
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors.length, 1)
-  t.is(error.errors[0].message, `Invalid number`)
-  t.is(error.errors[0].field.fullPath, `age`)
+    /**
+     * Whenever `age` is present, the validation will ensure it is a `Number`, though.
+     */
 
-  t.notThrows(() => {
-    contact2 = ContactSchema.parse({
+    error = t.throws(() => {
+      ContactSchema.parse({
+        name: 'Papo',
+        email: 'sandy@papo.com',
+        age: `I don't know.`
+      })
+    })
+
+    t.is(error.message, `Data is not valid`)
+    t.is(error.errors.length, 1)
+    t.is(error.errors[0].message, `Invalid number`)
+    t.is(error.errors[0].field.fullPath, `age`)
+
+    let contact2
+
+    t.notThrows(() => {
+      contact2 = ContactSchema.parse({
+        name: 'Papo',
+        email: 'sandy@papo.com',
+        age: 36
+      })
+    })
+
+    t.deepEqual(contact2, {
       name: 'Papo',
       email: 'sandy@papo.com',
       age: 36
     })
-  })
-
-  t.deepEqual(contact2, {
-    name: 'Papo',
-    email: 'sandy@papo.com',
-    age: 36
-  })
 })
 
 test(`Default values`, t => {
@@ -713,6 +719,14 @@ test(`Auto-casting`, t => {
 })
 
 test(`Virtuals (getters / setters)`, t => {
+  const Address = new Schema({
+    line1: String,
+    line2: String,
+    zip: Number,
+    get fullAddress () {
+      return  `${this.line1} / ${this.line2} / ${this.zip}`
+    }
+  })
   const User = new Schema({
     firstName: String,
     lastName: String,
@@ -725,12 +739,8 @@ test(`Virtuals (getters / setters)`, t => {
       this.lastName = lastName
     },
     address: {
-      line1: String,
-      line2: String,
-      zip: Number,
-      get fullAddress () {
-        return  `${this.line1} / ${this.line2} / ${this.zip}`
-      }
+      type: Address,
+      required: false
     }
   })
 
@@ -757,6 +767,13 @@ test(`Virtuals (getters / setters)`, t => {
   })
 
   t.is(error.message, 'Cannot set property fullAddress of #<Object> which has only a getter')
+
+  const she = User.parse({
+    firstName: 'Olivia',
+    lastName: 'Isabel'
+  })
+
+  t.false(Object.hasOwnProperty.call(she, 'address'))
 })
 
 test(`Loaders`, t => {

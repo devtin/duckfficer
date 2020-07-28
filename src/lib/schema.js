@@ -392,11 +392,13 @@ export class Schema {
     this.validate.call(this, v, { state })
 
     // append virtuals
-    this.virtuals.forEach(({path, getter, setter})  => {
-      Object.defineProperties(v, {
-        [path]: { get: getter, set: setter }
-      });
-    })
+    if (typeof v === 'object' && v !== null && v) {
+      this.virtuals.forEach(({path, getter, setter})  => {
+        Object.defineProperties(v, {
+          [path]: { get: getter, set: setter }
+        });
+      })
+    }
 
     return v
   }
