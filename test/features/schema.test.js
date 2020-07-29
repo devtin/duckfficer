@@ -1,5 +1,6 @@
 import test from 'ava'
 import { Schema, ValidationError, Transformers } from '../../'
+import crypto from 'crypto'
 
 test('Creating a schema', async t => {
   /**
@@ -774,6 +775,42 @@ test('Virtuals (getters / setters)', t => {
   })
 
   t.false(Object.hasOwnProperty.call(she, 'address'))
+})
+
+test('Methods', t => {
+  Transformers.Password = {
+    loaders: [String],
+    parse (v) {
+      return crypto.createHash('sha256')
+        .update(v)
+        .digest('hex')
+    }
+  }
+
+  const User = new Schema({
+    email: String,
+    password: 'Password'
+  }, {
+    methods: {
+      isValidPassword: {
+        input: String,
+        output: Boolean,
+        handler (givenPassword) {
+          return Transformers.Password.parse(givenPassword) === this.password
+        }
+      }
+    }
+  })
+
+  const me = User.parse({
+    email: 'tin@devtin.io',
+    password: '123'
+  })
+
+  t.truthy(me.password)
+  t.not(me.password, '123')
+  t.false(me.isValidPassword('456'))
+  t.true(me.isValidPassword('123'))
 })
 
 test('Loaders', t => {

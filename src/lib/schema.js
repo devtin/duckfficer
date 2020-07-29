@@ -59,6 +59,13 @@ const fnProxyStub = v => v
  */
 
 /**
+ * @typedef {Object} Method
+ * @property {Schema|Object} input - method input payload validation
+ * @property {Schema|Object} output - method output payload validation
+ * @property {Function} handler - function to be called (this arg is the value of the object)
+ */
+
+/**
  * @classdesc Orchestrates the validation of a data schema
  * @property {Schema} [parent] - Nested objects will have a {@link Schema} in this property
  * @property {String} name - Nested objects will have the name of it's containing property
@@ -74,18 +81,20 @@ export class Schema {
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Object} [options.defaultValues] - Default values to override the schema with
+   * @param {Method} [options.methods]
    * @param {Schema} [options.parent]
    * @param {Caster} [options.cast] - Schema caster
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
+  constructor (schema, { name, defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings
 
     if (Array.isArray(schema) && schema.length === 1) {
       schema = schema[0]
     }
 
+    this._methods = methods
     this.schema = schema
     this.parent = parent
     // schema level validation: validates using the entire value (maybe an object) of this path
@@ -412,6 +421,30 @@ export class Schema {
       this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
           [path]: { get: getter, set: setter }
+        })
+      })
+    }
+
+    // append methods
+    if (isNotNullObj(v)) {
+      Object.keys(this._methods).forEach(methodName => {
+        const methodFn = (...arg) => {
+          const inputValidation = this._methods[methodName].input
+          const outputValidation = this._methods[methodName].output
+
+          if (inputValidation) {
+            arg = (inputValidation instanceof Schema ? inputValidation : new Schema(inputValidation)).parse(arg.length === 1 ? arg[0] : arg)
+          }
+
+          const result = (this._methods[methodName].handler || this._methods[methodName]).apply(v, arg.length > 1 ? [arg] : arg)
+          if (outputValidation) {
+            return (outputValidation instanceof Schema ? outputValidation : new Schema(outputValidation)).parse(result)
+          }
+
+          return result
+        }
+        Object.assign(v, {
+          [methodName]: methodFn
         })
       })
     }
