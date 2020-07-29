@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, ValidationError } from '../../../.'
 
-test(`Number`, t => {
+test('Number', t => {
   /**
    * Validates `Number`s.
    */
@@ -31,7 +31,7 @@ test(`Number`, t => {
   t.is(contact.age, 36)
 })
 
-test(`min (minimum value)`, t => {
+test('min (minimum value)', t => {
   const NewNumber = new Schema({
     type: Number,
     min: 0
@@ -43,7 +43,7 @@ test(`min (minimum value)`, t => {
   t.is(NewNumber.parse(0), 0)
 })
 
-test(`max (maximum value)`, t => {
+test('max (maximum value)', t => {
   const NewNumber = new Schema({
     type: Number,
     max: 100
@@ -54,7 +54,7 @@ test(`max (maximum value)`, t => {
   t.is(NewNumber.parse(100), 100)
 })
 
-test(`decimalPlaces (maximum number of decimal places)`, t => {
+test('decimalPlaces (maximum number of decimal places)', t => {
   const NewNumber = new Schema({
     type: Number,
     decimalPlaces: 2
@@ -64,7 +64,7 @@ test(`decimalPlaces (maximum number of decimal places)`, t => {
   t.is(NewNumber.parse(12.345), 12.35)
 })
 
-test(`integer (accepts only integers)`, t => {
+test('integer (accepts only integers)', t => {
   const NewNumber = new Schema({
     type: Number,
     integer: true

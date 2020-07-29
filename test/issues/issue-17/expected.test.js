@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../'
 
-test(`Fixes #17`, t => {
+test('Fixes #17', t => {
   const objectParser = new Schema({
     type: Object
   })

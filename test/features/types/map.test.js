@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Map`, t => {
+test('Map', t => {
   /**
    * Validates [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) values
    */
@@ -15,7 +15,7 @@ test(`Map`, t => {
   t.is(error.message, 'Invalid map')
 })
 
-test(`autoCast (default \`true\`)`, t => {
+test('autoCast (default `true`)', t => {
   const MapSchema = new Schema({
     type: Map
   })

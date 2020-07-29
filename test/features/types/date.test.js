@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Date`, t => {
+test('Date', t => {
   /**
    * Validates `Date`'s
    */
@@ -20,7 +20,7 @@ test(`Date`, t => {
 
   const error = t.throws(() => dateValidator.parse({
     name: 'Martin',
-    birthday: `Somewhere in the 80s`
+    birthday: 'Somewhere in the 80s'
   }))
 
   t.is(error.message, 'Data is not valid')
@@ -51,7 +51,7 @@ test('autoCast (default `true`)', t => {
    */
   const error = t.throws(() => dateValidator.parse({
     name: 'Martin',
-    birthday: `Somewhere in the 80s`
+    birthday: 'Somewhere in the 80s'
   }))
 
   t.is(error.message, 'Data is not valid')

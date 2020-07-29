@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers } from '../../../.'
 
-test(`Custom`, t => {
+test('Custom', t => {
   /**
    * Custom transformers are great to implement custom logic that may be required by multiple entities of the ecosystem.
    */
@@ -13,7 +13,7 @@ test(`Custom`, t => {
     email: {
       type: 'Email',
       onlyGmail: true
-    },
+    }
   })
 
   let error = t.throws(() => customTransformer.parse({
@@ -21,8 +21,8 @@ test(`Custom`, t => {
     email: 'tin@devtin.io'
   }))
 
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Don't know how to resolve Email in property email`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Don\'t know how to resolve Email in property email')
 
   /**
    * Creating a custom transformer is as simple as appending the logic into the Transformers object
@@ -35,13 +35,13 @@ test(`Custom`, t => {
     loaders: [
       {
         type: String,
-        regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, `Invalid e-mail address { value } for field { field.name }`]
+        regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, 'Invalid e-mail address { value } for field { field.name }']
       }
     ], // pre-processes the value using this known-registered types
     validate (v) {
       t.true(this instanceof Schema)
       if (this.settings.onlyGmail && !/@gmail\.com$/.test(v)) {
-        return this.throwError(`Only gmail accounts`)
+        return this.throwError('Only gmail accounts')
       }
     }
   }

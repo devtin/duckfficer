@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Utils } from '../'
 
-test(`Return schema paths`, t => {
+test('Return schema paths', t => {
   const schema = new Schema({
     title: {
       type: String,
@@ -19,7 +19,7 @@ test(`Return schema paths`, t => {
   t.deepEqual(schema.paths, ['title', 'body', 'published'])
 })
 
-test(`Converts object into indexed dot array`, t => {
+test('Converts object into indexed dot array', t => {
   t.deepEqual(Utils.obj2dot({
     name: 'Martin',
     address: {
@@ -30,7 +30,7 @@ test(`Converts object into indexed dot array`, t => {
   }), ['name', 'address.city', 'address.zip', 'address.line1'])
 })
 
-test(`Finds in an object by path`, t => {
+test('Finds in an object by path', t => {
   t.is(Utils.find({
     address: {
       line1: 'Brickell Ave'
@@ -48,15 +48,15 @@ test(`Finds in an object by path`, t => {
   t.is(Utils.find(33120, ''), 33120)
 })
 
-test(`Renders handlebars kind-of templates`, t => {
-  t.is(Utils.render(`My address: { address.line1 }`, {
+test('Renders handlebars kind-of templates', t => {
+  t.is(Utils.render('My address: { address.line1 }', {
     address: {
       line1: 'Brickell Ave'
     }
   }), 'My address: Brickell Ave')
 })
 
-test(`castArray wraps values that are not an array into an array`, t => {
+test('castArray wraps values that are not an array into an array', t => {
   const t1 = Utils.castArray('some value')
   t.true(Array.isArray(t1))
   t.is(t1.length, 1)
@@ -68,7 +68,7 @@ test(`castArray wraps values that are not an array into an array`, t => {
   t.is(t2[0], 'some other value')
 })
 
-test(`Casts Schemas`, t => {
+test('Casts Schemas', t => {
   const UserSchema = new Schema({
     name: String
   })
@@ -77,7 +77,7 @@ test(`Casts Schemas`, t => {
   t.false(Schema.castSchema({ some: 'Object' }) instanceof Schema)
 })
 
-test(`Resolves schema at given path`, t => {
+test('Resolves schema at given path', t => {
   const AddressSchema = new Schema({
     street: String,
     zip: Number

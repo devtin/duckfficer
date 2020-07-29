@@ -38,18 +38,18 @@ const runCodeInNode = code => {
 }
 
 async function checkMdJsCode (mdText) {
-  const globals = getJsBlocks(mdText, { scope: 'global' }).join(`\n`)
+  const globals = getJsBlocks(mdText, { scope: 'global' }).join('\n')
   const noScope = getJsBlocks(mdText, { scope: 'no' })
   const res = []
   const expectedOutput = []
   await Promise.each(noScope, async code => {
-    const script = (globals + `\n` + code).replace(`require('${ packageName }')`, `require('${ path.join(__dirname, '../../') }')`)
+    const script = (globals + '\n' + code).replace(`require('${packageName}')`, `require('${path.join(__dirname, '../../')}')`)
     expectedOutput.push(getJsExpectedOutput(code))
     res.push(await runCodeInNode(script))
   })
   // console.log(`RES>>>\n`, res.join(''))
   // console.log(`EXPECTED>>>\n`, expectedOutput.join('\n'))
-  return _.trim(res.join(`\n`)) === _.trim(expectedOutput.join(`\n`))
+  return _.trim(res.join('\n')) === _.trim(expectedOutput.join('\n'))
 }
 
 module.exports = {

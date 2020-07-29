@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Utils, Transformers, ValidationError } from '../'
 
-test(`Validates the schema of the payload matches the defined schema`, t => {
+test('Validates the schema of the payload matches the defined schema', t => {
   const address = new Schema({
     line1: String,
     zip: Number
@@ -29,7 +29,7 @@ test(`Validates the schema of the payload matches the defined schema`, t => {
  * these properties are of the expected type. To do so, we need to create a schema:
  */
 
-test(`Validates the provided types against the defined schema`, async t => {
+test('Validates the provided types against the defined schema', async t => {
   const UserSchema = new Schema({
     name: String,
     birthday: Date,
@@ -37,30 +37,30 @@ test(`Validates the provided types against the defined schema`, async t => {
   })
 
   const Martin = UserSchema.parse({
-    name: `Martin Rafael`,
+    name: 'Martin Rafael',
     birthday: new Date('11/11/1999'),
     description: ['monkey', 'developer', 'arepa lover']
   })
 
-  t.is(Martin.name, `Martin Rafael`)
+  t.is(Martin.name, 'Martin Rafael')
   t.is(Martin.birthday.getFullYear(), 1999)
   t.is(Martin.description.length, 3)
 
   const error = t.throws(() => UserSchema.parse({
     name: 123,
-    birthday: `Don't know...`,
+    birthday: 'Don\'t know...',
     description: 'I like bananas'
   }))
 
   t.true(error instanceof ValidationError)
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors.length, 3)
-  t.is(error.errors[0].message, `Invalid string`)
-  t.is(error.errors[0].field.fullPath, `name`)
-  t.is(error.errors[1].message, `Invalid date`)
-  t.is(error.errors[1].field.fullPath, `birthday`)
-  t.is(error.errors[2].message, `Invalid array`)
-  t.is(error.errors[2].field.fullPath, `description`)
+  t.is(error.errors[0].message, 'Invalid string')
+  t.is(error.errors[0].field.fullPath, 'name')
+  t.is(error.errors[1].message, 'Invalid date')
+  t.is(error.errors[1].field.fullPath, 'birthday')
+  t.is(error.errors[2].message, 'Invalid array')
+  t.is(error.errors[2].field.fullPath, 'description')
 })
 
 test('Default value helper', async t => {
@@ -115,7 +115,7 @@ test('Default value helper (function)', t => {
  * Each transformer provides its own custom message
  */
 
-test(`Custom error messages with optional rendering`, t => {
+test('Custom error messages with optional rendering', t => {
   const Title = new Schema({
     name: 'title',
     type: String,
@@ -139,7 +139,7 @@ test(`Custom error messages with optional rendering`, t => {
  * `autoCasting` is a cool feature to have since it prevents you from doing extra casting.
  */
 
-test(`autoCasting`, t => {
+test('autoCasting', t => {
   const DOB = new Schema({
     name: 'title',
     type: Date
@@ -159,13 +159,13 @@ test(`autoCasting`, t => {
   // Though sometimes may be required for proper validation
   // as mentioned [here](https://github.com/devtin/schema-validator/issues/6)
 
-  let BooleanSchema = new Schema({
+  const BooleanSchema = new Schema({
     type: Boolean,
     autoCast: false
   })
 
   let error = t.throws(() => BooleanSchema.parse(5))
-  t.is(error.message, `Invalid boolean`) // => Invalid boolean
+  t.is(error.message, 'Invalid boolean') // => Invalid boolean
 
   const DateSchema = new Schema({
     type: Date,
@@ -175,10 +175,10 @@ test(`autoCasting`, t => {
   t.notThrows(() => DateSchema.parse(new Date('11/11/1999 23:11 GMT-0400')))
 
   error = t.throws(() => DateSchema.parse('11/11/1999'))
-  t.is(error.message, `Invalid date`)
+  t.is(error.message, 'Invalid date')
 })
 
-test(`Validates an object schema in terms of contained properties`, t => {
+test('Validates an object schema in terms of contained properties', t => {
   const user = {
     name: 'Martin Rafael',
     email: 'tin@devtin.io',
@@ -201,7 +201,7 @@ test(`Validates an object schema in terms of contained properties`, t => {
   t.false(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'], { strict: true })) // => false
 })
 
-test(`Validates and sanitizes schemas`, t => {
+test('Validates and sanitizes schemas', t => {
   const PostValidator = new Schema({
     title: {
       type: String,
@@ -220,7 +220,7 @@ test(`Validates and sanitizes schemas`, t => {
     category: 'shopping'
   })) // since there is no `category` field in the schema
 
-  t.is(error.message, `Invalid object schema`)
+  t.is(error.message, 'Invalid object schema')
 
   let post
   t.notThrows(() => {
@@ -239,7 +239,7 @@ test(`Validates and sanitizes schemas`, t => {
   t.true(post.published instanceof Date)
 })
 
-test(`Validates full nested schemas`, t => {
+test('Validates full nested schemas', t => {
   // console.log(`AddressValidator.paths`, AddressValidator.paths)
   const UserValidator = new Schema({
     name: String,
@@ -264,7 +264,7 @@ test(`Validates full nested schemas`, t => {
 
   const err = t.throws(() => UserValidator.parse({
     name: 'Martin',
-    email: 'marting.dc@gmail.com',
+    email: 'marting.dc@gmail.com'
   }))
 
   t.is(err.message, 'Data is not valid')
@@ -285,7 +285,7 @@ test(`Validates full nested schemas`, t => {
   }))
 })
 
-test(`Handles custom data-types`, t => {
+test('Handles custom data-types', t => {
   const customType = new Schema({
     name: {
       type: String,
@@ -294,7 +294,7 @@ test(`Handles custom data-types`, t => {
     email: {
       type: 'Email',
       onlyGmail: true
-    },
+    }
   })
 
   let error = t.throws(() => customType.parse({
@@ -302,8 +302,8 @@ test(`Handles custom data-types`, t => {
     email: 'tin@devtin.io'
   }))
 
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Don't know how to resolve Email in property email`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Don\'t know how to resolve Email in property email')
 
   // Registers a new custom type
   Transformers.Email = {
@@ -311,10 +311,10 @@ test(`Handles custom data-types`, t => {
     parse (v) {
       t.true(this instanceof Schema)
       if (!/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/.test(v)) {
-        return this.throwError(`Invalid e-mail address { value } for field { field.name }`, { value: v })
+        return this.throwError('Invalid e-mail address { value } for field { field.name }', { value: v })
       }
       if (this.settings.onlyGmail && !/@gmail\.com$/.test(v)) {
-        return this.throwError(`Only gmail accounts`)
+        return this.throwError('Only gmail accounts')
       }
       return v
     }
@@ -350,7 +350,7 @@ test(`Handles custom data-types`, t => {
   }))
 })
 
-test(`Checks whether contains a field or not`, t => {
+test('Checks whether contains a field or not', t => {
   const SampleSchema = new Schema({
     anObj: {
       withSomeProp: Boolean
@@ -363,14 +363,14 @@ test(`Checks whether contains a field or not`, t => {
   t.false(SampleSchema.hasField('anObj.unExistentProp', true))
 })
 
-test(`parseProperty`, t => {
+test('parseProperty', t => {
   const user = new Schema({
     type: 'String'
   })
   t.is(user.parseProperty('String', 'Hello'), 'Hello')
 })
 
-test(`runChildren`, t => {
+test('runChildren', t => {
   t.deepEqual(new Schema({
     type: 'String'
   }).runChildren('Hello'), {})
@@ -380,12 +380,12 @@ test(`runChildren`, t => {
   }).runChildren('Hello', { method: 'unknown' }), {})
 })
 
-test(`multiple types with only one item`, t => {
+test('multiple types with only one item', t => {
   const singleSchema = new Schema([String])
   t.is(singleSchema.parse('Martin'), 'Martin')
 })
 
-test(`performs fullCast of a schema with nested schemas`, t => {
+test('performs fullCast of a schema with nested schemas', t => {
   const address = new Schema({
     street: String,
     zip: {

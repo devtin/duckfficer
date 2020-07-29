@@ -6,7 +6,6 @@ const objectParser = new Schema({
 
 try {
   objectParser.parse({ hi: 'hello' })
-}
-catch (err) {
+} catch (err) {
   console.log(err.message) // => v is not defined
 }

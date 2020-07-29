@@ -6,7 +6,6 @@ const numberType = new Schema({
 
 try {
   numberType.parse('no')
-}
-catch (err) {
+} catch (err) {
   console.log(err instanceof ValidationError) // => false
 }

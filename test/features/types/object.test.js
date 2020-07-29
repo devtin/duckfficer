@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Object`, t => {
+test('Object', t => {
   const Transaction = new Schema({
     created: {
       type: Date,
@@ -32,12 +32,12 @@ test(`Object`, t => {
     payload: 'none'
   }))
 
-  t.is(error.message, `Data is not valid`) // => Data is not valid
+  t.is(error.message, 'Data is not valid') // => Data is not valid
   t.is(error.errors[0].message, 'Invalid object') // => Invalid date
   t.is(error.errors[0].field.fullPath, 'payload')
 })
 
-test(`mapSchema`, t => {
+test('mapSchema', t => {
   /**
    * We can optionally define the schema of the properties of an object.
    */

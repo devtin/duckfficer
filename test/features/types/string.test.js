@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`String`, t => {
+test('String', t => {
   /**
    * Validates `String`'s.
    */
@@ -15,7 +15,7 @@ test(`String`, t => {
   t.is(error.errors[0].field.fullPath, 'name')
 })
 
-test(`autoCast (default \`false\`)`, async t => {
+test('autoCast (default `false`)', async t => {
   /**
    * String transformer would call the method `toString` of any given object when `autoCast` equals `true` and would assign
    * returned value as long as it is different than `[object Object]`
@@ -37,7 +37,7 @@ test(`autoCast (default \`false\`)`, async t => {
   t.is(user.name, 'Some name')
 })
 
-test(`minlength`, async t => {
+test('minlength', async t => {
   /**
    * Setting `minlength` validates given `String` has a minimum length.
    */
@@ -50,15 +50,15 @@ test(`minlength`, async t => {
   })
 
   const error = t.throws(() => nameSchema.parse({ name: 'Tin' }))
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Invalid minlength`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Invalid minlength')
   // t.is(error.errors[0].message, `Looking for a custom error message?`)
-  t.is(error.errors[0].field.fullPath, `name`)
+  t.is(error.errors[0].field.fullPath, 'name')
 
-  t.notThrows(() => nameSchema.parse({ name: 'Martin' }), `Martin`)
+  t.notThrows(() => nameSchema.parse({ name: 'Martin' }), 'Martin')
 })
 
-test(`maxlength`, async t => {
+test('maxlength', async t => {
   /**
    * Setting `maxlength` validates given `String` has a maximum length of...
    */
@@ -71,8 +71,8 @@ test(`maxlength`, async t => {
   })
 
   const error = t.throws(() => lastNameSchema.parse({ lastName: 'Schwarzenegger' }))
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Invalid maxlength`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Invalid maxlength')
   // t.is(error.errors[0].message, `Looking for a custom error message?`)
 
   t.notThrows(() => lastNameSchema.parse({ lastName: 'Rafael' }))
@@ -90,8 +90,8 @@ test('regex', async t => {
   })
 
   const error = t.throws(() => nameSchema.parse({ name: 'Tin Rafael' }))
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Invalid regex`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Invalid regex')
 
   t.notThrows(() => nameSchema.parse({ name: 'Martin' }))
 
@@ -106,11 +106,11 @@ test('regex', async t => {
   })
 
   const error2 = t.throws(() => nameSchema2.parse({ name: 'Tin Rafael' }))
-  t.is(error2.message, `Data is not valid`)
-  t.is(error2.errors[0].message, `lowercase only`)
+  t.is(error2.message, 'Data is not valid')
+  t.is(error2.errors[0].message, 'lowercase only')
 })
 
-test(`enum`, t => {
+test('enum', t => {
   const mySchema = new Schema({
     topping: {
       type: String,
@@ -122,7 +122,7 @@ test(`enum`, t => {
   t.notThrows(() => mySchema.parse({ topping: 'ham' }))
 })
 
-test(`lowercase`, t => {
+test('lowercase', t => {
   /**
    * Optionally transforms input string into lowercase
    */
@@ -133,7 +133,7 @@ test(`lowercase`, t => {
   t.is(mySchema.parse('ADMIN'), 'admin')
 })
 
-test(`uppercase`, t => {
+test('uppercase', t => {
   /**
    * Optionally transforms input string into uppercase
    */

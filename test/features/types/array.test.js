@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Array`, t => {
+test('Array', t => {
   /**
    * Initializes `Array` types
    */
@@ -28,12 +28,12 @@ test(`Array`, t => {
     category: 'none' // < not an array
   }))
 
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid array')
   t.is(error.errors[0].field.fullPath, 'category')
 })
 
-test(`arraySchema`, t => {
+test('arraySchema', t => {
   /**
    * The Array transformer can initialize the items in the array by passing them through the transformer specified in
    * the `arraySchema` setting.
@@ -64,7 +64,7 @@ test(`arraySchema`, t => {
     lastAccess: ['11/11/1999', 'What is love?']
   }))
 
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid date')
   t.is(error.errors[0].field.fullPath, 'lastAccess.1')
 
@@ -93,7 +93,7 @@ test(`arraySchema`, t => {
 
   t.is(error2.message, 'Data is not valid')
   t.is(error2.errors[0].message, 'Invalid e-mail address gmail.com')
-  t.is(error2.errors[0].field.fullPath, `emails.1`)
+  t.is(error2.errors[0].field.fullPath, 'emails.1')
 
   t.notThrows(() => Contact.parse({
     name: 'Martin',

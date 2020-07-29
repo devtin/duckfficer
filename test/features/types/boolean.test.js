@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Boolean`, t => {
+test('Boolean', t => {
   /**
    * Validates `Boolean`s.
    */
@@ -10,7 +10,7 @@ test(`Boolean`, t => {
     name: String,
     active: {
       type: Boolean,
-      default: false,
+      default: false
     }
   })
 

@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Set`, t => {
+test('Set', t => {
   const ProductType = new Schema({
     name: String,
     category: Set
@@ -21,7 +21,7 @@ test(`Set`, t => {
     category: 'none'
   }))
 
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid set')
   t.is(error.errors[0].field.fullPath, 'category')
 })
@@ -48,7 +48,7 @@ test('autoCast (default `true`)', t => {
     name: 'Kombucha',
     category: ['Beverages', 'Health', 'Tea', 'Health']
   }))
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid set')
   t.is(error.errors[0].field.fullPath, 'category')
 })

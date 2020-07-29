@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Promise`, t => {
+test('Promise', t => {
   const UserType = new Schema({
     user: String,
     picture: Promise
@@ -10,7 +10,7 @@ test(`Promise`, t => {
   t.notThrows(() => UserType.parse({
     user: 'tin',
     picture: new Promise((resolve) => {
-      setTimeout(() => resolve(`that`), 3000)
+      setTimeout(() => resolve('that'), 3000)
     })
   }))
 
@@ -18,7 +18,7 @@ test(`Promise`, t => {
     user: 'tin',
     async picture () {
       return new Promise((resolve) => {
-        setTimeout(() => resolve(`nah`), 3000)
+        setTimeout(() => resolve('nah'), 3000)
       })
     }
   }))
@@ -29,7 +29,7 @@ test(`Promise`, t => {
   t.is(error.errors[0].field.fullPath, 'picture')
 })
 
-test(`autoCast (default \`false\`)`, t => {
+test('autoCast (default `false`)', t => {
   const UserType = new Schema({
     user: String,
     picture: {
@@ -54,13 +54,13 @@ test(`autoCast (default \`false\`)`, t => {
 
   t.notThrows(() => UserType.parse({
     user: 'tin',
-    picture: `Something`
+    picture: 'Something'
   }))
 
   t.notThrows(() => UserType.parse({
     user: 'tin',
     picture: new Promise(resolve => {
-      resolve(`Something`)
+      resolve('Something')
     })
   }))
 })

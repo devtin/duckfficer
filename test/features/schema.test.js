@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, ValidationError, Transformers } from '../../'
 
-test(`Creating a schema`, async t => {
+test('Creating a schema', async t => {
   /**
    * In order to check the data integrity of an object, a schema defining the expected structure of the desired object
    * needs to be created.
@@ -11,7 +11,7 @@ test(`Creating a schema`, async t => {
     // advanced type definition
     name: {
       // defining the type
-      type: String,
+      type: String
       // we could add additional settings here
     },
     // short-hand type definition
@@ -31,7 +31,7 @@ test(`Creating a schema`, async t => {
   t.true(typeof UserSchema.parse === 'function')
 
   const arbitraryObject = {
-    name: `Martin Rafael`,
+    name: 'Martin Rafael',
     birthday: new Date('11/11/1999'),
     description: ['monkey', 'developer', 'arepa lover']
   }
@@ -50,13 +50,13 @@ test(`Creating a schema`, async t => {
    */
 
   t.truthy(safeObject)
-  t.is(safeObject.name, `Martin Rafael`)
+  t.is(safeObject.name, 'Martin Rafael')
   t.true(safeObject.birthday instanceof Date)
   t.is(safeObject.birthday.getFullYear(), 1999)
   t.is(safeObject.description.length, 3)
 })
 
-test(`Validating and sanitizing arbitrary objects`, t => {
+test('Validating and sanitizing arbitrary objects', t => {
   /**
    * Using the same `UserSchema` example above:
    */
@@ -75,7 +75,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   const arbitraryObject = {
     firstName: 'Martin',
     lastName: 'Rafael',
-    birthday: `11/11/1999`,
+    birthday: '11/11/1999',
     address: {
       zip: 305
     },
@@ -98,11 +98,11 @@ test(`Validating and sanitizing arbitrary objects`, t => {
 
   t.true(error instanceof ValidationError)
   t.true(error instanceof Error)
-  t.is(error.message, `Invalid object schema`)
+  t.is(error.message, 'Invalid object schema')
   t.is(error.errors.length, 3)
-  t.is(error.errors[0].message, `Unknown property firstName`)
-  t.is(error.errors[1].message, `Unknown property lastName`)
-  t.is(error.errors[2].message, `Unknown property address.zip`)
+  t.is(error.errors[0].message, 'Unknown property firstName')
+  t.is(error.errors[1].message, 'Unknown property lastName')
+  t.is(error.errors[2].message, 'Unknown property address.zip')
 
   /**
    * When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
@@ -110,13 +110,13 @@ test(`Validating and sanitizing arbitrary objects`, t => {
    */
 
   error = t.throws(() => UserSchema.parse({
-    birthday: `11/11/1999`,
+    birthday: '11/11/1999',
     description: ['monkey', 'developer', 'arepa lover']
   }))
 
-  t.is(error.message, `Data is not valid`)
+  t.is(error.message, 'Data is not valid')
   t.is(error.errors.length, 1)
-  t.is(error.errors[0].message, `Property name is required`)
+  t.is(error.errors[0].message, 'Property name is required')
 
   /**
    * A custom `state` can be passed to extend the validation process.
@@ -132,20 +132,20 @@ test(`Validating and sanitizing arbitrary objects`, t => {
       type: String,
       validate (v, { state }) {
         if (v === 'admin' && !state?.user) {
-          this.throwError(`Only authenticated users can set the level to admin`)
+          this.throwError('Only authenticated users can set the level to admin')
         }
       }
     }
   }, {
     validate (v, { state }) {
       if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
-        this.throwError(`Admin users require an email`)
+        this.throwError('Admin users require an email')
       }
     }
   })
 
   error = t.throws(() => AnotherUserSchema.parse({
-    name: `Martin Rafael`,
+    name: 'Martin Rafael',
     level: 'admin'
   }))
   t.is(error.message, 'Data is not valid')
@@ -153,7 +153,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   t.is(error.errors[0].field.fullPath, 'level')
 
   error = t.throws(() => AnotherUserSchema.parse({
-    name: `Martin Rafael`,
+    name: 'Martin Rafael',
     level: 'admin'
   }, {
     state: {
@@ -168,7 +168,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
 
   t.notThrows(() => {
     return AnotherUserSchema.parse({
-      name: `Martin Rafael`,
+      name: 'Martin Rafael',
       level: 'admin'
     }, {
       state: {
@@ -181,7 +181,7 @@ test(`Validating and sanitizing arbitrary objects`, t => {
   })
 })
 
-test(`Error-handling and LifeCycle`, t => {
+test('Error-handling and LifeCycle', t => {
   /**
    * Below we are gonna dive into the schema-validation life-cycle for a better understanding of the tool.
    */
@@ -189,20 +189,20 @@ test(`Error-handling and LifeCycle`, t => {
   const lifeCycle = []
 
   let arbitraryObject
-  let passedState = { someStateProp: true }
+  const passedState = { someStateProp: true }
   let error
 
   const hook = ({ levelName, hookName }) => {
     return function (value, { state }) {
       t.is(state, passedState)
 
-      let label = `${ levelName }-level`
+      let label = `${levelName}-level`
 
       if (this.fullPath) {
-        label = `->${ this.fullPath }(${ label })`
+        label = `->${this.fullPath}(${label})`
       }
 
-      lifeCycle.push(`${ label } ${ hookName } hook`)
+      lifeCycle.push(`${label} ${hookName} hook`)
       return value
     }
   }
@@ -247,7 +247,7 @@ test(`Error-handling and LifeCycle`, t => {
 
   error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
-  t.is(error.message, `Invalid object schema`)
+  t.is(error.message, 'Invalid object schema')
   t.is(error.errors.length, 1)
   t.is(error.errors[0].message, 'Unknown property somePropertyNotDefinedInTheSchema')
 
@@ -255,7 +255,7 @@ test(`Error-handling and LifeCycle`, t => {
    * Throws an error when the given `arbitraryObject` structure does not comply with the given schema structure.
    */
 
-  t.is(error.errors[0].message, `Unknown property somePropertyNotDefinedInTheSchema`)
+  t.is(error.errors[0].message, 'Unknown property somePropertyNotDefinedInTheSchema')
   t.is(error.errors[0].field, undefined) // the field does not exists in our schema
 
   lifeCycle.length = 0
@@ -270,22 +270,22 @@ test(`Error-handling and LifeCycle`, t => {
     phoneNumber: '123'
   }, { state: passedState }))
 
-  t.is(error.errors[0].message, `Property name is required`)
+  t.is(error.errors[0].message, 'Property name is required')
   t.is(error.errors[0].field.fullPath, 'name')
 
   /**
    * Throws an error if defined type is not registered.
    */
 
-  t.is(error.errors[1].message, `Don't know how to resolve Birthday in property birthday`)
-  t.is(error.errors[1].field.fullPath, `birthday`)
+  t.is(error.errors[1].message, 'Don\'t know how to resolve Birthday in property birthday')
+  t.is(error.errors[1].field.fullPath, 'birthday')
 
   /**
    * Also throws an error when types don't match.
    */
 
-  t.is(error.errors[2].message, `Invalid number`)
-  t.is(error.errors[2].field.fullPath, `phoneNumber`)
+  t.is(error.errors[2].message, 'Invalid number')
+  t.is(error.errors[2].field.fullPath, 'phoneNumber')
 
   t.deepEqual(lifeCycle, [
     'schema-level cast hook',
@@ -337,7 +337,7 @@ test(`Error-handling and LifeCycle`, t => {
   ])
 })
 
-test(`Required and optional values`, t => {
+test('Required and optional values', t => {
   /**
    * All properties in a Schema are required by default.
    */
@@ -347,92 +347,92 @@ test(`Required and optional values`, t => {
     zip: Number
   })
 
-    /**
+  /**
      * Whenever a required property is missing, an error is thrown.
      */
 
-    let error = t.throws(() => AddressSchema.parse({
-      line1: 'Brickell',
-      line2: 'Ave'
-    }))
+  let error = t.throws(() => AddressSchema.parse({
+    line1: 'Brickell',
+    line2: 'Ave'
+  }))
 
-    t.is(error.message, 'Data is not valid')
-    t.is(error.errors.length, 1)
-    t.is(error.errors[0].message, `Property zip is required`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, 'Property zip is required')
 
-    /**
+  /**
      * In order to make a property optional we must pass the flag `required` set to `false`
      */
 
-    const ContactSchemaO = new Schema({
-      name: String,
-      email: String,
-      age: {
-        type: Number,
-        required: false // property `age` is optional
-      },
-      address: {
-        type: AddressSchema,
-        required: false
-      }
-    })
-    const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
+  const ContactSchemaO = new Schema({
+    name: String,
+    email: String,
+    age: {
+      type: Number,
+      required: false // property `age` is optional
+    },
+    address: {
+      type: AddressSchema,
+      required: false
+    }
+  })
+  const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
 
-    /**
+  /**
      * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
      */
 
-    t.notThrows(() => {
-      ContactSchema.parse({
-        name: 'Martin',
-        email: 'tin@devtin.io'
-      })
+  t.notThrows(() => {
+    ContactSchema.parse({
+      name: 'Martin',
+      email: 'tin@devtin.io'
     })
+  })
 
-    t.notThrows(() => {
-      ContactSchema.parse({
-        name: 'Martin',
-        email: 'tin@devtin.io',
-        age: undefined,
-        address: undefined
-      })
+  t.notThrows(() => {
+    ContactSchema.parse({
+      name: 'Martin',
+      email: 'tin@devtin.io',
+      age: undefined,
+      address: undefined
     })
+  })
 
-    /**
+  /**
      * Whenever `age` is present, the validation will ensure it is a `Number`, though.
      */
 
-    error = t.throws(() => {
-      ContactSchema.parse({
-        name: 'Papo',
-        email: 'sandy@papo.com',
-        age: `I don't know.`
-      })
+  error = t.throws(() => {
+    ContactSchema.parse({
+      name: 'Papo',
+      email: 'sandy@papo.com',
+      age: 'I don\'t know.'
     })
+  })
 
-    t.is(error.message, `Data is not valid`)
-    t.is(error.errors.length, 1)
-    t.is(error.errors[0].message, `Invalid number`)
-    t.is(error.errors[0].field.fullPath, `age`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, 'Invalid number')
+  t.is(error.errors[0].field.fullPath, 'age')
 
-    let contact2
+  let contact2
 
-    t.notThrows(() => {
-      contact2 = ContactSchema.parse({
-        name: 'Papo',
-        email: 'sandy@papo.com',
-        age: 36
-      })
-    })
-
-    t.deepEqual(contact2, {
+  t.notThrows(() => {
+    contact2 = ContactSchema.parse({
       name: 'Papo',
       email: 'sandy@papo.com',
       age: 36
     })
+  })
+
+  t.deepEqual(contact2, {
+    name: 'Papo',
+    email: 'sandy@papo.com',
+    age: 36
+  })
 })
 
-test(`Default values`, t => {
+test('Default values', t => {
   /**
    * Default values are meant to be used whenever an arbitrary object misses the value of the property in subject.
    */
@@ -531,7 +531,7 @@ test(`Default values`, t => {
   t.is(parsed.subscribe, true)
 })
 
-test(`Null values`, t => {
+test('Null values', t => {
   /**
    * Sometimes it is useful to allow a property to accept null values no matter what type it has.
    * Property-setting `allowNull` allows you to do so.
@@ -550,7 +550,7 @@ test(`Null values`, t => {
   t.is(NullSchema.parse(null), null)
 })
 
-test(`Nesting schemas`, t => {
+test('Nesting schemas', t => {
   /**
    * We can use a previously defined schema in order to extend the validation of other schemas.
    */
@@ -558,7 +558,7 @@ test(`Nesting schemas`, t => {
     line1: String,
     line2: {
       type: String,
-      required: false,
+      required: false
     },
     zip: {
       type: Number,
@@ -617,15 +617,15 @@ test(`Nesting schemas`, t => {
   }))
 })
 
-test(`Multiple types`, t => {
+test('Multiple types', t => {
   let error
   const FnSchema = new Schema([Function, Promise])
 
   t.notThrows(() => FnSchema.parse(() => {}))
-  t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve(`this`))))
+  t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve('this'))))
 
-  error = t.throws(() => FnSchema.parse(`some pic` ))
-  t.is(error.message, `Could not resolve given value type. Allowed types are Function and Promise`)
+  error = t.throws(() => FnSchema.parse('some pic'))
+  t.is(error.message, 'Could not resolve given value type. Allowed types are Function and Promise')
 
   const UserSchema = new Schema({
     name: String,
@@ -650,11 +650,11 @@ test(`Multiple types`, t => {
     name: 'Ana',
     age: new Date('6/18/2020')
   }))
-  t.is(error.message, `Data is not valid`)
-  t.is(error.errors[0].message, `Could not resolve given value type in property age. Allowed types are String and Number`)
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Could not resolve given value type in property age. Allowed types are String and Number')
 })
 
-test(`Auto-casting`, t => {
+test('Auto-casting', t => {
   /**
    * Most transformers provide an option for auto-casting. When property-setting `autoCast` equals `true`
    * (depending on the transformer) it may try to resolve given arbitrary value into the expected one.
@@ -712,19 +712,19 @@ test(`Auto-casting`, t => {
 
   t.is(error.message, 'Data is not valid')
   t.is(error.errors.length, 2)
-  t.is(error.errors[0].message, `Invalid date`)
-  t.is(error.errors[0].field.fullPath, `birthday`)
-  t.is(error.errors[1].message, `Invalid number`)
-  t.is(error.errors[1].field.fullPath, `kids`)
+  t.is(error.errors[0].message, 'Invalid date')
+  t.is(error.errors[0].field.fullPath, 'birthday')
+  t.is(error.errors[1].message, 'Invalid number')
+  t.is(error.errors[1].field.fullPath, 'kids')
 })
 
-test(`Virtuals (getters / setters)`, t => {
+test('Virtuals (getters / setters)', t => {
   const Address = new Schema({
     line1: String,
     line2: String,
     zip: Number,
     get fullAddress () {
-      return  `${this.line1} / ${this.line2} / ${this.zip}`
+      return `${this.line1} / ${this.line2} / ${this.zip}`
     }
   })
   const User = new Schema({
@@ -776,7 +776,7 @@ test(`Virtuals (getters / setters)`, t => {
   t.false(Object.hasOwnProperty.call(she, 'address'))
 })
 
-test(`Loaders`, t => {
+test('Loaders', t => {
   /**
    * Loaders can be seen as a way of piping transformers.
    */
@@ -786,7 +786,7 @@ test(`Loaders`, t => {
       type: String,
       loaders: [Number],
       cast (aNumber) {
-        return `#${ aNumber }`
+        return `#${aNumber}`
       }
     },
     name: String
@@ -810,30 +810,30 @@ test(`Loaders`, t => {
   t.is(product.id, '#123')
 })
 
-test(`Overriding initial settings`, t => {
+test('Overriding initial settings', t => {
   const SomeSchema = new Schema({
     name: String
   })
 
   const error1 = t.throws(() => SomeSchema.parse(undefined))
-  t.is(error1.message, `Data is not valid`)
-  t.is(error1.errors[0].message, `Property name is required`)
+  t.is(error1.message, 'Data is not valid')
+  t.is(error1.errors[0].message, 'Property name is required')
 
   /**
    * We can override the initial settings of our schema
    */
 
   const SomeOptionalSchema = new Schema({
-      name: String
-    },
-    {
-      settings: {
-        required: false
-      }
-    })
+    name: String
+  },
+  {
+    settings: {
+      required: false
+    }
+  })
 
   t.notThrows(() => SomeOptionalSchema.parse(undefined))
   const error2 = t.throws(() => SomeOptionalSchema.parse({}))
-  t.is(error2.message, `Data is not valid`)
-  t.is(error2.errors[0].message, `Property name is required`)
+  t.is(error2.message, 'Data is not valid')
+  t.is(error2.errors[0].message, 'Property name is required')
 })

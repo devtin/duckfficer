@@ -1,13 +1,13 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test(`Function`, t => {
+test('Function', t => {
   const ProductType = new Schema({
     user: String,
     save: Function
   })
 
-  let product = ProductType.parse({
+  const product = ProductType.parse({
     user: 'tin',
     save () {
       return 'yeah!'

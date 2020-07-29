@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers } from '../../'
 
-test(`Built-in validation (provided by types or transformers)`, t => {
+test('Built-in validation (provided by types or transformers)', t => {
   /**
    * A wide variety of type-validators are provided built-in many of them with extra-helpers to enhance the validation
    * logic. Refer to the [Types](#types) section below for available type validators and helpers.
@@ -22,7 +22,7 @@ test(`Built-in validation (provided by types or transformers)`, t => {
   ])
 })
 
-test(`Custom property validation hook (provided at schema-setting level)`, t => {
+test('Custom property validation hook (provided at schema-setting level)', t => {
   /**
    * The [validate](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
    * extra validation logic.
@@ -35,7 +35,7 @@ test(`Custom property validation hook (provided at schema-setting level)`, t => 
       validate (date, { state }) {
         t.is(state, givenState)
         if (Date.parse(date) < Date.parse('2019/1/1')) {
-          this.throwError(`Orders prior 2019 have been archived`)
+          this.throwError('Orders prior 2019 have been archived')
         }
       }
     },
@@ -60,20 +60,20 @@ test(`Custom property validation hook (provided at schema-setting level)`, t => 
   t.is(error.errors[0].field.fullPath, 'created')
 })
 
-test(`Custom value validation hook (provided at schema level)`, t => {
+test('Custom value validation hook (provided at schema level)', t => {
   const ProductSchema = new Schema({
-      id: Number,
-      name: String,
-      price: Number
-    },
-    {
-      validate (v, { state }) {
-        t.is(state, givenState)
-        if (v.id < 200) {
-          this.throwError(`Product deprecated`)
-        }
+    id: Number,
+    name: String,
+    price: Number
+  },
+  {
+    validate (v, { state }) {
+      t.is(state, givenState)
+      if (v.id < 200) {
+        this.throwError('Product deprecated')
       }
-    })
+    }
+  })
 
   const givenState = { someState: true }
 
@@ -85,5 +85,5 @@ test(`Custom value validation hook (provided at schema level)`, t => {
     state: givenState
   }))
 
-  t.is(error.message, `Product deprecated`)
+  t.is(error.message, 'Product deprecated')
 })
