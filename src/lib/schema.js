@@ -167,6 +167,21 @@ export class Schema {
     return settings
   }
 
+  /**
+   * Checks whether given obj is valid compared to the schema
+   *
+   * @param obj
+   * @return {Boolean} whether the obj is valid or not
+   */
+  isValid (obj) {
+    try {
+      this.parse(obj)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
   _parseSchema (obj) {
     return Object.keys(obj).map((prop) => {
       const objDesc = Object.getOwnPropertyDescriptor(obj, prop)
