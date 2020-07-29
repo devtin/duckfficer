@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/devtin/schema-validator/compare/v3.1.1...v3.2.0) (2020-07-29)
+
+
+### Features
+
+* **Schema:** isValid ([310a241](https://github.com/devtin/schema-validator/commit/310a2411e913dce5eb8e6603e6d742807c453870))
+* **utils:** isNotNullObj ([9f87069](https://github.com/devtin/schema-validator/commit/9f8706978751e810d4b37decfbaffa98cafbb5cb))
+
 ### [3.1.1](https://github.com/devtin/schema-validator/compare/v3.1.0...v3.1.1) (2020-07-28)
 
 

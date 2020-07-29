@@ -213,6 +213,7 @@ Orchestrates the validation of a data schema
     * [new Schema(schema, [options])](#new_Schema_new)
     * _instance_
         * [.paths](#Schema+paths)
+        * [.isValid(obj)](#Schema+isValid) ⇒ <code>Boolean</code>
         * [.schemaAtPath(pathName)](#Schema+schemaAtPath) ⇒ [<code>Schema</code>](#Schema) \| [<code>Array.&lt;Schema&gt;</code>](#Schema)
         * [.hasField(fieldName, [deep])](#Schema+hasField) ⇒ <code>Boolean</code>
         * [.structureValidation(obj)](#Schema+structureValidation)
@@ -254,6 +255,18 @@ Sets the environment up:
 | Name | Type | Description |
 | --- | --- | --- |
 | paths | <code>Array.&lt;String&gt;</code> | Contains paths |
+
+<a name="Schema+isValid"></a>
+
+### schema.isValid(obj) ⇒ <code>Boolean</code>
+Checks whether given obj is valid compared to the schema
+
+**Kind**: instance method of [<code>Schema</code>](#Schema)  
+**Returns**: <code>Boolean</code> - whether the obj is valid or not  
+
+| Param |
+| --- |
+| obj | 
 
 <a name="Schema+schemaAtPath"></a>
 

@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.1.1
+ * @devtin/schema-validator v3.2.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -47,9 +47,9 @@ function obj2dot (obj, { parent = '', separator = '.' } = {}) {
   const paths = [];
   Object.keys(obj).forEach(prop => {
     if (obj[prop] && typeof obj[prop] === 'object' && !Array.isArray(obj[prop])) {
-      return paths.push(...obj2dot(obj[prop], { parent: `${ parent }${ prop }${ separator }`, separator }))
+      return paths.push(...obj2dot(obj[prop], { parent: `${parent}${prop}${separator}`, separator }))
     }
-    paths.push(`${ parent }${ prop }`);
+    paths.push(`${parent}${prop}`);
   });
   return paths
 }
@@ -91,7 +91,7 @@ function find (obj, path) {
  * @param {Array} arr
  * @param {Function} cb - Callback function called per item in the array passing the item and index as arguments.
  */
-function forEach(arr, cb) {
+function forEach (arr, cb) {
   for (let i = 0; i < arr.length; i++) {
     if (cb(arr[i], i) === false) {
       break
@@ -100,8 +100,8 @@ function forEach(arr, cb) {
 }
 
 // from https://stackoverflow.com/a/3561711/1064165
-function escapeRegExp(s) {
-  return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+function escapeRegExp (s) {
+  return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
 }
 
 /**
@@ -126,14 +126,18 @@ function escapeRegExp(s) {
 function render (template, obj) {
   const objProps = obj2dot(obj);
   objProps.forEach(prop => {
-    template = template.replace(new RegExp(`{[\\s]*${ prop.split('.').map(escapeRegExp).join('.') }[\\s]*}`, 'g'), find(obj, prop));
+    template = template.replace(new RegExp(`{[\\s]*${prop.split('.').map(escapeRegExp).join('.')}[\\s]*}`, 'g'), find(obj, prop));
   });
   return template
 }
 
+function isNotNullObj (obj) {
+  return typeof obj === 'object' && !Array.isArray(obj) && obj !== null
+}
+
 function getSubProperties (properties, parent) {
   parent = parent.split('.').map(escapeRegExp).join('.');
-  const pattern = new RegExp(`^${ parent }\\.`);
+  const pattern = new RegExp(`^${parent}\\.`);
   return properties.filter(prop => pattern.test(prop)).map(prop => prop.replace(pattern, ''))
 }
 
@@ -166,7 +170,7 @@ function getSubProperties (properties, parent) {
  */
 
 function propertiesRestricted (obj, properties, { strict = false } = {}) {
-  if (typeof obj !== 'object' || obj === null) {
+  if (!isNotNullObj(obj)) {
     return false
   }
 
@@ -176,11 +180,13 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
     forEach(properties, property => {
       if (property.indexOf('.') > 0) {
         const [parent] = property.split('.');
-        return valid = propertiesRestricted(obj[parent], getSubProperties(properties, parent), { strict })
+        valid = propertiesRestricted(obj[parent], getSubProperties(properties, parent), { strict });
+        return valid
       }
 
       if (!Object.prototype.hasOwnProperty.call(obj, property)) {
-        return valid = false
+        valid = false;
+        return valid
       }
     });
   }
@@ -188,7 +194,7 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
   if (valid) {
     forEach(Object.keys(obj), property => {
       if (typeof obj[property] === 'object' && !Array.isArray(obj[property])) {
-        const propMatch = new RegExp(`^${ escapeRegExp(property) }\\.(.+)$`);
+        const propMatch = new RegExp(`^${escapeRegExp(property)}\\.(.+)$`);
         let defaultApproved = properties.indexOf(property) >= 0;
         const childProps = properties
           .filter((v) => {
@@ -199,11 +205,13 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
             return v.replace(propMatch, '$1')
           });
 
-        return valid = defaultApproved || propertiesRestricted(obj[property], childProps)
+        valid = defaultApproved || propertiesRestricted(obj[property], childProps);
+        return valid
       }
 
       if (properties.indexOf(property) === -1) {
-        return valid = false
+        valid = false;
+        return valid
       }
     });
   }
@@ -316,7 +324,7 @@ const Transformers = {
    */
   Array: {
     settings: {
-      typeError: `Invalid array`
+      typeError: 'Invalid array'
     },
     parse (value) {
       if (this.settings.arraySchema) {
@@ -326,7 +334,7 @@ const Transformers = {
             schema,
             name,
             parent: this,
-            settings: schema.settings,
+            settings: schema.settings
           }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
             name,
             parent: this
@@ -383,7 +391,7 @@ const Transformers = {
    */
   Boolean: {
     settings: {
-      typeError: `Invalid boolean`,
+      typeError: 'Invalid boolean',
       autoCast: false
     },
     cast (value) {
@@ -406,7 +414,7 @@ const Transformers = {
    */
   Date: {
     settings: {
-      typeError: `Invalid date`,
+      typeError: 'Invalid date',
       autoCast: true
     },
     cast (value) {
@@ -436,7 +444,7 @@ const Transformers = {
    */
   Function: {
     settings: {
-      typeError: `Invalid function`
+      typeError: 'Invalid function'
     },
     validate (value) {
       if (typeof value !== 'function') {
@@ -455,7 +463,7 @@ const Transformers = {
    */
   Map: {
     settings: {
-      typeError: `Invalid map`,
+      typeError: 'Invalid map',
       autoCast: true
     },
     cast (value) {
@@ -489,10 +497,10 @@ const Transformers = {
    */
   Number: {
     settings: {
-      typeError: `Invalid number`,
-      minError: `minimum accepted value is { value }`,
-      maxError: `maximum accepted value is { value }`,
-      integerError: `Invalid integer`,
+      typeError: 'Invalid number',
+      minError: 'minimum accepted value is { value }',
+      maxError: 'maximum accepted value is { value }',
+      integerError: 'Invalid integer',
       min: undefined,
       max: undefined,
       integer: false,
@@ -538,7 +546,7 @@ const Transformers = {
    */
   Object: {
     settings: {
-      typeError: `Invalid object`
+      typeError: 'Invalid object'
     },
     parse (value) {
       if (this.settings.mapSchema !== undefined) {
@@ -581,7 +589,7 @@ const Transformers = {
    */
   Promise: {
     settings: {
-      typeError: `Invalid Promise`,
+      typeError: 'Invalid Promise',
       autoCast: false,
       isPromise (v) {
         return typeof v === 'object' && typeof v.then === 'function'
@@ -615,7 +623,7 @@ const Transformers = {
    */
   Set: {
     settings: {
-      typeError: `Invalid set`,
+      typeError: 'Invalid set',
       autoCast: true
     },
     cast (value) {
@@ -652,8 +660,8 @@ const Transformers = {
    */
   String: {
     settings: {
-      typeError: `Invalid string`,
-      enumError: `Unknown enum option { value }`,
+      typeError: 'Invalid string',
+      enumError: 'Unknown enum option { value }',
       enum: [],
       autoCast: false,
       lowercase: false,
@@ -675,7 +683,7 @@ const Transformers = {
       }
 
       if (this.settings.minlength) {
-        const [minlength, error] = castThrowable(this.settings.minlength, `Invalid minlength`);
+        const [minlength, error] = castThrowable(this.settings.minlength, 'Invalid minlength');
 
         if (value.length < minlength) {
           this.throwError(error, { value });
@@ -683,7 +691,7 @@ const Transformers = {
       }
 
       if (this.settings.maxlength) {
-        const [maxlength, error] = castThrowable(this.settings.maxlength, `Invalid maxlength`);
+        const [maxlength, error] = castThrowable(this.settings.maxlength, 'Invalid maxlength');
 
         if (value.length > maxlength) {
           this.throwError(error, { value });
@@ -691,7 +699,7 @@ const Transformers = {
       }
 
       if (this.settings.regex) {
-        const [regex, error] = castThrowable(this.settings.regex, `Invalid regex`);
+        const [regex, error] = castThrowable(this.settings.regex, 'Invalid regex');
 
         if (!regex.test(value)) {
           this.throwError(error, { value });
@@ -867,7 +875,7 @@ class Schema {
     }
 
     if (this.settings.default !== undefined && this.settings.required) {
-      throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
+      throw new Error(`Remove either the 'required' or the 'default' option for property ${this.fullPath}.`)
     }
 
     this._defaultSettings.default = this.getDefault();
@@ -909,6 +917,21 @@ class Schema {
     const settings = Object.assign({}, obj);
     delete settings.type;
     return settings
+  }
+
+  /**
+   * Checks whether given obj is valid compared to the schema
+   *
+   * @param obj
+   * @return {Boolean} whether the obj is valid or not
+   */
+  isValid (obj) {
+    try {
+      this.parse(obj);
+      return true
+    } catch (err) {
+      return false
+    }
   }
 
   _parseSchema (obj) {
@@ -971,7 +994,7 @@ class Schema {
   }
 
   get fullPath () {
-    return (this.parent && this.parent.fullPath ? `${ this.parent.fullPath }.` : '') + this.name
+    return (this.parent && this.parent.fullPath ? `${this.parent.fullPath}.` : '') + this.name
   }
 
   get ownPaths () {
@@ -989,7 +1012,7 @@ class Schema {
     if (this.hasChildren) {
       this.children.forEach(({ paths }) => {
         paths.forEach(path => {
-          foundPaths.push((this.name ? `${ this.name }.` : '') + path);
+          foundPaths.push((this.name ? `${this.name}.` : '') + path);
         });
       });
     }
@@ -1052,7 +1075,7 @@ class Schema {
    * @throws {Schema~ValidationError} when the object does not match the schema
    */
   structureValidation (obj) {
-    if (!obj || !this.hasChildren) {
+    if (!isNotNullObj(obj) || !this.hasChildren) {
       return
     }
 
@@ -1064,7 +1087,7 @@ class Schema {
             this.hasChildren &&
             !this.hasField(field)
           ) {
-            unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`));
+            unknownFields.push(new Error(`Unknown property ${this.name ? this.name + '.' : ''}${field}`));
           }
         });
       }
@@ -1073,14 +1096,14 @@ class Schema {
     this.ownPaths.forEach((path) => {
       try {
         this.schemaAtPath(path).structureValidation(obj[path]);
-      } catch(err) {
+      } catch (err) {
         const { errors } = err;
         unknownFields.push(...errors);
       }
     });
 
     if (unknownFields.length > 0) {
-      throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
+      throw new ValidationError('Invalid object schema' + (this.parent ? ` in property ${this.fullPath}` : ''), {
         errors: unknownFields,
         value: obj,
         field: this
@@ -1133,11 +1156,11 @@ class Schema {
     }
 
     // schema-level validation
-    this.validate.call(this, v, { state });
+    this.validate(v, { state });
 
     // append virtuals
-    if (typeof v === 'object' && v !== null && v) {
-      this.virtuals.forEach(({path, getter, setter})  => {
+    if (isNotNullObj(v)) {
+      this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
           [path]: { get: getter, set: setter }
         });
@@ -1198,14 +1221,14 @@ class Schema {
         }
       });
       if (!parsed) {
-        this.throwError(`Could not resolve given value type${ this.fullPath ? ' in property ' + this.fullPath : '' }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v });
+        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v });
       }
       return result
     }
     const transformer = Transformers[type];
 
     if (!transformer) {
-      this.throwError(`Don't know how to resolve ${ type } in property ${ this.fullPath }`, { value: v });
+      this.throwError(`Don't know how to resolve ${type} in property ${this.fullPath}`, { value: v });
     }
 
     if (this.settings.default !== undefined && v === undefined) {
@@ -1217,7 +1240,7 @@ class Schema {
     }
 
     if (v === undefined && this.settings.required) {
-      const [required, error] = castThrowable(this.settings.required, `Property ${ this.fullPath } is required`);
+      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`);
       required && this.throwError(error, { value: v });
     }
 
@@ -1272,12 +1295,9 @@ class Schema {
 
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/));
-      const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined;
+      const input = isNotNullObj(obj) ? obj[schema.name] : undefined;
 
-      sandbox(() => {/*
-        if (!schema[method]) {
-          console.log(method, `not found in ${ pathName }`, schema)
-        }*/
+      sandbox(() => {
         const val = schema[method](input, { state });
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val });
@@ -1286,7 +1306,7 @@ class Schema {
     });
 
     if (errors.length > 0) {
-      throw new ValidationError(`Data is not valid`, { errors })
+      throw new ValidationError('Data is not valid', { errors })
     }
 
     return resultingObject
@@ -1315,7 +1335,7 @@ class Schema {
 
   getDefault (child) {
     if (this.parent) {
-      return this.parent.getDefault(child ? `${ this.name }.${ child }` : this.name)
+      return this.parent.getDefault(child ? `${this.name}.${child}` : this.name)
     }
 
     if (child) {
