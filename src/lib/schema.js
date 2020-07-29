@@ -123,7 +123,7 @@ export class Schema {
     }
 
     if (this.settings.default !== undefined && this.settings.required) {
-      throw new Error(`Remove either the 'required' or the 'default' option for property ${ this.fullPath }.`)
+      throw new Error(`Remove either the 'required' or the 'default' option for property ${this.fullPath}.`)
     }
 
     this._defaultSettings.default = this.getDefault()
@@ -242,7 +242,7 @@ export class Schema {
   }
 
   get fullPath () {
-    return (this.parent && this.parent.fullPath ? `${ this.parent.fullPath }.` : '') + this.name
+    return (this.parent && this.parent.fullPath ? `${this.parent.fullPath}.` : '') + this.name
   }
 
   get ownPaths () {
@@ -260,7 +260,7 @@ export class Schema {
     if (this.hasChildren) {
       this.children.forEach(({ paths }) => {
         paths.forEach(path => {
-          foundPaths.push((this.name ? `${ this.name }.` : '') + path)
+          foundPaths.push((this.name ? `${this.name}.` : '') + path)
         })
       })
     }
@@ -335,7 +335,7 @@ export class Schema {
             this.hasChildren &&
             !this.hasField(field)
           ) {
-            unknownFields.push(new Error(`Unknown property ${ this.name ? this.name + '.' : '' }${ field }`))
+            unknownFields.push(new Error(`Unknown property ${this.name ? this.name + '.' : ''}${field}`))
           }
         })
       }
@@ -344,14 +344,14 @@ export class Schema {
     this.ownPaths.forEach((path) => {
       try {
         this.schemaAtPath(path).structureValidation(obj[path])
-      } catch(err) {
+      } catch (err) {
         const { errors } = err
         unknownFields.push(...errors)
       }
     })
 
     if (unknownFields.length > 0) {
-      throw new ValidationError(`Invalid object schema` + (this.parent ? ` in property ${ this.fullPath }` : ''), {
+      throw new ValidationError('Invalid object schema' + (this.parent ? ` in property ${this.fullPath}` : ''), {
         errors: unknownFields,
         value: obj,
         field: this
@@ -404,14 +404,14 @@ export class Schema {
     }
 
     // schema-level validation
-    this.validate.call(this, v, { state })
+    this.validate(v, { state })
 
     // append virtuals
     if (typeof v === 'object' && v !== null && v) {
       this.virtuals.forEach(({path, getter, setter})  => {
         Object.defineProperties(v, {
           [path]: { get: getter, set: setter }
-        });
+        })
       })
     }
 
@@ -469,14 +469,14 @@ export class Schema {
         }
       })
       if (!parsed) {
-        this.throwError(`Could not resolve given value type${ this.fullPath ? ' in property ' + this.fullPath : '' }. Allowed types are ${ type.slice(0, -1).join(', ') + ' and ' + type.pop() }`, { value: v })
+        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v })
       }
       return result
     }
     const transformer = Transformers[type]
 
     if (!transformer) {
-      this.throwError(`Don't know how to resolve ${ type } in property ${ this.fullPath }`, { value: v })
+      this.throwError(`Don't know how to resolve ${type} in property ${this.fullPath}`, { value: v })
     }
 
     if (this.settings.default !== undefined && v === undefined) {
@@ -488,7 +488,7 @@ export class Schema {
     }
 
     if (v === undefined && this.settings.required) {
-      const [required, error] = castThrowable(this.settings.required, `Property ${ this.fullPath } is required`)
+      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`)
       required && this.throwError(error, { value: v })
     }
 
@@ -557,7 +557,7 @@ export class Schema {
     })
 
     if (errors.length > 0) {
-      throw new ValidationError(`Data is not valid`, { errors })
+      throw new ValidationError('Data is not valid', { errors })
     }
 
     return resultingObject
@@ -586,7 +586,7 @@ export class Schema {
 
   getDefault (child) {
     if (this.parent) {
-      return this.parent.getDefault(child ? `${ this.name }.${ child }` : this.name)
+      return this.parent.getDefault(child ? `${this.name}.${child}` : this.name)
     }
 
     if (child) {

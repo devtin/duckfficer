@@ -1,8 +1,7 @@
 import { propertiesRestricted } from './properties-restricted.js'
 import test from 'ava'
 
-test(`Properties restricted`, t => {
-
+test('Properties restricted', t => {
   const user = {
     name: 'Martin Rafael',
     email: 'tin@devtin.io',

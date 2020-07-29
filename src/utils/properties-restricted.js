@@ -3,7 +3,7 @@ import { escapeRegExp } from './escape-regex.js'
 
 function getSubProperties (properties, parent) {
   parent = parent.split('.').map(escapeRegExp).join('.')
-  const pattern = new RegExp(`^${ parent }\\.`)
+  const pattern = new RegExp(`^${parent}\\.`)
   return properties.filter(prop => pattern.test(prop)).map(prop => prop.replace(pattern, ''))
 }
 
@@ -46,11 +46,13 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
     forEach(properties, property => {
       if (property.indexOf('.') > 0) {
         const [parent] = property.split('.')
-        return valid = propertiesRestricted(obj[parent], getSubProperties(properties, parent), { strict })
+        valid = propertiesRestricted(obj[parent], getSubProperties(properties, parent), { strict })
+        return valid
       }
 
       if (!Object.prototype.hasOwnProperty.call(obj, property)) {
-        return valid = false
+        valid = false
+        return valid
       }
     })
   }
@@ -58,7 +60,7 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
   if (valid) {
     forEach(Object.keys(obj), property => {
       if (typeof obj[property] === 'object' && !Array.isArray(obj[property])) {
-        const propMatch = new RegExp(`^${ escapeRegExp(property) }\\.(.+)$`)
+        const propMatch = new RegExp(`^${escapeRegExp(property)}\\.(.+)$`)
         let defaultApproved = properties.indexOf(property) >= 0
         const childProps = properties
           .filter((v) => {
@@ -69,11 +71,13 @@ export function propertiesRestricted (obj, properties, { strict = false } = {}) 
             return v.replace(propMatch, '$1')
           })
 
-        return valid = defaultApproved || propertiesRestricted(obj[property], childProps)
+        valid = defaultApproved || propertiesRestricted(obj[property], childProps)
+        return valid
       }
 
       if (properties.indexOf(property) === -1) {
-        return valid = false
+        valid = false
+        return valid
       }
     })
   }
