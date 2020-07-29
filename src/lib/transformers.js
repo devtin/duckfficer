@@ -61,7 +61,7 @@ export const Transformers = {
    */
   Array: {
     settings: {
-      typeError: `Invalid array`
+      typeError: 'Invalid array'
     },
     parse (value) {
       if (this.settings.arraySchema) {
@@ -71,7 +71,7 @@ export const Transformers = {
             schema,
             name,
             parent: this,
-            settings: schema.settings,
+            settings: schema.settings
           }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
             name,
             parent: this
@@ -128,7 +128,7 @@ export const Transformers = {
    */
   Boolean: {
     settings: {
-      typeError: `Invalid boolean`,
+      typeError: 'Invalid boolean',
       autoCast: false
     },
     cast (value) {
@@ -151,7 +151,7 @@ export const Transformers = {
    */
   Date: {
     settings: {
-      typeError: `Invalid date`,
+      typeError: 'Invalid date',
       autoCast: true
     },
     cast (value) {
@@ -181,7 +181,7 @@ export const Transformers = {
    */
   Function: {
     settings: {
-      typeError: `Invalid function`
+      typeError: 'Invalid function'
     },
     validate (value) {
       if (typeof value !== 'function') {
@@ -200,7 +200,7 @@ export const Transformers = {
    */
   Map: {
     settings: {
-      typeError: `Invalid map`,
+      typeError: 'Invalid map',
       autoCast: true
     },
     cast (value) {
@@ -234,10 +234,10 @@ export const Transformers = {
    */
   Number: {
     settings: {
-      typeError: `Invalid number`,
-      minError: `minimum accepted value is { value }`,
-      maxError: `maximum accepted value is { value }`,
-      integerError: `Invalid integer`,
+      typeError: 'Invalid number',
+      minError: 'minimum accepted value is { value }',
+      maxError: 'maximum accepted value is { value }',
+      integerError: 'Invalid integer',
       min: undefined,
       max: undefined,
       integer: false,
@@ -283,7 +283,7 @@ export const Transformers = {
    */
   Object: {
     settings: {
-      typeError: `Invalid object`
+      typeError: 'Invalid object'
     },
     parse (value) {
       if (this.settings.mapSchema !== undefined) {
@@ -326,7 +326,7 @@ export const Transformers = {
    */
   Promise: {
     settings: {
-      typeError: `Invalid Promise`,
+      typeError: 'Invalid Promise',
       autoCast: false,
       isPromise (v) {
         return typeof v === 'object' && typeof v.then === 'function'
@@ -360,7 +360,7 @@ export const Transformers = {
    */
   Set: {
     settings: {
-      typeError: `Invalid set`,
+      typeError: 'Invalid set',
       autoCast: true
     },
     cast (value) {
@@ -397,8 +397,8 @@ export const Transformers = {
    */
   String: {
     settings: {
-      typeError: `Invalid string`,
-      enumError: `Unknown enum option { value }`,
+      typeError: 'Invalid string',
+      enumError: 'Unknown enum option { value }',
       enum: [],
       autoCast: false,
       lowercase: false,
@@ -420,7 +420,7 @@ export const Transformers = {
       }
 
       if (this.settings.minlength) {
-        const [minlength, error] = castThrowable(this.settings.minlength, `Invalid minlength`)
+        const [minlength, error] = castThrowable(this.settings.minlength, 'Invalid minlength')
 
         if (value.length < minlength) {
           this.throwError(error, { value })
@@ -428,7 +428,7 @@ export const Transformers = {
       }
 
       if (this.settings.maxlength) {
-        const [maxlength, error] = castThrowable(this.settings.maxlength, `Invalid maxlength`)
+        const [maxlength, error] = castThrowable(this.settings.maxlength, 'Invalid maxlength')
 
         if (value.length > maxlength) {
           this.throwError(error, { value })
@@ -436,7 +436,7 @@ export const Transformers = {
       }
 
       if (this.settings.regex) {
-        const [regex, error] = castThrowable(this.settings.regex, `Invalid regex`)
+        const [regex, error] = castThrowable(this.settings.regex, 'Invalid regex')
 
         if (!regex.test(value)) {
           this.throwError(error, { value })

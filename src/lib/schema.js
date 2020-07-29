@@ -6,6 +6,7 @@ import { forEach } from 'utils/for-each.js'
 import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
 import { find } from 'utils/find'
+import { isNotNullObj } from 'utils/is-not-null-obj'
 
 const fnProxyStub = v => v
 
@@ -323,7 +324,7 @@ export class Schema {
    * @throws {Schema~ValidationError} when the object does not match the schema
    */
   structureValidation (obj) {
-    if (!obj || !this.hasChildren) {
+    if (!isNotNullObj(obj) || !this.hasChildren) {
       return
     }
 
@@ -407,8 +408,8 @@ export class Schema {
     this.validate(v, { state })
 
     // append virtuals
-    if (typeof v === 'object' && v !== null && v) {
-      this.virtuals.forEach(({path, getter, setter})  => {
+    if (isNotNullObj(v)) {
+      this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
           [path]: { get: getter, set: setter }
         })
@@ -543,12 +544,9 @@ export class Schema {
 
     this.ownPaths.forEach(pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/))
-      const input = typeof obj === 'object' && obj !== null ? obj[schema.name] : undefined
+      const input = isNotNullObj(obj) ? obj[schema.name] : undefined
 
-      sandbox(() => {/*
-        if (!schema[method]) {
-          console.log(method, `not found in ${ pathName }`, schema)
-        }*/
+      sandbox(() => {
         const val = schema[method](input, { state })
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val })

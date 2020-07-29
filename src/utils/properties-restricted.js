@@ -1,4 +1,5 @@
 import { forEach } from './for-each'
+import { isNotNullObj } from './is-not-null-obj'
 import { escapeRegExp } from './escape-regex.js'
 
 function getSubProperties (properties, parent) {
@@ -36,7 +37,7 @@ function getSubProperties (properties, parent) {
  */
 
 export function propertiesRestricted (obj, properties, { strict = false } = {}) {
-  if (typeof obj !== 'object' || obj === null) {
+  if (!isNotNullObj(obj)) {
     return false
   }
 
