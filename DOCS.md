@@ -37,6 +37,8 @@ original value in case it could not be guessed.</p>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
 <dd><p>A transformer holds the logic of instantiating a data type (casting, validation and parsing).</p>
 </dd>
+<dt><a href="#Method">Method</a> : <code>Object</code></dt>
+<dd></dd>
 <dt><a href="#virtual">virtual</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
@@ -241,6 +243,7 @@ Sets the environment up:
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>String</code> | Alternative name of the object |
 | [options.defaultValues] | <code>Object</code> | Default values to override the schema with |
+| [options.methods] | [<code>Method</code>](#Method) |  |
 | [options.parent] | [<code>Schema</code>](#Schema) |  |
 | [options.cast] | [<code>Caster</code>](#Caster) | Schema caster |
 | [options.settings] | <code>Object</code> | Initial settings |
@@ -716,6 +719,18 @@ A transformer holds the logic of instantiating a data type (casting, validation 
 | [parse] | [<code>Parser</code>](#Parser) | Parser function |
 | [validate] | [<code>Validator</code>](#Validator) | Validator function |
 | [loaders] | <code>Array.&lt;String&gt;</code> | Transformer names to pipe the value through prior handling it with the parser function. |
+
+<a name="Method"></a>
+
+## Method : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| input | [<code>Schema</code>](#Schema) \| <code>Object</code> | method input payload validation |
+| output | [<code>Schema</code>](#Schema) \| <code>Object</code> | method output payload validation |
+| handler | <code>function</code> | function to be called (this arg is the value of the object) |
 
 <a name="virtual"></a>
 

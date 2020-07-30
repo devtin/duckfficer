@@ -7,6 +7,7 @@ import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
 import { find } from 'utils/find'
 import { isNotNullObj } from 'utils/is-not-null-obj'
+import { EventEmitter } from 'events'
 
 const fnProxyStub = v => v
 
@@ -382,6 +383,10 @@ export class Schema {
     return v
   }
 
+  static ensureSchema (obj) {
+    return obj instanceof Schema ? obj : new Schema(obj)
+  }
+
   /**
    * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
@@ -425,26 +430,69 @@ export class Schema {
       })
     }
 
-    // append methods
-    if (isNotNullObj(v)) {
-      Object.keys(this._methods).forEach(methodName => {
-        const methodFn = (...arg) => {
-          const inputValidation = this._methods[methodName].input
-          const outputValidation = this._methods[methodName].output
+    // event emitter
+    if (isNotNullObj(v) || Array.isArray(v)) {
+      const emitter = new EventEmitter()
+      Object.defineProperties(v, {
+        $on: {
+          value: emitter.on.bind(emitter),
+          writable: true,
+          enumerable: false
+        }
+      })
 
+      // append methods
+      Object.keys(this._methods).forEach(methodName => {
+        const inputValidation = this._methods[methodName].input
+        const outputValidation = this._methods[methodName].output
+        const methodIsEnumerable = this._methods[methodName].enumerable
+        const methodEvents = this._methods[methodName].events
+
+        const methodFn = (...arg) => {
           if (inputValidation) {
-            arg = (inputValidation instanceof Schema ? inputValidation : new Schema(inputValidation)).parse(arg.length === 1 ? arg[0] : arg)
+            try {
+              arg = Schema.ensureSchema(inputValidation).parse(arg.length === 1 ? arg[0] : arg)
+            } catch (err) {
+              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
+            }
           }
 
-          const result = (this._methods[methodName].handler || this._methods[methodName]).apply(v, arg.length > 1 ? [arg] : arg)
+          const thisArg = {
+            $emit (eventName, payload) {
+              if (methodEvents) {
+                if (!methodEvents[eventName]) {
+                  throw new Error(`Unknown event ${eventName}`)
+                }
+
+                try {
+                  payload = Schema.ensureSchema(methodEvents[eventName]).parse(payload)
+                } catch (err) {
+                  throw new ValidationError(`Invalid payload for event ${eventName}`, {
+                    errors: err.errors.length > 0 ? err.errors : [err]
+                  })
+                }
+              }
+              emitter.emit(eventName, payload)
+            },
+            $field: v
+          }
+          const result = (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, arg.length > 1 ? [arg] : arg)
+
           if (outputValidation) {
-            return (outputValidation instanceof Schema ? outputValidation : new Schema(outputValidation)).parse(result)
+            try {
+              return Schema.ensureSchema(outputValidation).parse(result)
+            } catch (err) {
+              throw new ValidationError(`Invalid output at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
+            }
           }
 
           return result
         }
-        Object.assign(v, {
-          [methodName]: methodFn
+
+        Object.defineProperty(v, methodName, {
+          value: methodFn,
+          writable: true,
+          enumerable: methodIsEnumerable
         })
       })
     }
