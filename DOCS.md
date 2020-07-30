@@ -89,7 +89,7 @@ Utils.obj2dot({
   name: 'Martin',
   address: {
     city: 'Miami',
-    zip: 33129,
+    zip: 305,
     line1: 'Brickell ave'
   }
 }) // => ['name', 'address.city', 'address.zip', 'address.line1']
@@ -176,7 +176,7 @@ const user = {
   email: 'tin@devtin.io',
   address: {
     city: 'Miami, Fl',
-    zip: 33129,
+    zip: 305,
     line1: 'Brickell Ave'
   }
 }

@@ -24,7 +24,7 @@ function getSubProperties (properties, parent) {
  *   email: 'tin@devtin.io',
  *   address: {
  *     city: 'Miami, Fl',
- *     zip: 33129,
+ *     zip: 305,
  *     line1: 'Brickell Ave'
  *   }
  * }

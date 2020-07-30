@@ -184,7 +184,7 @@ test('Validates an object schema in terms of contained properties', t => {
     email: 'tin@devtin.io',
     address: {
       city: 'Miami, Fl',
-      zip: 33129,
+      zip: 305,
       line1: 'Brickell Ave',
       metadata: {
         houseColor: 'yellow'
@@ -279,7 +279,7 @@ test('Validates full nested schemas', t => {
     birthday: '11/11/1999',
     address: {
       city: 'Miami',
-      zip: 33129,
+      zip: 305,
       line1: '2451 Brickell Ave'
     }
   }))

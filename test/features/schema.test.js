@@ -504,7 +504,7 @@ test('Default values', t => {
   const defaultValues = {
     address: {
       state: 'Florida',
-      zip: 33129
+      zip: 305
     },
     subscribe: true
   }
@@ -528,7 +528,7 @@ test('Default values', t => {
   })
 
   t.is(parsed.address.state, 'Florida')
-  t.is(parsed.address.zip, 33129)
+  t.is(parsed.address.zip, 305)
   t.is(parsed.subscribe, true)
 })
 
@@ -599,7 +599,7 @@ test('Nesting schemas', t => {
     name: 'Martin',
     birthday: '11/11/1999',
     address: {
-      zip: 33129
+      zip: 305
     }
   }))
 
@@ -613,7 +613,7 @@ test('Nesting schemas', t => {
     birthday: '11/11/1999',
     address: {
       line1: 'Brickell Ave',
-      zip: 33129
+      zip: 305
     }
   }))
 })
@@ -752,12 +752,12 @@ test('Virtuals (getters / setters)', t => {
     address: {
       line1: 'Brickell',
       line2: 'Ave',
-      zip: 33129
+      zip: 305
     }
   })
 
   t.is(me.fullName, 'Martin Rafael')
-  t.is(me.address.fullAddress, 'Brickell / Ave / 33129')
+  t.is(me.address.fullAddress, 'Brickell / Ave / 305')
 
   me.fullName = 'Pedro Perez'
 

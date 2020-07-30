@@ -7,7 +7,7 @@ test('Properties restricted', t => {
     email: 'tin@devtin.io',
     address: {
       city: 'Miami, Fl',
-      zip: 33129,
+      zip: 305,
       line1: 'Brickell Ave'
     }
   }

@@ -18,7 +18,7 @@
  *   name: 'Martin',
  *   address: {
  *     city: 'Miami',
- *     zip: 33129,
+ *     zip: 305,
  *     line1: 'Brickell ave'
  *   }
  * }) // => ['name', 'address.city', 'address.zip', 'address.line1']

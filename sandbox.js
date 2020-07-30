@@ -14,7 +14,7 @@ console.log(s.parse({
   papo: [],
   address: {
     line1: '2451',
-    zip: 33129,
+    zip: 305,
   }
 }))
 
@@ -23,7 +23,7 @@ console.log(s.parse({
   papo: {},
   address: {
     line1: '2451',
-    zip: 33129,
+    zip: 305,
   }
 }))
 
@@ -32,7 +32,7 @@ console.log(s.parse({
   papo: 0,
   address: {
     line1: '2451',
-    zip: 33129,
+    zip: 305,
   }
 }))
 
@@ -41,7 +41,7 @@ console.log(s.parse({
   papo: undefined,
   address: {
     line1: '2451',
-    zip: 33129,
+    zip: 305,
   }
 }))
 */
