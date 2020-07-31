@@ -1,7 +1,7 @@
 ## Guide » Transformers
 
 Transformers are the ones validating, casting and parsing all property-types defined in the schema.
-Read the [Transformers section in the API documentation](../DOCS.md#Transformer) for more information.
+Read the [Transformers section in the API documentation](api.md#Transformer) for more information.
 
 {{ #transformersIndex }}
 {{{ . }}}

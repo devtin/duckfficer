@@ -26,7 +26,7 @@ test('Creating a schema', async t => {
    * argument an arbitrary object that will be casted and validated against the defined schema. The parse function will
    * return a newly created schema-compliant object.
    *
-   * See the [Schema](/DOCS.md#Schema) class docs for more information.
+   * See the [Schema](/api.md#Schema) class docs for more information.
    */
 
   t.true(typeof UserSchema.parse === 'function')
@@ -475,7 +475,7 @@ test('Default values', t => {
   })
 
   /**
-   * A default value could also be a function. Refer to the [SchemaSettings](/DOCS.md#schemaschemasettings--object) docs
+   * A default value could also be a function. Refer to the [SchemaSettings](/api.md#schemaschemasettings--object) docs
    * for more information. The function will receive a object with optionally the state passed during parse.
    */
 

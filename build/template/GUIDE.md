@@ -16,14 +16,14 @@ the <a href="https://github.com/avajs/ava" target="_blank">AVA</a> syntax may he
 
 ## Life-cycle
 
-- [Schema.parse](/DOCS.md#Schema+parse)
-  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/DOCS.md#Schema..SchemaSettings))
-  - apply specified [transformer](/DOCS.md#Transformers)
-  - runs local [cast](/DOCS.md#Caster) hook
-  - runs transformer [cast](/DOCS.md#Caster) hook
-  - runs transformer [validate](/DOCS.md#Validator) hook
-  - runs local [validate](/DOCS.md#Validator) hook
-  - runs transformer [parse](/DOCS.md#Parser) hook 
+- [Schema.parse](/api.md#Schema+parse)
+  - parses [loaders](#Loaders) (if any given in the [SchemaSetting](/api.md#Schema..SchemaSettings))
+  - apply specified [transformer](/api.md#Transformers)
+  - runs local [cast](/api.md#Caster) hook
+  - runs transformer [cast](/api.md#Caster) hook
+  - runs transformer [validate](/api.md#Validator) hook
+  - runs local [validate](/api.md#Validator) hook
+  - runs transformer [parse](/api.md#Parser) hook 
 
 ## Transformers
 

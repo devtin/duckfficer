@@ -33,7 +33,7 @@ test('BigInt', t => {
 
 test('autoCast (default `false`)', t => {
   /**
-   * [BigInt](/DOCS.md#Transformers.BigInt) transformer has a built-in auto-casting function that would convert any numeric
+   * [BigInt](/api.md#Transformers.BigInt) transformer has a built-in auto-casting function that would convert any numeric
    * representation of a `String` or a `Number` into a proper `BigInt`. This feature is disabled by default.
    */
   const UserSchema = new Schema({

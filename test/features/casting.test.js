@@ -22,7 +22,7 @@ test('Built-in cast (provided by types or transformers)', t => {
 
 test('Custom property-cast hook (provided at schema-setting level)', t => {
   /**
-   * The [cast](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
+   * The [cast](/api.md#Caster) hook can be use within a [SchemaSetting](/api.md#Schema..SchemaSettings) to provide
    * extra casting logic.
    */
 

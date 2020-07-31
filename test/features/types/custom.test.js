@@ -28,7 +28,7 @@ test('Custom', t => {
    * Creating a custom transformer is as simple as appending the logic into the Transformers object
    * found in `const { Transformers } = require('@devtin/schema-validator')`.
    *
-   * Have a look at the [Transformer](/DOCS.md#Transformer) object in the docs.
+   * Have a look at the [Transformer](/api.md#Transformer) object in the docs.
    */
 
   Transformers.Email = {

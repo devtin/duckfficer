@@ -31,12 +31,13 @@
     "url": "https://github.com/devtin/schema-validator"
   },
   "scripts": {
-    "build": "npm run build:lib && npm run build:docs && npm run build:readme",
-    "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:docs && npm run build:readme",
-    "build:docs": "jsdoc2md --template build/template/DOCS.hbs --files dist/schema-validator.js > DOCS.md",
+    "build": "npm run build:lib && npm run build:api && npm run build:docs && npm run build:readme",
+    "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:api && npm run build:docs && npm run build:readme",
+    "build:api": "jsdoc2md --template build/template/DOCS.hbs --files dist/schema-validator.js > docs/api.md",
     "build:lib": "rollup -c && gzip -c dist/schema-validator.umd.js > dist/schema-validator.umd.js.gz",
     "build:live": "nodemon -w src -w test --exec npm run build",
     "build:readme": "node build/readme.js",
+    "build:docs": "node build/docs.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava",
     "test:unit": "npm run test src/**/*.unit.js",

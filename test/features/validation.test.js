@@ -24,7 +24,7 @@ test('Built-in validation (provided by types or transformers)', t => {
 
 test('Custom property validation hook (provided at schema-setting level)', t => {
   /**
-   * The [validate](/DOCS.md#Caster) hook can be use within a [SchemaSetting](/DOCS.md#Schema..SchemaSettings) to provide
+   * The [validate](/api.md#Caster) hook can be use within a [SchemaSetting](/api.md#Schema..SchemaSettings) to provide
    * extra validation logic.
    */
 
