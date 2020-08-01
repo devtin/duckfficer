@@ -84,7 +84,8 @@ parseAvaFile(fromFeatures('schema.test.js'))
       shields,
       'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace('require(\'./\')', 'require(\'@devtin/schema-validator\')'),
       'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'@devtin/schema-validator\')'),
-      index
+      index,
+      readme: true
     }
 
     fs.writeFileSync(path.join(__dirname, '../README.md'), mustache.render(readmeTemplate, payload))

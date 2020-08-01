@@ -47,6 +47,9 @@ const getIndexesFromTests = (tests) => {
 }
 
 const testsToSection = (sectionTitle, tests) => {
+  if (tests.length === 1) {
+    return avaTestsToMd(tests)
+  }
   return `# ${sectionTitle}\n\n${getIndexesFromTests(tests)}\n\n${avaTestsToMd(tests, mdOptions)}`
 }
 
@@ -57,6 +60,8 @@ const testsToSection = (sectionTitle, tests) => {
   let guide = await parseAvaFile(fromFeatures('schema.test.js'))
   let casting = await parseAvaFile(fromFeatures('casting.test.js'))
   let validation = await parseAvaFile(fromFeatures('validation.test.js'))
+  const virtuals = await parseAvaFile(fromFeatures('virtuals.test.js'))
+  const methods = await parseAvaFile(fromFeatures('methods-events.test.js'))
 
   const Transformers = {}
   await Promise.each(Object.keys(TheTransformers), async name => {
@@ -82,6 +87,8 @@ const testsToSection = (sectionTitle, tests) => {
   writeDoc('guide.md', testsToSection('Guide', guide))
   writeDoc('casting.md', testsToSection('Casting (sanitation)', casting))
   writeDoc('validation.md', testsToSection('Validation', validation))
+  writeDoc('virtuals.md', testsToSection('Virtuals', virtuals))
+  writeDoc('methods-events.md', testsToSection('Methods & Events', methods))
   writeDoc('types.md', transformers.join('\n\n'))
   writeDoc('README.md', mustache.render(readmeTemplate, readmePayload))
 })()

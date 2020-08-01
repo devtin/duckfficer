@@ -1,5 +1,126 @@
 import test from 'ava'
-import { Schema, Transformers } from '../../'
+import { Schema, Transformers, ValidationError } from '../../'
+
+test('Validating and sanitizing arbitrary objects', t => {
+  const UserSchema = new Schema({
+    name: String,
+    birthday: Date,
+    description: Array
+  })
+
+  /**
+   * Think of an *arbitrary object* as one coming from an unreliable source, i.e. passed in an http request;
+   * or maybe retrieved by a manual input from a terminal application.
+   */
+
+  const arbitraryObject = {
+    firstName: 'Martin',
+    lastName: 'Rafael',
+    birthday: '11/11/1999',
+    address: {
+      zip: 305
+    },
+    description: ['monkey', 'developer', 'arepa lover']
+  }
+
+  /**
+   * Above's object `arbitraryObject` contains properties that do not exist in the schema: `firstName`,
+   * `middleName` and `lastName`, are not defined in the schema.
+   *
+   * Following validation will result in an error since the arbitrary object does not match the schema: it contains
+   * these 3 unknown properties. The schema validator will first perform a structure validation making sure the payload
+   * structure matches the provided schema structure, prior performing any type validation / further logic.
+   *
+   * Even when the property `name` (expected by the defined schema) is also missing, it won't be reported since the
+   * payload's schema structure doest not match the provided one.
+   */
+
+  let error = t.throws(() => UserSchema.parse(arbitraryObject))
+
+  t.true(error instanceof ValidationError)
+  t.true(error instanceof Error)
+  t.is(error.message, 'Invalid object schema')
+  t.is(error.errors.length, 3)
+  t.is(error.errors[0].message, 'Unknown property firstName')
+  t.is(error.errors[1].message, 'Unknown property lastName')
+  t.is(error.errors[2].message, 'Unknown property address.zip')
+
+  /**
+   * When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
+   * then proceed with further validations...
+   */
+
+  error = t.throws(() => UserSchema.parse({
+    birthday: '11/11/1999',
+    description: ['monkey', 'developer', 'arepa lover']
+  }))
+
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, 'Property name is required')
+
+  /**
+   * A custom `state` can be passed to extend the validation process.
+   */
+
+  const AnotherUserSchema = new Schema({
+    name: String,
+    email: {
+      type: String,
+      required: false
+    },
+    level: {
+      type: String,
+      validate (v, { state }) {
+        if (v === 'admin' && !state?.user) {
+          this.throwError('Only authenticated users can set the level to admin')
+        }
+      }
+    }
+  }, {
+    validate (v, { state }) {
+      if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
+        this.throwError('Admin users require an email')
+      }
+    }
+  })
+
+  error = t.throws(() => AnotherUserSchema.parse({
+    name: 'Martin Rafael',
+    level: 'admin'
+  }))
+  t.is(error.message, 'Data is not valid')
+  t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
+  t.is(error.errors[0].field.fullPath, 'level')
+
+  error = t.throws(() => AnotherUserSchema.parse({
+    name: 'Martin Rafael',
+    level: 'admin'
+  }, {
+    state: {
+      user: {
+        name: 'system',
+        level: 'admin'
+      }
+    }
+  }))
+
+  t.is(error.message, 'Admin users require an email')
+
+  t.notThrows(() => {
+    return AnotherUserSchema.parse({
+      name: 'Martin Rafael',
+      level: 'admin'
+    }, {
+      state: {
+        user: {
+          name: 'system',
+          level: 'root'
+        }
+      }
+    })
+  })
+})
 
 test('Built-in validation (provided by types or transformers)', t => {
   /**

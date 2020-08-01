@@ -13,6 +13,13 @@ Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br
 for validating & sanitizing JavaScript data schemas.
 </p>
 
+{{#readme}}
+- [Installation](#installation)
+- [About](#about)
+- [At a glance](#at-a-glance)
+- [Documentation](https://devtin.github.io/schema-validator)
+{{/readme}}
+
 ## Installation
 
 ```sh
