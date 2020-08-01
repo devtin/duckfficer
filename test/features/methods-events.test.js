@@ -53,7 +53,7 @@ test('Methods & Events', t => {
   })
 
   /**
-   * In the `User` schema below, we are adding a method called `isValidPassword which will check whether given password
+   * In the `User` schema below, we are adding a method called `isValidPassword` which will check whether given password
    * matched the one provided in the model or not. This method expects a `String` as a argument, can dispatch a
    * `passwordValidated` event and is meant to return a `Boolean`.
    */
