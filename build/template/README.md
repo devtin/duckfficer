@@ -10,7 +10,7 @@
 
 <p align="center">
 Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br>
-for validating & sanitizing JavaScript data schemas.
+for modeling, validating & sanitizing JavaScript data schemas.
 </p>
 
 {{#readme}}
