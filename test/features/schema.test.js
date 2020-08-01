@@ -224,8 +224,8 @@ test('Required and optional values', t => {
   })
 
   /**
-     * Whenever a required property is missing, an error is thrown.
-     */
+   * Whenever a required property is missing, an error is thrown.
+   */
 
   let error = t.throws(() => AddressSchema.parse({
     line1: 'Brickell',
@@ -237,8 +237,8 @@ test('Required and optional values', t => {
   t.is(error.errors[0].message, 'Property zip is required')
 
   /**
-     * In order to make a property optional we must pass the flag `required` set to `false`
-     */
+   * In order to make a property optional we must pass the flag `required` set to `false`
+   */
 
   const ContactSchemaO = new Schema({
     name: String,
@@ -255,8 +255,8 @@ test('Required and optional values', t => {
   const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
 
   /**
-     * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
-     */
+   * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
+   */
 
   t.notThrows(() => {
     ContactSchema.parse({
@@ -275,8 +275,8 @@ test('Required and optional values', t => {
   })
 
   /**
-     * Whenever `age` is present, the validation will ensure it is a `Number`, though.
-     */
+   * Whenever `age` is present, the validation will ensure it is a `Number`, though.
+   */
 
   error = t.throws(() => {
     ContactSchema.parse({

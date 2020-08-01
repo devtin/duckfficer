@@ -238,11 +238,11 @@ const AddressSchema = new Schema({
   line2: String,
   zip: Number
 })
+```
 
-/**
-   * Whenever a required property is missing, an error is thrown.
-   */
+Whenever a required property is missing, an error is thrown.
 
+```js
 let error = t.throws(() => AddressSchema.parse({
   line1: 'Brickell',
   line2: 'Ave'
@@ -251,11 +251,11 @@ let error = t.throws(() => AddressSchema.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors.length, 1)
 t.is(error.errors[0].message, 'Property zip is required')
+```
 
-/**
-   * In order to make a property optional we must pass the flag `required` set to `false`
-   */
+In order to make a property optional we must pass the flag `required` set to `false`
 
+```js
 const ContactSchemaO = new Schema({
   name: String,
   email: String,
@@ -269,11 +269,11 @@ const ContactSchemaO = new Schema({
   }
 })
 const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
+```
 
-/**
-   * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
-   */
+Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
 
+```js
 t.notThrows(() => {
   ContactSchema.parse({
     name: 'Martin',
@@ -289,11 +289,11 @@ t.notThrows(() => {
     address: undefined
   })
 })
+```
 
-/**
-   * Whenever `age` is present, the validation will ensure it is a `Number`, though.
-   */
+Whenever `age` is present, the validation will ensure it is a `Number`, though.
 
+```js
 error = t.throws(() => {
   ContactSchema.parse({
     name: 'Papo',
