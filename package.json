@@ -30,6 +30,7 @@
     "type": "git",
     "url": "https://github.com/devtin/schema-validator"
   },
+  "homepage": "https://devtin.github.io/schema-validator",
   "scripts": {
     "build": "npm run build:lib && npm run build:api && npm run build:docs && npm run build:readme",
     "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:api && npm run build:docs && npm run build:readme",
