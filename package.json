@@ -103,6 +103,40 @@
     "scripts": {
       "prerelease": "npm run lint && npm run build:wcoverage && npm run test",
       "precommit": "npm run --silent build > /dev/null 2>&1 && git add ."
-    }
+    },
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Chore"
+      },
+      {
+        "type": "docs",
+        "section": "Docs"
+      },
+      {
+        "type": "refactor",
+        "section": "Refactor"
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "hidden": true
+      },
+      {
+        "type": "test",
+        "section": "Tests"
+      }
+    ]
   }
 }
