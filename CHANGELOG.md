@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.3.1](https://github.com/devtin/schema-validator/compare/v3.3.0...v3.3.1) (2020-08-01)
+
+
+### Chore
+
+* add homepage ([5d007ff](https://github.com/devtin/schema-validator/commit/5d007fff8fabb2a5496509f20a10773fc2bbfdc4))
+* improve description ([65ea903](https://github.com/devtin/schema-validator/commit/65ea903e294ebfbf8fc3f5132cde5b3f44e1d18f))
+
 ## [3.3.0](https://github.com/devtin/schema-validator/compare/v3.2.0...v3.3.0) (2020-08-01)
 
 

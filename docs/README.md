@@ -12,7 +12,7 @@
 
 <p align="center">
 Zero-dependencies, light-weight library (~4.2KB minified + gzipped)<br>
-for validating & sanitizing JavaScript data schemas.
+for modeling, validating & sanitizing JavaScript data schemas.
 </p>
 
 
