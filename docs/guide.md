@@ -1,7 +1,6 @@
 # Guide
 
 - [Creating a schema](#creating-a-schema)
-- [Validating and sanitizing arbitrary objects](#validating-and-sanitizing-arbitrary-objects)
 - [Error-handling and LifeCycle](#error-handling-and-life-cycle)
 - [Required and optional values](#required-and-optional-values)
 - [Default values](#default-values)
@@ -9,8 +8,6 @@
 - [Nesting schemas](#nesting-schemas)
 - [Multiple types](#multiple-types)
 - [Auto-casting](#auto-casting)
-- [Virtuals (getters / setters)](#virtuals-getters-setters)
-- [Methods](#methods)
 - [Loaders](#loaders)
 - [Overriding initial settings](#overriding-initial-settings)
 
@@ -69,133 +66,6 @@ t.is(safeObject.name, 'Martin Rafael')
 t.true(safeObject.birthday instanceof Date)
 t.is(safeObject.birthday.getFullYear(), 1999)
 t.is(safeObject.description.length, 3)
-```
-
-## Validating and sanitizing arbitrary objects
-
-
-
-Using the same `UserSchema` example above:
-
-```js
-const UserSchema = new Schema({
-  name: String,
-  birthday: Date,
-  description: Array
-})
-```
-
-Think of an *arbitrary object* as one coming from an unreliable source, i.e. passed in an http request;
-or maybe retrieved by a manual input from a terminal application.
-
-```js
-const arbitraryObject = {
-  firstName: 'Martin',
-  lastName: 'Rafael',
-  birthday: '11/11/1999',
-  address: {
-    zip: 305
-  },
-  description: ['monkey', 'developer', 'arepa lover']
-}
-```
-
-Above's object `arbitraryObject` contains properties that do not exist in the schema: `firstName`,
-`middleName` and `lastName`, are not defined in the schema.
-
-Following validation will result in an error since the arbitrary object does not match the schema: it contains
-these 3 unknown properties. The schema validator will first perform a structure validation making sure the payload
-structure matches the provided schema structure, prior performing any type validation / further logic.
-
-Even when the property `name` (expected by the defined schema) is also missing, it won't be reported since the
-payload's schema structure doest not match the provided one.
-
-```js
-let error = t.throws(() => UserSchema.parse(arbitraryObject))
-
-t.true(error instanceof ValidationError)
-t.true(error instanceof Error)
-t.is(error.message, 'Invalid object schema')
-t.is(error.errors.length, 3)
-t.is(error.errors[0].message, 'Unknown property firstName')
-t.is(error.errors[1].message, 'Unknown property lastName')
-t.is(error.errors[2].message, 'Unknown property address.zip')
-```
-
-When the payload's structure matches the schema (all of the payload properties are defined in the schema) it will
-then proceed with further validations...
-
-```js
-error = t.throws(() => UserSchema.parse({
-  birthday: '11/11/1999',
-  description: ['monkey', 'developer', 'arepa lover']
-}))
-
-t.is(error.message, 'Data is not valid')
-t.is(error.errors.length, 1)
-t.is(error.errors[0].message, 'Property name is required')
-```
-
-A custom `state` can be passed to extend the validation process.
-
-```js
-const AnotherUserSchema = new Schema({
-  name: String,
-  email: {
-    type: String,
-    required: false
-  },
-  level: {
-    type: String,
-    validate (v, { state }) {
-      if (v === 'admin' && !state?.user) {
-        this.throwError('Only authenticated users can set the level to admin')
-      }
-    }
-  }
-}, {
-  validate (v, { state }) {
-    if (state.user.level !== 'root' && v.level === 'admin' && !v.email) {
-      this.throwError('Admin users require an email')
-    }
-  }
-})
-
-error = t.throws(() => AnotherUserSchema.parse({
-  name: 'Martin Rafael',
-  level: 'admin'
-}))
-t.is(error.message, 'Data is not valid')
-t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
-t.is(error.errors[0].field.fullPath, 'level')
-
-error = t.throws(() => AnotherUserSchema.parse({
-  name: 'Martin Rafael',
-  level: 'admin'
-}, {
-  state: {
-    user: {
-      name: 'system',
-      level: 'admin'
-    }
-  }
-}))
-
-t.is(error.message, 'Admin users require an email')
-
-t.notThrows(() => {
-  return AnotherUserSchema.parse({
-    name: 'Martin Rafael',
-    level: 'admin'
-  }, {
-    state: {
-      user: {
-        name: 'system',
-        level: 'root'
-      }
-    }
-  })
-})
 ```
 
 ## Error-handling and LifeCycle
@@ -527,7 +397,7 @@ Another useful way of passing default values is on the schema level using the op
 const defaultValues = {
   address: {
     state: 'Florida',
-    zip: 33129
+    zip: 305
   },
   subscribe: true
 }
@@ -551,7 +421,7 @@ const parsed = SomeSchema.parse({
 })
 
 t.is(parsed.address.state, 'Florida')
-t.is(parsed.address.zip, 33129)
+t.is(parsed.address.zip, 305)
 t.is(parsed.subscribe, true)
 ```
 
@@ -628,7 +498,7 @@ const error2 = t.throws(() => UserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999',
   address: {
-    zip: 33129
+    zip: 305
   }
 }))
 
@@ -642,7 +512,7 @@ t.notThrows(() => UserSchema.parse({
   birthday: '11/11/1999',
   address: {
     line1: 'Brickell Ave',
-    zip: 33129
+    zip: 305
   }
 }))
 ```
@@ -750,104 +620,6 @@ t.is(error.errors[0].message, 'Invalid date')
 t.is(error.errors[0].field.fullPath, 'birthday')
 t.is(error.errors[1].message, 'Invalid number')
 t.is(error.errors[1].field.fullPath, 'kids')
-```
-
-## Virtuals (getters / setters)
-
-```js
-const Address = new Schema({
-  line1: String,
-  line2: String,
-  zip: Number,
-  get fullAddress () {
-    return `${this.line1} / ${this.line2} / ${this.zip}`
-  }
-})
-const User = new Schema({
-  firstName: String,
-  lastName: String,
-  get fullName () {
-    return this.firstName + ' ' + this.lastName
-  },
-  set fullName (v) {
-    const [firstName, lastName] = v.split(/\s+/)
-    this.firstName = firstName
-    this.lastName = lastName
-  },
-  address: {
-    type: Address,
-    required: false
-  }
-})
-
-const me = User.parse({
-  firstName: 'Martin',
-  lastName: 'Rafael',
-  address: {
-    line1: 'Brickell',
-    line2: 'Ave',
-    zip: 33129
-  }
-})
-
-t.is(me.fullName, 'Martin Rafael')
-t.is(me.address.fullAddress, 'Brickell / Ave / 33129')
-
-me.fullName = 'Pedro Perez'
-
-t.is(me.firstName, 'Pedro')
-t.is(me.lastName, 'Perez')
-
-const error = t.throws(() => {
-  me.address.fullAddress = 'papo'
-})
-
-t.is(error.message, 'Cannot set property fullAddress of #<Object> which has only a getter')
-
-const she = User.parse({
-  firstName: 'Olivia',
-  lastName: 'Isabel'
-})
-
-t.false(Object.hasOwnProperty.call(she, 'address'))
-```
-
-## Methods
-
-```js
-Transformers.Password = {
-  loaders: [String],
-  parse (v) {
-    return crypto.createHash('sha256')
-      .update(v)
-      .digest('hex')
-  }
-}
-
-const User = new Schema({
-  email: String,
-  password: 'Password'
-}, {
-  methods: {
-    isValidPassword: {
-      input: String,
-      output: Boolean,
-      handler (givenPassword) {
-        return Transformers.Password.parse(givenPassword) === this.password
-      }
-    }
-  }
-})
-
-const me = User.parse({
-  email: 'tin@devtin.io',
-  password: '123'
-})
-
-t.truthy(me.password)
-t.not(me.password, '123')
-t.false(me.isValidPassword('456'))
-t.true(me.isValidPassword('123'))
 ```
 
 ## Loaders

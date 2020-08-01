@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/devtin/schema-validator/compare/v3.2.0...v3.3.0) (2020-08-01)
+
+
+### Features
+
+* introducing methods / events ([f0a3dd9](https://github.com/devtin/schema-validator/commit/f0a3dd95baebf86ab60fb4460673216c9f6c740b))
+* **docs:** website ([7bebbe6](https://github.com/devtin/schema-validator/commit/7bebbe6fa997b1d4b94ca7a0ea98be0ce4248403))
+* methods ([653ab10](https://github.com/devtin/schema-validator/commit/653ab10823690bbe1c9b4885343dd13080d9060a))
+
+
+### Chore
+
+* covering more CHANGELOG items ([a5ed8f0](https://github.com/devtin/schema-validator/commit/a5ed8f09b50d07005606bd567225fc6439a0a0b8))
+* **ci:** no need to npm ci at publish ([6ca96a7](https://github.com/devtin/schema-validator/commit/6ca96a7fa70e7b382bd02a7d3bf0f9671796ce12))
+
+
+### Refactor
+
+* docs ([df345d9](https://github.com/devtin/schema-validator/commit/df345d90dd84ad2760f7f9eece85bd2426bfd965))
+
 ## [3.2.0](https://github.com/devtin/schema-validator/compare/v3.1.1...v3.2.0) (2020-07-29)
 
 

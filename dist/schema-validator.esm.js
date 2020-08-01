@@ -1,8 +1,10 @@
 /*!
- * @devtin/schema-validator v3.2.0
+ * @devtin/schema-validator v3.3.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
+import { EventEmitter } from 'events';
+
 /**
  * @method Utils~castArray
  * @desc Makes sure a value is wrapped in an array
@@ -33,7 +35,7 @@ function castArray (value) {
  *   name: 'Martin',
  *   address: {
  *     city: 'Miami',
- *     zip: 33129,
+ *     zip: 305,
  *     line1: 'Brickell ave'
  *   }
  * }) // => ['name', 'address.city', 'address.zip', 'address.line1']
@@ -153,7 +155,7 @@ function getSubProperties (properties, parent) {
  *   email: 'tin@devtin.io',
  *   address: {
  *     city: 'Miami, Fl',
- *     zip: 33129,
+ *     zip: 305,
  *     line1: 'Brickell Ave'
  *   }
  * }
@@ -806,6 +808,13 @@ const fnProxyStub = v => v;
  */
 
 /**
+ * @typedef {Object} Method
+ * @property {Schema|Object} input - method input payload validation
+ * @property {Schema|Object} output - method output payload validation
+ * @property {Function} handler - function to be called (this arg is the value of the object)
+ */
+
+/**
  * @classdesc Orchestrates the validation of a data schema
  * @property {Schema} [parent] - Nested objects will have a {@link Schema} in this property
  * @property {String} name - Nested objects will have the name of it's containing property
@@ -821,18 +830,20 @@ class Schema {
    * @param {Object} [options]
    * @param {String} [options.name] - Alternative name of the object
    * @param {Object} [options.defaultValues] - Default values to override the schema with
+   * @param {Method} [options.methods]
    * @param {Schema} [options.parent]
    * @param {Caster} [options.cast] - Schema caster
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, defaultValues = {}, parent, validate, cast, settings = {} } = {}) {
+  constructor (schema, { name, defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings;
 
     if (Array.isArray(schema) && schema.length === 1) {
       schema = schema[0];
     }
 
+    this._methods = methods;
     this.schema = schema;
     this.parent = parent;
     // schema level validation: validates using the entire value (maybe an object) of this path
@@ -1120,6 +1131,10 @@ class Schema {
     return v
   }
 
+  static ensureSchema (obj) {
+    return obj instanceof Schema ? obj : new Schema(obj)
+  }
+
   /**
    * Validates schema structure, casts, validates and parses  hooks of every field in the schema
    * @param {Object} [v] - The object to evaluate
@@ -1159,6 +1174,73 @@ class Schema {
       this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
           [path]: { get: getter, set: setter }
+        });
+      });
+    }
+
+    // event emitter
+    if (isNotNullObj(v) || Array.isArray(v)) {
+      const emitter = new EventEmitter();
+      Object.defineProperties(v, {
+        $on: {
+          value: emitter.on.bind(emitter),
+          writable: true,
+          enumerable: false
+        }
+      });
+
+      // append methods
+      Object.keys(this._methods).forEach(methodName => {
+        const inputValidation = this._methods[methodName].input;
+        const outputValidation = this._methods[methodName].output;
+        const methodIsEnumerable = this._methods[methodName].enumerable;
+        const methodEvents = this._methods[methodName].events;
+
+        const methodFn = (...arg) => {
+          if (inputValidation) {
+            try {
+              arg = Schema.ensureSchema(inputValidation).parse(arg.length === 1 ? arg[0] : arg);
+            } catch (err) {
+              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
+            }
+          }
+
+          const thisArg = {
+            $emit (eventName, payload) {
+              if (methodEvents) {
+                if (!methodEvents[eventName]) {
+                  throw new Error(`Unknown event ${eventName}`)
+                }
+
+                try {
+                  payload = Schema.ensureSchema(methodEvents[eventName]).parse(payload);
+                } catch (err) {
+                  throw new ValidationError(`Invalid payload for event ${eventName}`, {
+                    errors: err.errors.length > 0 ? err.errors : [err]
+                  })
+                }
+              }
+              emitter.emit(eventName, payload);
+            },
+            $field: v
+          };
+          const result = (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, arg.length > 1 ? [arg] : arg);
+
+          if (outputValidation) {
+            try {
+              return Schema.ensureSchema(outputValidation).parse(result)
+            } catch (err) {
+              throw new ValidationError(`Invalid output at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
+            }
+          }
+
+          return result
+        };
+
+        Object.defineProperty(v, methodName, {
+          value: methodFn,
+          writable: true,
+          enumerable: methodIsEnumerable
         });
       });
     }
