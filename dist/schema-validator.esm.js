@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.3.1
+ * @devtin/schema-validator v3.4.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -757,6 +757,19 @@ class ValidationError extends Error {
   }
 }
 
+/**
+ * @class Schema~MethodError
+ * @property {String} errorName
+ * @property {*} payload
+ */
+class MethodError extends Error {
+  constructor (errorName, payload) {
+    super(errorName);
+    this.errorName = errorName;
+    this.payload = payload;
+  }
+}
+
 const fnProxyStub = v => v;
 
 /**
@@ -1195,6 +1208,7 @@ class Schema {
         const outputValidation = this._methods[methodName].output;
         const methodIsEnumerable = this._methods[methodName].enumerable;
         const methodEvents = this._methods[methodName].events;
+        const methodErrors = this._methods[methodName].errors;
 
         const methodFn = (...arg) => {
           if (inputValidation) {
@@ -1221,6 +1235,22 @@ class Schema {
                 }
               }
               emitter.emit(eventName, payload);
+            },
+            $throw (errorName, payload) {
+              if (methodErrors) {
+                if (!methodErrors[errorName]) {
+                  throw new MethodError(`Unknown error ${errorName}`)
+                }
+
+                try {
+                  payload = methodErrors[errorName] ? Schema.ensureSchema(methodErrors[errorName]).parse(payload) : payload;
+                } catch (err) {
+                  throw new ValidationError(`Invalid payload for error ${errorName}`, {
+                    errors: err.errors.length > 0 ? err.errors : [err]
+                  })
+                }
+              }
+              throw new MethodError(errorName, payload)
             },
             $field: v
           };

@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/devtin/schema-validator/compare/v3.3.1...v3.4.0) (2020-08-02)
+
+
+### Features
+
+* introduce method errors ([5481c62](https://github.com/devtin/schema-validator/commit/5481c62531e017c59eed92bf07c1e525194fc272))
+
+
+### Docs
+
+* add favicon ([e1717b5](https://github.com/devtin/schema-validator/commit/e1717b53a67bc046562da348f156a0f2f57afa60))
+* deploy changes ([77907dd](https://github.com/devtin/schema-validator/commit/77907dde656fbcf17277a4b5e888b230702f9699))
+* fix https ([d5d5ed5](https://github.com/devtin/schema-validator/commit/d5d5ed5ed0a0b2d78163614ddea5596228b5efb3))
+* fix icons ref ([7936936](https://github.com/devtin/schema-validator/commit/79369368a34d00aec91ac15e4b75c5a7d7c39b8b))
+* **methods:** fix typo breaking format ([4a55b67](https://github.com/devtin/schema-validator/commit/4a55b67247c3490bffa0a2e0fbbfe572a62c66cd))
+* fix jsdocs ([3130b7d](https://github.com/devtin/schema-validator/commit/3130b7d8ced61a5d50db9b2d7fbfb4e159971cf8))
+
+
+### Chore
+
+* improve package description ([6997baa](https://github.com/devtin/schema-validator/commit/6997baaf625d014027081e976c775d31acc17553))
+* **devDependencies:** update ([784b51f](https://github.com/devtin/schema-validator/commit/784b51f71d36f5aad438c7579a2d632c5d277bd9))
+
 ### [3.3.1](https://github.com/devtin/schema-validator/compare/v3.3.0...v3.3.1) (2020-08-01)
 
 

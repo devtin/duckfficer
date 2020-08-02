@@ -226,6 +226,7 @@ Orchestrates the validation of a data schema
         * [.isNested(obj)](#Schema.isNested) ⇒ <code>boolean</code>
     * _inner_
         * [~ValidationError](#Schema..ValidationError)
+        * [~MethodError](#Schema..MethodError)
         * [~TheSchema](#Schema..TheSchema) : <code>Object</code>
         * [~SchemaSettings](#Schema..SchemaSettings) : <code>Object</code>
 
@@ -377,6 +378,17 @@ Thrown by [Schema](#Schema)
 | value | <code>\*</code> | Given value |
 | field | [<code>Schema</code>](#Schema) |  |
 | errors | [<code>Array.&lt;ValidationError&gt;</code>](#Schema..ValidationError) | Errors found |
+
+<a name="Schema..MethodError"></a>
+
+### Schema~MethodError
+**Kind**: inner class of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| errorName | <code>String</code> | 
+| payload | <code>\*</code> | 
 
 <a name="Schema..TheSchema"></a>
 

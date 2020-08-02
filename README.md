@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~4.2KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~4.3KB minified + gzipped)<br>
 for modeling, validating & sanitizing JavaScript data schemas.
 </p>
 
@@ -32,7 +32,7 @@ $ yarn add @devtin/schema-validator
 
 Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
 JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~4.2KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+this light-weight library (~4.3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
 
 ## At-a-glance
 
