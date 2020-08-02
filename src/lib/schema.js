@@ -2,6 +2,7 @@ import { propertiesRestricted } from 'utils/properties-restricted'
 import { castArray } from 'utils/cast-array'
 import { obj2dot } from 'utils/obj-2-dot'
 import { ValidationError } from './validation-error.js'
+import { MethodError } from './method-error.js'
 import { forEach } from 'utils/for-each.js'
 import { castThrowable } from 'utils/cast-throwable'
 import { Transformers } from './transformers.js'
@@ -447,6 +448,7 @@ export class Schema {
         const outputValidation = this._methods[methodName].output
         const methodIsEnumerable = this._methods[methodName].enumerable
         const methodEvents = this._methods[methodName].events
+        const methodErrors = this._methods[methodName].errors
 
         const methodFn = (...arg) => {
           if (inputValidation) {
@@ -473,6 +475,22 @@ export class Schema {
                 }
               }
               emitter.emit(eventName, payload)
+            },
+            $throw (errorName, payload) {
+              if (methodErrors) {
+                if (!methodErrors[errorName]) {
+                  throw new MethodError(`Unknown error ${errorName}`)
+                }
+
+                try {
+                  payload = methodErrors[errorName] ? Schema.ensureSchema(methodErrors[errorName]).parse(payload) : payload
+                } catch (err) {
+                  throw new ValidationError(`Invalid payload for error ${errorName}`, {
+                    errors: err.errors.length > 0 ? err.errors : [err]
+                  })
+                }
+              }
+              throw new MethodError(errorName, payload)
             },
             $field: v
           }
