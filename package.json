@@ -2,7 +2,7 @@
   "name": "@devtin/schema-validator",
   "author": "Martin Rafael <tin@devtin.io>",
   "version": "3.3.1",
-  "description": "Zero-dependencies, light-weight library for modeling, validating & sanitizing javascript data schemas",
+  "description": "Zero-dependencies, light-weight library for modeling, validating & sanitizing data",
   "keywords": [
     "json",
     "duck-type",
