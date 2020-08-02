@@ -61,7 +61,7 @@ const testsToSection = (sectionTitle, tests) => {
   let casting = await parseAvaFile(fromFeatures('casting.test.js'))
   let validation = await parseAvaFile(fromFeatures('validation.test.js'))
   const virtuals = await parseAvaFile(fromFeatures('virtuals.test.js'))
-  const methods = await parseAvaFile(fromFeatures('methods-events.test.js'))
+  const methods = await parseAvaFile(fromFeatures('methods-events-errors.test.js'))
 
   const Transformers = {}
   await Promise.each(Object.keys(TheTransformers), async name => {
