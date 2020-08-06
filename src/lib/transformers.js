@@ -254,15 +254,15 @@ export const Transformers = {
       }
 
       if (this.settings.integer && !Number.isInteger(value)) {
-        this.throwError(Transformers.Number.settings.integerError, { value })
+        this.throwError(this.settings.integerError, { value })
       }
 
       if (this.settings.min !== undefined && value < this.settings.min) {
-        this.throwError(Transformers.Number.settings.minError, { value: this.settings.min })
+        this.throwError(this.settings.minError, { value: this.settings.min })
       }
 
       if (this.settings.max !== undefined && value > this.settings.max) {
-        this.throwError(Transformers.Number.settings.maxError, { value: this.settings.max })
+        this.throwError(this.settings.maxError, { value: this.settings.max })
       }
     },
     parse (v) {
@@ -417,7 +417,7 @@ export const Transformers = {
       }
 
       if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
-        this.throwError(Transformers.String.settings.enumError, { value })
+        this.throwError(this.settings.enumError, { value })
       }
 
       if (this.settings.minlength) {
