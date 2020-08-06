@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://github.com/devtin/schema-validator/compare/v3.4.0...v3.5.0) (2020-08-06)
+
+
+### Features
+
+* **transformers:** introduce custom error types ([abf9651](https://github.com/devtin/schema-validator/commit/abf96516fa45d6e244e8f30b7d825b9b5f61768f))
+
+
+### Docs
+
+* fix build ([f50b6cb](https://github.com/devtin/schema-validator/commit/f50b6cbe8530b8d01df2129e0f04fe58b7f4e930))
+* include recently added changes ([0fd7b3a](https://github.com/devtin/schema-validator/commit/0fd7b3a2c405dfdb3d02ce0266161f713cfdae6d))
+
+
+### Chore
+
+* **dependencies:** update ([8a513d7](https://github.com/devtin/schema-validator/commit/8a513d7ab23431be1a3e17f06a7531d841961bdd))
+
 ## [3.4.0](https://github.com/devtin/schema-validator/compare/v3.3.1...v3.4.0) (2020-08-02)
 
 

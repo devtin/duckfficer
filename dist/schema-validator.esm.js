@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.4.0
+ * @devtin/schema-validator v3.5.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -344,7 +344,7 @@ const Transformers = {
     },
     validate (value) {
       if (!Array.isArray(value)) {
-        this.throwError(Transformers.Array.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -364,7 +364,7 @@ const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'bigint') {
-        this.throwError(Transformers.BigInt.settings.typeError);
+        this.throwError(this.settings.typeError);
       }
     },
     cast (value) {
@@ -397,7 +397,7 @@ const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'boolean') {
-        this.throwError(Transformers.Boolean.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -429,7 +429,7 @@ const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Date)) {
-        this.throwError(Transformers.Date.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -446,7 +446,7 @@ const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'function') {
-        this.throwError(Transformers.Function.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -465,7 +465,7 @@ const Transformers = {
       autoCast: true
     },
     cast (value) {
-      if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Map)) {
+      if (isNotNullObj(value) && !(value instanceof Map)) {
         value = new Map(Object.entries(value));
       }
 
@@ -473,7 +473,7 @@ const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Map)) {
-        this.throwError(Transformers.Map.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -510,7 +510,7 @@ const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'number' || isNaN(value)) {
-        this.throwError(Transformers.Number.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
 
       if (this.settings.integer && !Number.isInteger(value)) {
@@ -570,8 +570,8 @@ const Transformers = {
       return value
     },
     validate (value) {
-      if (typeof value !== 'object') {
-        this.throwError(Transformers.Object.settings.typeError, { value });
+      if (!isNotNullObj(value)) {
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -590,7 +590,7 @@ const Transformers = {
       typeError: 'Invalid Promise',
       autoCast: false,
       isPromise (v) {
-        return typeof v === 'object' && typeof v.then === 'function'
+        return isNotNullObj(v) && typeof v.then === 'function'
       }
     },
     cast (value) {
@@ -606,7 +606,7 @@ const Transformers = {
     },
     validate (value) {
       if (!Transformers.Promise.settings.isPromise(value)) {
-        this.throwError(Transformers.Promise.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -633,7 +633,7 @@ const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Set)) {
-        this.throwError(Transformers.Set.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
     }
   },
@@ -673,7 +673,7 @@ const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'string') {
-        this.throwError(Transformers.String.settings.typeError, { value });
+        this.throwError(this.settings.typeError, { value });
       }
 
       if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
@@ -1040,9 +1040,13 @@ class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues, type, cast, validate, currentType }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
+      type: type || schema.type,
+      currentType: currentType || schema.currentType,
+      _cast: (cast || cast === false ? cast : schema._cast),
+      _validate: (validate || validate === false ? validate : schema._validate),
       parent,
       cloned: true,
       _defaultValues: defaultValues || schema._defaulValues,
@@ -1294,7 +1298,7 @@ class Schema {
       }
 
       const type = Schema.guessType(loaderSchema);
-      const clone = Object.assign(Object.create(this), this, { type, _cast: undefined, _validate: undefined });
+      const clone = Schema.cloneSchema({ schema: this, type, currentType: type, cast: false, validate: false });
 
       if (type !== 'Schema') {
         clone._settings = Object.assign({}, clone._settings, loaderSchema, {
