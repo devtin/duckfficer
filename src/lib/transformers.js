@@ -1,4 +1,5 @@
 import { castThrowable } from 'utils/cast-throwable.js'
+import { isNotNullObj } from 'utils/is-not-null-obj'
 /**
  * @typedef {Function} Validator
  * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
@@ -83,7 +84,7 @@ export const Transformers = {
     },
     validate (value) {
       if (!Array.isArray(value)) {
-        this.throwError(Transformers.Array.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -103,7 +104,7 @@ export const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'bigint') {
-        this.throwError(Transformers.BigInt.settings.typeError)
+        this.throwError(this.settings.typeError)
       }
     },
     cast (value) {
@@ -136,7 +137,7 @@ export const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'boolean') {
-        this.throwError(Transformers.Boolean.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -168,7 +169,7 @@ export const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Date)) {
-        this.throwError(Transformers.Date.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -185,7 +186,7 @@ export const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'function') {
-        this.throwError(Transformers.Function.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -204,7 +205,7 @@ export const Transformers = {
       autoCast: true
     },
     cast (value) {
-      if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Map)) {
+      if (isNotNullObj(value) && !(value instanceof Map)) {
         value = new Map(Object.entries(value))
       }
 
@@ -212,7 +213,7 @@ export const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Map)) {
-        this.throwError(Transformers.Map.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -249,7 +250,7 @@ export const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'number' || isNaN(value)) {
-        this.throwError(Transformers.Number.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
 
       if (this.settings.integer && !Number.isInteger(value)) {
@@ -309,8 +310,8 @@ export const Transformers = {
       return value
     },
     validate (value) {
-      if (typeof value !== 'object') {
-        this.throwError(Transformers.Object.settings.typeError, { value })
+      if (!isNotNullObj(value)) {
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -329,7 +330,7 @@ export const Transformers = {
       typeError: 'Invalid Promise',
       autoCast: false,
       isPromise (v) {
-        return typeof v === 'object' && typeof v.then === 'function'
+        return isNotNullObj(v) && typeof v.then === 'function'
       }
     },
     cast (value) {
@@ -345,7 +346,7 @@ export const Transformers = {
     },
     validate (value) {
       if (!Transformers.Promise.settings.isPromise(value)) {
-        this.throwError(Transformers.Promise.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -372,7 +373,7 @@ export const Transformers = {
     },
     validate (value) {
       if (!(value instanceof Set)) {
-        this.throwError(Transformers.Set.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
     }
   },
@@ -412,7 +413,7 @@ export const Transformers = {
     },
     validate (value) {
       if (typeof value !== 'string') {
-        this.throwError(Transformers.String.settings.typeError, { value })
+        this.throwError(this.settings.typeError, { value })
       }
 
       if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {

@@ -280,9 +280,13 @@ export class Schema {
     return foundPaths
   }
 
-  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues }) {
+  static cloneSchema ({ schema, name, parent, settings = {}, defaultValues, type, cast, validate, currentType }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
       name: name || schema.name,
+      type: type || schema.type,
+      currentType: currentType || schema.currentType,
+      _cast: (cast || cast === false ? cast : schema._cast),
+      _validate: (validate || validate === false ? validate : schema._validate),
       parent,
       cloned: true,
       _defaultValues: defaultValues || schema._defaulValues,
@@ -534,7 +538,7 @@ export class Schema {
       }
 
       const type = Schema.guessType(loaderSchema)
-      const clone = Object.assign(Object.create(this), this, { type, _cast: undefined, _validate: undefined })
+      const clone = Schema.cloneSchema({ schema: this, type, currentType: type, cast: false, validate: false })
 
       if (type !== 'Schema') {
         clone._settings = Object.assign({}, clone._settings, loaderSchema, {
