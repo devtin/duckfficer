@@ -1,0 +1,16 @@
+- **@devtin/schema-validator**
+- [Getting started](/)
+- [Basic Guide](/guide.md)
+- [Casting (sanitation)](/casting.md)
+- [Validation](/validation.md)
+- [Virtuals](/virtuals.md)
+- [Methods & Events](/methods-events.md)
+- [Types (transformers)](/types.md)
+- [API](/api.md)
+- **Links**
+- [Github](https://github.com/devtin/schema-validator)
+- [NPM](https://www.npmjs.com/package/@devtin/schema-validator)
+- **Credits**
+- [Martín Rafael González](https://twitter.com/tin_r)
+- **License**
+- [MIT](https://opensource.org/licenses/MIT)

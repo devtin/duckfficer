@@ -1,0 +1,3 @@
+{"total": {"lines":{"total":392,"covered":387,"skipped":0,"pct":98.72},"statements":{"total":398,"covered":393,"skipped":0,"pct":98.74},"functions":{"total":94,"covered":93,"skipped":0,"pct":98.94},"branches":{"total":371,"covered":352,"skipped":0,"pct":94.88}}
+,"/Users/tin/projects/schema-validator/dist/schema-validator.js": {"lines":{"total":392,"covered":387,"skipped":0,"pct":98.72},"functions":{"total":94,"covered":93,"skipped":0,"pct":98.94},"statements":{"total":398,"covered":393,"skipped":0,"pct":98.74},"branches":{"total":371,"covered":352,"skipped":0,"pct":94.88}}
+}
