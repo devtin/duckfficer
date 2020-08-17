@@ -42,28 +42,28 @@ const plugins = [
 const libStarter = 2019
 const currentYear = new Date().getFullYear()
 const banner = `/*!
- * ${ name } v${ version }
- * (c) ${ libStarter }${ currentYear !== libStarter ? '-' + currentYear : '' } ${ author }
- * ${ license }
+ * ${name} v${version}
+ * (c) ${libStarter}${currentYear !== libStarter ? '-' + currentYear : ''} ${author}
+ * ${license}
  */`
 
 export default [
   {
-    input: 'src/schema-validator.js',
+    input: 'src/duckfficer.js',
     output: [
       {
-        file: `dist/schema-validator.js`,
+        file: 'dist/duckfficer.js',
         format: 'cjs',
         banner
-      },
+      }
     ],
     plugins
   },
   {
-    input: 'src/schema-validator.js',
+    input: 'src/duckfficer.js',
     output: [
       {
-        file: `dist/schema-validator.esm.js`,
+        file: 'dist/duckfficer.esm.js',
         format: 'esm',
         banner
       }
@@ -71,10 +71,10 @@ export default [
     plugins
   },
   {
-    input: 'src/schema-validator.js',
+    input: 'src/duckfficer.js',
     output: [
       {
-        file: `dist/schema-validator.umd.js`,
+        file: 'dist/duckfficer.umd.js',
         format: 'umd',
         extend: true,
         name: 'default',

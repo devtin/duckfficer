@@ -1,12 +1,11 @@
 {
-  "name": "@devtin/schema-validator",
+  "name": "duckfficer",
   "author": "Martin Rafael <tin@devtin.io>",
-  "version": "3.5.1",
+  "version": "1.0.0",
   "description": "Zero-dependencies, light-weight library for modeling, validating & sanitizing data",
   "keywords": [
     "json",
-    "duck-type",
-    "duck-typing",
+    "duck",
     "sanitize",
     "type",
     "typing",
@@ -18,9 +17,9 @@
     "casting",
     "modeling"
   ],
-  "main": "dist/schema-validator.js",
-  "module": "dist/schema-validator.esm.js",
-  "browser": "dist/schema-validator.umd.js",
+  "main": "dist/duckfficer.js",
+  "module": "dist/duckfficer.esm.js",
+  "browser": "dist/duckfficer.umd.js",
   "license": "MIT",
   "files": [
     "dist/*",
@@ -28,21 +27,21 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/devtin/schema-validator"
+    "url": "https://github.com/devtin/duckfficer"
   },
-  "homepage": "https://devtin.github.io/schema-validator",
+  "homepage": "https://devtin.github.io/duckfficer",
   "scripts": {
     "build": "npm run build:lib && npm run build:api && npm run build:docs && npm run build:readme",
     "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:api && npm run build:docs && npm run build:readme",
-    "build:api": "jsdoc2md --template build/template/DOCS.hbs --files dist/schema-validator.js > docs/api.md",
-    "build:lib": "rollup -c && gzip -c dist/schema-validator.umd.js > dist/schema-validator.umd.js.gz",
+    "build:api": "jsdoc2md --template build/template/DOCS.hbs --files dist/duckfficer.js > docs/api.md",
+    "build:lib": "rollup -c && gzip -c dist/duckfficer.umd.js > dist/duckfficer.umd.js.gz",
     "build:live": "nodemon -w src -w test --exec npm run build",
     "build:readme": "node build/readme.js",
     "build:docs": "node build/docs.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src/",
     "test": "NODE_ENV=test ava",
     "test:unit": "npm run test src/**/*.unit.js",
-    "test:browser": "cp dist/schema-validator.umd.js sandbox/ && light-server -s sandbox -p 3000 -o",
+    "test:browser": "cp dist/duckfficer.umd.js sandbox/ && light-server -s sandbox -p 3000 -o",
     "prepublishOnly": "npm run lint && npm run build:wcoverage && npm run test && echo 'Looks good for a release!'",
     "release": "standard-version -a",
     "postpublish": "git push && git push --tags",

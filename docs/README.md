@@ -1,39 +1,37 @@
 <p align="center"><img align="center" width="480" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p>
 
-<div align="center"><h1 align="center">@devtin/schema-validator</h1></div>
+<div align="center"><h1 align="center">duckfficer</h1></div>
 
 <p align="center">
-<a href="https://www.npmjs.com/package/@devtin/schema-validator" target="_blank"><img src="https://img.shields.io/npm/v/@devtin/schema-validator.svg" alt="Version"></a>
-<a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-99%25-green" alt="Coverage 99%"></a>
-<a href="/test/features"><img src="https://github.com/devtin/schema-validator/workflows/test/badge.svg"></a>
-<a href="https://gitter.im/schema-validator/community"><img src="https://badges.gitter.im/schema-validator/community.svg"></a>
+<a href="https://www.npmjs.com/package/duckfficer" target="_blank"><img src="https://img.shields.io/npm/v/duckfficer.svg" alt="Version"></a>
+<a href="https://htmlpreview.github.io/?https://github.com/devtin/duckfficer/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-99%25-green" alt="Coverage 99%"></a>
+<a href="/test/features"><img src="https://github.com/devtin/duckfficer/workflows/test/badge.svg"></a>
 <a href="https://opensource.org/licenses" target="_blank"><img src="https://img.shields.io/badge/License-MIT-brightgreen.svg"></a>
 </p>
 
 <p align="center">
 Zero-dependencies, light-weight library (~4.3KB minified + gzipped)<br>
-for modeling, validating & sanitizing JavaScript data schemas.
+for modeling, validating & sanitizing data.
 </p>
 
 
 ## Installation
 
 ```sh
-$ npm i @devtin/schema-validator
+$ npm i duckfficer
 # or
-$ yarn add @devtin/schema-validator
+$ yarn add duckfficer
 ```
 
 ## About
 
-Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
-JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~4.3KB minified + gzipped) for validating & sanitizing JavaScript data schemas.
+Validating & sanitizing data coming from untrusted sources in JavaScript could be tedious. This light-weight library 
+(~4.3KB minified + gzipped) was initially built to help validate & sanitize data in a RESTFul API.
 
 ## At-a-glance
 
 ```js
-const { Schema, Transformers } = require('@devtin/schema-validator')
+const { Schema, Transformers } = require('duckfficer')
 const crypto = require('crypto')
 
 Transformers.Password = {

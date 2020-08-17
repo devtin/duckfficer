@@ -81,7 +81,7 @@ const testsToSection = (sectionTitle, tests) => {
   const readmePayload = {
     libSize,
     shields,
-    'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'@devtin/schema-validator\')')
+    'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')')
   }
 
   writeDoc('guide.md', testsToSection('Guide', guide))

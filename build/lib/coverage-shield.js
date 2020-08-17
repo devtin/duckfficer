@@ -4,7 +4,7 @@ const { forOwn } = require('lodash')
 class CoverageShield {
   static computeCoverage (file = path.join(process.cwd(), 'coverage/coverage-summary.json')) {
     const coverageResult = require(file)
-    let pct = []
+    const pct = []
     Object.keys(coverageResult.total).forEach(prop => {
       if (prop === 'statements') {
         pct.push(coverageResult.total[prop].pct)
@@ -17,10 +17,10 @@ class CoverageShield {
 
   static coveragePctColor (pct) {
     const colorPalette = {
-      '25': 'red',
-      '50': 'orange',
-      '75': 'yellow',
-      '100': 'green'
+      25: 'red',
+      50: 'orange',
+      75: 'yellow',
+      100: 'green'
     }
     let color
 
@@ -36,7 +36,7 @@ class CoverageShield {
 
   static getShield () {
     const pct = Math.round(CoverageShield.computeCoverage())
-    return `<a href="https://htmlpreview.github.io/?https://github.com/devtin/schema-validator/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-${ pct }%25-${ CoverageShield.coveragePctColor(pct) }" alt="Coverage ${ pct }%"></a>`
+    return `<a href="https://htmlpreview.github.io/?https://github.com/devtin/duckfficer/blob/master/coverage/lcov-report/index.html"><img src="https://img.shields.io/badge/coverage-${pct}%25-${CoverageShield.coveragePctColor(pct)}" alt="Coverage ${pct}%"></a>`
   }
 }
 

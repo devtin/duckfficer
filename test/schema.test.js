@@ -157,7 +157,7 @@ test('autoCasting', t => {
   t.true(Number.isInteger(qtty.parse('20')))
 
   // Though sometimes may be required for proper validation
-  // as mentioned [here](https://github.com/devtin/schema-validator/issues/6)
+  // as mentioned [here](https://github.com/devtin/duckfficer/issues/6)
 
   const BooleanSchema = new Schema({
     type: Boolean,

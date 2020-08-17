@@ -1,4 +1,4 @@
-- **@devtin/schema-validator**
+- **duckfficer**
 - [Getting started](/)
 - [Basic Guide](/guide.md)
 - [Casting (sanitation)](/casting.md)
@@ -8,8 +8,8 @@
 - [Types (transformers)](/types.md)
 - [API](/api.md)
 - **Links**
-- [Github](https://github.com/devtin/schema-validator)
-- [NPM](https://www.npmjs.com/package/@devtin/schema-validator)
+- [Github](https://github.com/devtin/duckfficer)
+- [NPM](https://www.npmjs.com/package/duckfficer)
 - **Credits**
 - [Martín Rafael González](https://twitter.com/tin_r)
 - **License**

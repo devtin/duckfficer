@@ -966,7 +966,7 @@ t.is(error.errors[0].message, 'Don\'t know how to resolve Email in property emai
 ```
 
 Creating a custom transformer is as simple as appending the logic into the Transformers object
-found in `const { Transformers } = require('@devtin/schema-validator')`.
+found in `const { Transformers } = require('duckfficer')`.
 
 Have a look at the [Transformer](/api.md#Transformer) object in the docs.
 

@@ -1,5 +1,5 @@
 /*!
- * @devtin/schema-validator v3.5.1
+ * duckfficer v1.0.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */

@@ -1,6 +1,6 @@
 <p align="center"><img align="center" width="480" src="https://repository-images.githubusercontent.com/228456718/f4767e00-61e6-11ea-964a-7b02d8dcb48f"/></p>
 
-<div align="center"><h1 align="center">@devtin/schema-validator</h1></div>
+<div align="center"><h1 align="center">duckfficer</h1></div>
 
 <p align="center">
 {{#shields}}
@@ -10,29 +10,28 @@
 
 <p align="center">
 Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br>
-for modeling, validating & sanitizing JavaScript data schemas.
+for modeling, validating & sanitizing data.
 </p>
 
 {{#readme}}
 - [Installation](#installation)
 - [About](#about)
 - [At a glance](#at-a-glance)
-- [Documentation](https://devtin.github.io/schema-validator)
+- [Documentation](https://devtin.github.io/duckfficer)
 {{/readme}}
 
 ## Installation
 
 ```sh
-$ npm i @devtin/schema-validator
+$ npm i duckfficer
 # or
-$ yarn add @devtin/schema-validator
+$ yarn add duckfficer
 ```
 
 ## About
 
-Tired of performing duck-type validation while sharing data-schema across different endpoints of my beloved
-JavaScript ecosystem, I took some inspiration from the [mongoose](https://mongoosejs.com)'s validation syntax and created
-this light-weight library (~{{{ libSize }}} minified + gzipped) for validating & sanitizing JavaScript data schemas.
+Validating & sanitizing data coming from untrusted sources in JavaScript could be tedious. This light-weight library 
+(~{{{ libSize }}} minified + gzipped) was initially built to help validate & sanitize data in a RESTFul API.
 
 ## At-a-glance
 

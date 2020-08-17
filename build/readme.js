@@ -80,10 +80,10 @@ parseAvaFile(fromFeatures('schema.test.js'))
     const guide = avaTestsToMd(schema.concat(validation).concat(casting), mdOptions) + '\n\n## Types\n\n' + transformers.join('\n\n')
     const payload = {
       guide,
-      libSize: `${Math.round((fs.statSync(path.join(__dirname, '../dist/schema-validator.umd.js.gz')).size / 1024) * 10) / 10}KB`,
+      libSize: `${Math.round((fs.statSync(path.join(__dirname, '../dist/duckfficer.umd.js.gz')).size / 1024) * 10) / 10}KB`,
       shields,
-      'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace('require(\'./\')', 'require(\'@devtin/schema-validator\')'),
-      'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'@devtin/schema-validator\')'),
+      'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'),
+      'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'),
       index,
       readme: true
     }
