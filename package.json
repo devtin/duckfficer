@@ -18,7 +18,7 @@
     "modeling"
   ],
   "main": "dist/duckfficer.js",
-  "module": "dist/duckfficer.esm.js",
+  "module": "dist/duckfficer.mjs",
   "browser": "dist/duckfficer.umd.js",
   "license": "MIT",
   "files": [

@@ -63,7 +63,7 @@ export default [
     input: 'src/duckfficer.js',
     output: [
       {
-        file: 'dist/duckfficer.esm.js',
+        file: 'dist/duckfficer.mjs',
         format: 'esm',
         banner
       }
