@@ -10,7 +10,7 @@
 
 <p align="center">
 Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br>
-for modeling, validating & sanitizing data.
+for modeling, validating & sanitizing data
 </p>
 
 {{#readme}}
@@ -31,7 +31,7 @@ $ yarn add duckfficer
 ## About
 
 Validating & sanitizing data coming from untrusted sources in JavaScript could be tedious. This light-weight library 
-(~{{{ libSize }}} minified + gzipped) was initially built to help validate & sanitize data in a RESTFul API.
+(~{{{ libSize }}} minified + gzipped) was initially built to help validate & sanitize data for a RESTFul API project.
 
 ## At-a-glance
 
