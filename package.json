@@ -29,7 +29,7 @@
     "type": "git",
     "url": "https://github.com/devtin/duckfficer"
   },
-  "homepage": "https://devtin.github.io/duckfficer",
+  "homepage": "https://duckfficer.js.org",
   "scripts": {
     "build": "npm run build:lib && npm run build:api && npm run build:docs && npm run build:readme",
     "build:wcoverage": "npm run build:lib && npm run coverage && npm run build:api && npm run build:docs && npm run build:readme",
