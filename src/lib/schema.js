@@ -430,7 +430,7 @@ export class Schema {
     if (isNotNullObj(v)) {
       this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
-          [path]: { get: getter, set: setter }
+          [path]: { get: getter, set: setter, enumerable: true }
         })
       })
     }
