@@ -31,9 +31,11 @@ environment and the browser.
 
 ## At-a-glance
 
-/**
- * *index.js*
- */
+
+
+*index.js*
+
+```js
 const Koa = require('koa')
 const koaBody = require('koa-body')
 const Router = require('koa-router')
@@ -67,11 +69,11 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
   .listen(3000)
+```
 
-/**
- * *schemas/user.js*
- */
+*schemas/user.js*
 
+```js
 const { Schema } = require('duckfficer')
 
 const User = new Schema({
@@ -88,37 +90,38 @@ const User = new Schema({
 })
 
 module.exports = { User }
+```
 
-/**
- * Now, start the script:
- *
- * ```sh
- * $ node index.js
- * ```
- *
- * On another terminal window:
- *
- * ```sh
- * $ curl -d "firstName=John&lastName=Doe&email=john&dob=october" http://localhost:3000/user
- * ```
- * Should output:
- *
- * ```json
- * {
- *   "error": "Data is not valid",
- *   "errors": [
- *     {
- *       "message": "john is not a valid e-mail address",
- *       "value": "john",
- *       "field": "email"
- *     },
- *     {
- *       "message": "Invalid date",
- *       "value": "october",
- *       "field": "dob"
- *     }
- *   ]
- * }
- * ```
- */
+Now, start the script:
 
+```sh
+$ node index.js
+```
+
+On another terminal window:
+
+```sh
+$ curl -d "firstName=John&lastName=Doe&email=john&dob=october" http://localhost:3000/user
+```
+Should output:
+
+```json
+{
+  "error": "Data is not valid",
+  "errors": [
+    {
+      "message": "john is not a valid e-mail address",
+      "value": "john",
+      "field": "email"
+    },
+    {
+      "message": "Invalid date",
+      "value": "october",
+      "field": "dob"
+    }
+  ]
+}
+```
+
+```js
+```

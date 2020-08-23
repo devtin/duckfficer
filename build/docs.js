@@ -1,4 +1,4 @@
-const { parseAvaFile, avaTestsToMd, avaTestToMd } = require('@pleasure-js/docs')
+const { parseAvaFile, avaTestsToMd, avaTestToMd, jsCodeToMd } = require('@pleasure-js/docs')
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
@@ -81,7 +81,7 @@ const testsToSection = (sectionTitle, tests) => {
   const readmePayload = {
     libSize,
     shields,
-    'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')')
+    'at-a-glance': jsCodeToMd(fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'))
   }
 
   writeDoc('guide.md', testsToSection('Guide', guide))
