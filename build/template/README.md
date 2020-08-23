@@ -32,6 +32,7 @@ $ yarn add duckfficer
 
 Validating & sanitizing data coming from untrusted sources in JavaScript could be a tedious task. This
 zero-dependencies, light-weight library (~{{{ libSize }}} min+gz) was initially built as a helper for a RESTful API
+environment and the browser.
 
 ## At-a-glance
 
