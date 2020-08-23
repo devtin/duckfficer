@@ -35,6 +35,4 @@ zero-dependencies, light-weight library (~{{{ libSize }}} min+gz) was initially 
 
 ## At-a-glance
 
-```js
 {{{ at-a-glance }}}
-```

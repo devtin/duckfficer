@@ -1,4 +1,4 @@
-const { parseAvaFile, avaTestsToMd, avaTestToMd } = require('@pleasure-js/docs')
+const { parseAvaFile, avaTestsToMd, avaTestToMd, jsCodeToMd } = require('@pleasure-js/docs')
 const path = require('path')
 const mustache = require('mustache')
 const fs = require('fs')
@@ -82,8 +82,7 @@ parseAvaFile(fromFeatures('schema.test.js'))
       guide,
       libSize: `${Math.round((fs.statSync(path.join(__dirname, '../dist/duckfficer.umd.js.gz')).size / 1024) * 10) / 10}KB`,
       shields,
-      'advanced-usage': fs.readFileSync(path.join(__dirname, '../advanced-usage.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'),
-      'at-a-glance': fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'),
+      'at-a-glance': jsCodeToMd(_.trim(fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'))),
       index,
       readme: true
     }
