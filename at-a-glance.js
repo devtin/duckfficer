@@ -49,7 +49,7 @@ const User = new Schema({
   },
   email: {
     type: String,
-    regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value} is not a valid e-mail address']
+    regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
   },
   dob: Date
 })
