@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
 const mustache = require('mustache')
-const { kebabCase } = require('lodash')
+const { kebabCase, trim } = require('lodash')
 
 const { shields } = require('./fixtures/shields.js')
 const { getLibSize } = require('./lib/get-lib-size')
@@ -81,7 +81,7 @@ const testsToSection = (sectionTitle, tests) => {
   const readmePayload = {
     libSize,
     shields,
-    'at-a-glance': jsCodeToMd(fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')'))
+    'at-a-glance': jsCodeToMd(trim(fs.readFileSync(path.join(__dirname, '../at-a-glance.js')).toString().replace('require(\'./\')', 'require(\'duckfficer\')')))
   }
 
   writeDoc('guide.md', testsToSection('Guide', guide))

@@ -123,5 +123,4 @@ Should output:
 }
 ```
 
-```js
-```
+
