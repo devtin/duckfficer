@@ -397,10 +397,11 @@ export class Schema {
    * @param {Object} [v] - The object to evaluate
    * @param {Object} [options]
    * @param {Object} [options.state] - State to pass through the lifecycle
+   * @param {Boolean} [options.virtualsEnumerable] - whether to set virtuals enumerable
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v, { state = {} } = {}) {
+  parse (v, { state = {}, virtualsEnumerable = true } = {}) {
     // schema-level casting
     // todo: cast children schemas
     v = this.fullCast(v, { state })
@@ -430,7 +431,7 @@ export class Schema {
     if (isNotNullObj(v)) {
       this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
-          [path]: { get: getter, set: setter, enumerable: true }
+          [path]: { get: getter, set: setter, enumerable: virtualsEnumerable }
         })
       })
     }
