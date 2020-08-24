@@ -327,6 +327,7 @@ Validates schema structure, casts, validates and parses  hooks of every field in
 | [v] | <code>Object</code> | The object to evaluate |
 | [options] | <code>Object</code> |  |
 | [options.state] | <code>Object</code> | State to pass through the lifecycle |
+| [options.virtualsEnumerable] | <code>Boolean</code> | whether to set virtuals enumerable |
 
 <a name="Schema+processLoaders"></a>
 

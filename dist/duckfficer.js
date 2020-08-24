@@ -1,5 +1,5 @@
 /*!
- * duckfficer v1.1.1
+ * duckfficer v1.2.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -1163,10 +1163,11 @@ class Schema {
    * @param {Object} [v] - The object to evaluate
    * @param {Object} [options]
    * @param {Object} [options.state] - State to pass through the lifecycle
+   * @param {Boolean} [options.virtualsEnumerable] - whether to set virtuals enumerable
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v, { state = {} } = {}) {
+  parse (v, { state = {}, virtualsEnumerable = false } = {}) {
     // schema-level casting
     // todo: cast children schemas
     v = this.fullCast(v, { state });
@@ -1196,7 +1197,7 @@ class Schema {
     if (isNotNullObj(v)) {
       this.virtuals.forEach(({ path, getter, setter }) => {
         Object.defineProperties(v, {
-          [path]: { get: getter, set: setter, enumerable: true }
+          [path]: { get: getter, set: setter, enumerable: virtualsEnumerable }
         });
       });
     }

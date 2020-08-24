@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/devtin/duckfficer/compare/v1.1.1...v1.2.0) (2020-08-24)
+
+
+### Features
+
+* option to turn off virtuals enumerable ([220d119](https://github.com/devtin/duckfficer/commit/220d119f43e1c553784119506bd13e50d204a712))
+* option to turn on virtuals enumerable ([07c1251](https://github.com/devtin/duckfficer/commit/07c125136eff505013f66797f06c683bd0c3e3ca))
+
 ### [1.1.1](https://github.com/devtin/duckfficer/compare/v1.1.0...v1.1.1) (2020-08-24)
 
 
