@@ -288,6 +288,7 @@ export const Transformers = {
     },
     parse (value) {
       if (this.settings.mapSchema !== undefined) {
+        const newVal = {}
         Object.keys(value).forEach(name => {
           const obj = value[name]
           const schema = this.constructor.castSchema(this.settings.mapSchema)
@@ -303,8 +304,9 @@ export const Transformers = {
               parent: this
             }))
 
-          value[name] = parser.parse(obj)
+          newVal[name] = parser.parse(obj)
         })
+        return newVal
       }
 
       return value
