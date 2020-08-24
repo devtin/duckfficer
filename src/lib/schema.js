@@ -401,7 +401,7 @@ export class Schema {
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v, { state = {}, virtualsEnumerable = true } = {}) {
+  parse (v, { state = {}, virtualsEnumerable = false } = {}) {
     // schema-level casting
     // todo: cast children schemas
     v = this.fullCast(v, { state })
