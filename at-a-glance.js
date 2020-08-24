@@ -1,11 +1,34 @@
 /**
+ * *schemas/user.js*
+ */
+
+const { Schema } = require('duckfficer')
+
+// lets create a schema first
+const User = new Schema({
+  firstName: String,
+  lastName: String,
+  get fullName () {
+    return this.firstName + ' ' + this.lastName
+  },
+  email: {
+    type: String,
+    regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
+  },
+  dob: Date
+})
+
+module.exports = { User }
+
+/**
  * *index.js*
  */
+
 const Koa = require('koa')
 const koaBody = require('koa-body')
 const Router = require('koa-router')
 
-// this is our custom schema
+// lets import our custom schema
 const { User } = require('./schemas/user')
 
 const app = new Koa()
@@ -26,7 +49,8 @@ app.use(async (ctx, next) => {
 
 router.post('/user', (ctx, next) => {
   const payload = User.parse(ctx.request.body)
-  // some business logic...
+  console.log(payload.dob instanceof Date) // => true
+  // our object is valid, we may go perform some business logic...
   ctx.body = payload
 })
 
@@ -34,27 +58,6 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
   .listen(3000)
-
-/**
- * *schemas/user.js*
- */
-
-const { Schema } = require('duckfficer')
-
-const User = new Schema({
-  firstName: String,
-  lastName: String,
-  get fullName () {
-    return this.firstName + ' ' + this.lastName
-  },
-  email: {
-    type: String,
-    regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
-  },
-  dob: Date
-})
-
-module.exports = { User }
 
 /**
  * Now, start the script:
