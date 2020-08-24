@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/devtin/duckfficer/compare/v1.1.0...v1.1.1) (2020-08-24)
+
+
+### Bug Fixes
+
+* **Object.mapSchema:** do not mutate object ([8ee4b67](https://github.com/devtin/duckfficer/commit/8ee4b67222ad1d6a29584901ef69b5e1b80d3113))
+
+
+### Chore
+
+* fix docs build ([ca78a08](https://github.com/devtin/duckfficer/commit/ca78a08a7b7eb6f555ff671cad6ff97223b6ed04))
+* fix docs build (trim) ([287958a](https://github.com/devtin/duckfficer/commit/287958aee0e75eca2dfc85ed5ce9f16cb34feabb))
+
+
+### Docs
+
+* prioritize schema creation ([984c888](https://github.com/devtin/duckfficer/commit/984c88816604c9036835940a59335e951c6d92d0))
+
 ## [1.1.0](https://github.com/devtin/duckfficer/compare/v1.0.0...v1.1.0) (2020-08-23)
 
 
