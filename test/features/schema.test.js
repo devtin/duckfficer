@@ -38,8 +38,8 @@ test('Creating a schema', async t => {
   }
 
   let safeObject
-  t.notThrows(() => {
-    safeObject = UserSchema.parse(arbitraryObject)
+  await t.notThrowsAsync(async () => {
+    safeObject = await UserSchema.parse(arbitraryObject)
   })
 
   t.truthy(safeObject)
@@ -57,7 +57,7 @@ test('Creating a schema', async t => {
   t.is(safeObject.description.length, 3)
 })
 
-test('Error-handling and LifeCycle', t => {
+test('Error-handling and LifeCycle', async t => {
   /**
    * Below we are gonna dive into the schema-validation life-cycle for a better understanding of the tool.
    */
@@ -121,7 +121,7 @@ test('Error-handling and LifeCycle', t => {
     phoneNumber: '123'
   }
 
-  error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+  error = await t.throwsAsync(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
   t.is(error.message, 'Invalid object schema')
   t.is(error.errors.length, 1)
@@ -140,7 +140,7 @@ test('Error-handling and LifeCycle', t => {
    * Throws an error when missing required values.
    */
 
-  error = t.throws(() => UserSchema.parse({
+  error = await t.throwsAsync(() => UserSchema.parse({
     // name: 'Martin',
     birthday: '11/11/1999',
     phoneNumber: '123'
@@ -192,7 +192,7 @@ test('Error-handling and LifeCycle', t => {
   // resetting lifecycle trace
   lifeCycle.length = 0
 
-  t.notThrows(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+  await t.notThrowsAsync(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
   /**
    * Below we can clearly see the life-cycle of the validation process.
@@ -213,7 +213,7 @@ test('Error-handling and LifeCycle', t => {
   ])
 })
 
-test('Required and optional values', t => {
+test('Required and optional values', async t => {
   /**
    * All properties in a Schema are required by default.
    */
@@ -227,7 +227,7 @@ test('Required and optional values', t => {
    * Whenever a required property is missing, an error is thrown.
    */
 
-  let error = t.throws(() => AddressSchema.parse({
+  let error = await t.throwsAsync(() => AddressSchema.parse({
     line1: 'Brickell',
     line2: 'Ave'
   }))
@@ -258,33 +258,33 @@ test('Required and optional values', t => {
    * Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
    */
 
-  t.notThrows(() => {
+  await t.notThrowsAsync(() =>
     ContactSchema.parse({
       name: 'Martin',
       email: 'tin@devtin.io'
     })
-  })
+  )
 
-  t.notThrows(() => {
+  await t.notThrowsAsync(() =>
     ContactSchema.parse({
       name: 'Martin',
       email: 'tin@devtin.io',
       age: undefined,
       address: undefined
     })
-  })
+  )
 
   /**
    * Whenever `age` is present, the validation will ensure it is a `Number`, though.
    */
 
-  error = t.throws(() => {
+  error = await t.throwsAsync(() =>
     ContactSchema.parse({
       name: 'Papo',
       email: 'sandy@papo.com',
       age: 'I don\'t know.'
     })
-  })
+  )
 
   t.is(error.message, 'Data is not valid')
   t.is(error.errors.length, 1)
@@ -293,8 +293,8 @@ test('Required and optional values', t => {
 
   let contact2
 
-  t.notThrows(() => {
-    contact2 = ContactSchema.parse({
+  await t.notThrowsAsync(async () => {
+    contact2 = await ContactSchema.parse({
       name: 'Papo',
       email: 'sandy@papo.com',
       age: 36
@@ -308,7 +308,7 @@ test('Required and optional values', t => {
   })
 })
 
-test('Default values', t => {
+test('Default values', async t => {
   /**
    * Default values are meant to be used whenever an arbitrary object misses the value of the property in subject.
    */
@@ -338,8 +338,9 @@ test('Default values', t => {
   t.is(error.message, 'Remove either the \'required\' or the \'default\' option for property state.')
 
   let sanitized
-  t.notThrows(() => {
-    sanitized = ContactSchema.parse({
+
+  await t.notThrowsAsync(async () => {
+    sanitized = await ContactSchema.parse({
       name: 'Martin'
     })
   })
@@ -363,8 +364,8 @@ test('Default values', t => {
   })
 
   let Martin
-  t.notThrows(() => {
-    Martin = UserSchema.parse({
+  await t.notThrowsAsync(async () => {
+    Martin = await UserSchema.parse({
       name: 'Martin'
     })
   })
@@ -394,7 +395,7 @@ test('Default values', t => {
     subscribe: Boolean
   }, { defaultValues })
 
-  const parsed = SomeSchema.parse({
+  const parsed = await SomeSchema.parse({
     name: 'Martin',
     address: {
       street: 'Brickell ave'
@@ -407,7 +408,7 @@ test('Default values', t => {
   t.is(parsed.subscribe, true)
 })
 
-test('Null values', t => {
+test('Null values', async t => {
   /**
    * Sometimes it is useful to allow a property to accept null values no matter what type it has.
    * Property-setting `allowNull` allows you to do so.
@@ -415,7 +416,7 @@ test('Null values', t => {
   const RegularSchema = new Schema({
     type: String
   })
-  const error = t.throws(() => RegularSchema.parse(null))
+  const error = await t.throwsAsync(() => RegularSchema.parse(null))
   t.is(error.message, 'Invalid string')
 
   const NullSchema = new Schema({
@@ -423,10 +424,10 @@ test('Null values', t => {
     // allowing null values!
     allowNull: true
   })
-  t.is(NullSchema.parse(null), null)
+  t.is(await NullSchema.parse(null), null)
 })
 
-test('Nesting schemas', t => {
+test('Nesting schemas', async t => {
   /**
    * We can use a previously defined schema in order to extend the validation of other schemas.
    */
@@ -454,14 +455,14 @@ test('Nesting schemas', t => {
     address: AddressSchema
   })
 
-  const user = UserSchema.parse({
+  const user = await UserSchema.parse({
     name: 'Martin',
     birthday: '11/11/1999'
   })
 
   t.truthy(user)
 
-  const error1 = t.throws(() => UserSchema.parse({
+  const error1 = await t.throwsAsync(() => UserSchema.parse({
     name: 'Martin',
     birthday: '11/11/1999',
     address: null
@@ -470,7 +471,7 @@ test('Nesting schemas', t => {
   t.is(error1.errors[0].message, 'Property address.line1 is required')
   t.is(error1.errors[0].field.fullPath, 'address.line1')
 
-  const error2 = t.throws(() => UserSchema.parse({
+  const error2 = await t.throwsAsync(() => UserSchema.parse({
     name: 'Martin',
     birthday: '11/11/1999',
     address: {
@@ -483,7 +484,7 @@ test('Nesting schemas', t => {
 
   t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address', 'address.line1', 'address.line2', 'address.zip'])
 
-  t.notThrows(() => UserSchema.parse({
+  await t.notThrowsAsync(() => UserSchema.parse({
     name: 'Martin',
     birthday: '11/11/1999',
     address: {
@@ -493,36 +494,38 @@ test('Nesting schemas', t => {
   }))
 })
 
-test('Multiple types', t => {
+test('Multiple types', async t => {
   let error
-  const FnSchema = new Schema([Function, Promise])
+  const FnSchema = new Schema([Function, Object])
 
-  t.notThrows(() => FnSchema.parse(() => {}))
-  t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve('this'))))
+  await t.notThrowsAsync(() => FnSchema.parse(() => {}))
+  await t.notThrowsAsync(() => FnSchema.parse(new Promise(resolve => {
+    resolve({ obj: 'some-obj' })
+  })))
 
-  error = t.throws(() => FnSchema.parse('some pic'))
-  t.is(error.message, 'Could not resolve given value type. Allowed types are Function and Promise')
+  error = await t.throwsAsync(() => FnSchema.parse('some pic'))
+  t.is(error.message, 'Could not resolve given value type. Allowed types are Function and Object')
 
   const UserSchema = new Schema({
     name: String,
     age: [String, Number]
   })
 
-  const martin = UserSchema.parse({
+  const martin = await UserSchema.parse({
     name: 'Martin',
     age: '12'
   })
 
   t.is(martin.age, '12')
 
-  const olivia = UserSchema.parse({
+  const olivia = await UserSchema.parse({
     name: 'Olivia',
     age: 0.9
   })
 
   t.is(olivia.age, 0.9)
 
-  error = t.throws(() => UserSchema.parse({
+  error = await t.throwsAsync(() => UserSchema.parse({
     name: 'Ana',
     age: new Date('6/18/2020')
   }))
@@ -530,7 +533,7 @@ test('Multiple types', t => {
   t.is(error.errors[0].message, 'Could not resolve given value type in property age. Allowed types are String and Number')
 })
 
-test('Auto-casting', t => {
+test('Auto-casting', async t => {
   /**
    * Most transformers provide an option for auto-casting. When property-setting `autoCast` equals `true`
    * (depending on the transformer) it may try to resolve given arbitrary value into the expected one.
@@ -551,8 +554,8 @@ test('Auto-casting', t => {
 
   let Olivia
 
-  t.notThrows(() => {
-    Olivia = UserSchema.parse({
+  await t.notThrowsAsync(async () => {
+    Olivia = await UserSchema.parse({
       name: 'Olivia',
       birthday: '8/31/2019',
       kids: '0'
@@ -580,7 +583,7 @@ test('Auto-casting', t => {
     }
   })
 
-  const error = t.throws(() => StrictUserSchema.parse({
+  const error = await t.throwsAsync(() => StrictUserSchema.parse({
     name: 'Martin',
     birthday: '11/11/1999',
     kids: '1'
@@ -594,7 +597,7 @@ test('Auto-casting', t => {
   t.is(error.errors[1].field.fullPath, 'kids')
 })
 
-test('Loaders', t => {
+test('Loaders', async t => {
   /**
    * Loaders can be seen as a way of piping transformers.
    */
@@ -610,7 +613,7 @@ test('Loaders', t => {
     name: String
   })
 
-  const error = t.throws(() => User.parse({
+  const error = await t.throwsAsync(() => User.parse({
     id: '123',
     name: 'Kombucha'
   }))
@@ -618,8 +621,8 @@ test('Loaders', t => {
   t.is(error.errors[0].message, 'Invalid number')
 
   let product
-  t.notThrows(() => {
-    product = User.parse({
+  await t.notThrowsAsync(async () => {
+    product = await User.parse({
       id: 123,
       name: 'Kombucha'
     })
@@ -628,12 +631,12 @@ test('Loaders', t => {
   t.is(product.id, '#123')
 })
 
-test('Overriding initial settings', t => {
+test('Overriding initial settings', async t => {
   const SomeSchema = new Schema({
     name: String
   })
 
-  const error1 = t.throws(() => SomeSchema.parse(undefined))
+  const error1 = await t.throwsAsync(() => SomeSchema.parse(undefined))
   t.is(error1.message, 'Data is not valid')
   t.is(error1.errors[0].message, 'Property name is required')
 
@@ -650,8 +653,8 @@ test('Overriding initial settings', t => {
     }
   })
 
-  t.notThrows(() => SomeOptionalSchema.parse(undefined))
-  const error2 = t.throws(() => SomeOptionalSchema.parse({}))
+  await t.notThrowsAsync(() => SomeOptionalSchema.parse(undefined))
+  const error2 = await t.throwsAsync(() => SomeOptionalSchema.parse({}))
   t.is(error2.message, 'Data is not valid')
   t.is(error2.errors[0].message, 'Property name is required')
 })

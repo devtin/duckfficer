@@ -14,13 +14,12 @@ test('Built-in cast (provided by types or transformers)', t => {
     'Date',
     'Map',
     'Number',
-    'Promise',
     'Set',
     'String'
   ])
 })
 
-test('Custom property-cast hook (provided at schema-setting level)', t => {
+test('Custom property-cast hook (provided at schema-setting level)', async t => {
   /**
    * The [cast](/api.md#Caster) hook can be use within a [SchemaSetting](/api.md#Schema..SchemaSettings) to provide
    * extra casting logic.
@@ -41,7 +40,7 @@ test('Custom property-cast hook (provided at schema-setting level)', t => {
 
   const givenState = { someState: true }
 
-  const error = t.throws(() => {
+  const error = await t.throwsAsync(() => {
     return ProductSchema.parse({
       id: '123',
       name: 'Kombucha'
@@ -53,8 +52,8 @@ test('Custom property-cast hook (provided at schema-setting level)', t => {
   t.is(error.errors[0].message, 'Invalid number')
 
   let product
-  t.notThrows(() => {
-    product = ProductSchema.parse({
+  await t.notThrowsAsync(async () => {
+    product = await ProductSchema.parse({
       id: '#123',
       name: 'Kombucha'
     }, {
@@ -64,7 +63,7 @@ test('Custom property-cast hook (provided at schema-setting level)', t => {
   t.is(product.id, 123)
 })
 
-test('Custom value cast hook (provided at schema level)', t => {
+test('Custom value cast hook (provided at schema level)', async t => {
   /**
    * We can cast (transform) whatever value passed to the parse method prior proceeding with any further logic by using
    * the schema-level cast hook.
@@ -91,8 +90,8 @@ test('Custom value cast hook (provided at schema level)', t => {
 
   const givenState = { someState: true }
   let product
-  t.notThrows(() => {
-    product = ProductSchema.parse({
+  await t.notThrowsAsync(async () => {
+    product = await ProductSchema.parse({
       id: 321,
       name: 'Hass Avocados',
       price: 3.99

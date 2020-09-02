@@ -1,7 +1,9 @@
 import test from 'ava'
-import { Schema, ValidationError, Transformers } from '../'
+import { Schema, ValidationError, Transformers, Utils } from '../'
 
-test('All error throwing transformers must throw a ValidationError', t => {
+const { PromiseEach } = Utils
+
+test('All error throwing transformers must throw a ValidationError', async t => {
   const transformersToTest = {
     Object: 1,
     Array: 1,
@@ -13,13 +15,13 @@ test('All error throwing transformers must throw a ValidationError', t => {
 
   t.plan(Object.keys(transformersToTest).length)
 
-  Object.keys(transformersToTest).forEach(type => {
+  await PromiseEach(Object.keys(transformersToTest), async type => {
     const instance = new Schema({
       type
     })
 
     try {
-      instance.parse(transformersToTest[type])
+      await instance.parse(transformersToTest[type])
     } catch (err) {
       t.true(err instanceof ValidationError)
       t.log(`error thrown by type ${type} is${!(err instanceof ValidationError) ? ' not' : ''} a ValidationError`)
@@ -27,10 +29,10 @@ test('All error throwing transformers must throw a ValidationError', t => {
   })
 })
 
-test('Type errors are configured via the `typeError` setting', t => {
-  Object.keys(Transformers).forEach(typeName => {
+test('Type errors are configured via the `typeError` setting', async t => {
+  await PromiseEach(Object.keys(Transformers), async typeName => {
     const typeError = `some custom error for ${typeName}`
-    const error = t.throws(() => (new Schema({
+    const error = await t.throwsAsync(() => (new Schema({
       type: typeName,
       typeError
     })).parse(null))

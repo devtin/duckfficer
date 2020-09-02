@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, ValidationError } from '../../../.'
 
-test('BigInt', t => {
+test('BigInt', async t => {
   /**
    * Validates `BigInt`s.
    */
@@ -10,7 +10,7 @@ test('BigInt', t => {
     id: BigInt
   })
 
-  const error = t.throws(() => UserSchema.parse({
+  const error = await t.throwsAsync(() => UserSchema.parse({
     user: 'tin',
     id: 1
   }))
@@ -20,8 +20,8 @@ test('BigInt', t => {
   t.is(error.errors[0].field.fullPath, 'id')
 
   let contact
-  t.notThrows(() => {
-    contact = UserSchema.parse({
+  await t.notThrowsAsync(async () => {
+    contact = await UserSchema.parse({
       user: 'tin',
       id: 1n
     })
@@ -31,7 +31,7 @@ test('BigInt', t => {
   t.is(contact.id, 1n)
 })
 
-test('autoCast (default `false`)', t => {
+test('autoCast (default `false`)', async t => {
   /**
    * [BigInt](/api.md#Transformers.BigInt) transformer has a built-in auto-casting function that would convert any numeric
    * representation of a `String` or a `Number` into a proper `BigInt`. This feature is disabled by default.
@@ -41,7 +41,7 @@ test('autoCast (default `false`)', t => {
     id: BigInt
   })
 
-  t.throws(() => UserSchema.parse({
+  await t.throwsAsync(() => UserSchema.parse({
     user: 'tin',
     id: '1'
   }))
@@ -59,8 +59,8 @@ test('autoCast (default `false`)', t => {
   })
 
   let contact
-  t.notThrows(() => {
-    contact = UserSchema2.parse({
+  await t.notThrowsAsync(async () => {
+    contact = await UserSchema2.parse({
       user: 'tin',
       id: '1' // < numeric string
     })
@@ -69,7 +69,7 @@ test('autoCast (default `false`)', t => {
   t.is(contact.user, 'tin')
   t.is(contact.id, 1n)
 
-  const error = t.throws(() => UserSchema2.parse({
+  const error = await t.throwsAsync(() => UserSchema2.parse({
     user: 'tin',
     id: 'some huge integer'
   }))

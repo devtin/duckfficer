@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Date', t => {
+test('Date', async t => {
   /**
    * Validates `Date`'s
    */
@@ -10,15 +10,12 @@ test('Date', t => {
     birthday: Date
   })
 
-  let contact
-  t.notThrows(() => {
-    contact = dateValidator.parse({
-      name: 'Martin',
-      birthday: new Date('11/11/1999')
-    })
-  })
+  await t.notThrowsAsync(() => dateValidator.parse({
+    name: 'Martin',
+    birthday: new Date('11/11/1999')
+  }))
 
-  const error = t.throws(() => dateValidator.parse({
+  const error = await t.throwsAsync(() => dateValidator.parse({
     name: 'Martin',
     birthday: 'Somewhere in the 80s'
   }))
@@ -27,7 +24,7 @@ test('Date', t => {
   t.is(error.errors[0].message, 'Invalid date')
 })
 
-test('autoCast (default `true`)', t => {
+test('autoCast (default `true`)', async t => {
   /**
    * Date transformer has a built-in cast function that transforms proper `String`-dates into `Date`'s.
    */
@@ -37,8 +34,8 @@ test('autoCast (default `true`)', t => {
   })
 
   let contact
-  t.notThrows(() => {
-    contact = dateValidator.parse({
+  await t.notThrowsAsync(async () => {
+    contact = await dateValidator.parse({
       name: 'Martin',
       birthday: '11/11/1999' // this is a string originally
     })
@@ -49,7 +46,7 @@ test('autoCast (default `true`)', t => {
   /**
    * `String`'s that can not be guessed as `Date`'s would result in an error.
    */
-  const error = t.throws(() => dateValidator.parse({
+  const error = await t.throwsAsync(() => dateValidator.parse({
     name: 'Martin',
     birthday: 'Somewhere in the 80s'
   }))
@@ -68,7 +65,7 @@ test('autoCast (default `true`)', t => {
       autoCast: false
     }
   })
-  const error2 = t.throws(() => dateValidator2.parse({
+  const error2 = await t.throwsAsync(() => dateValidator2.parse({
     name: 'Martin',
     birthday: '11/11/1999'
   }))

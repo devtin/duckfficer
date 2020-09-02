@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../'
 
-test('Virtuals (getters / setters)', t => {
+test('Virtuals (getters / setters)', async t => {
   const Address = new Schema({
     line1: String,
     line2: String,
@@ -28,7 +28,7 @@ test('Virtuals (getters / setters)', t => {
     }
   })
 
-  const me = User.parse({
+  const me = await User.parse({
     firstName: 'Martin',
     lastName: 'Rafael',
     address: {
@@ -51,11 +51,19 @@ test('Virtuals (getters / setters)', t => {
   })
 
   t.is(error.message, 'Cannot set property fullAddress of #<Object> which has only a getter')
+  t.deepEqual(Object.keys(me), ['firstName', 'lastName', 'address'])
 
-  const she = User.parse({
+  /**
+   * Once parsed, virtuals are non-enumerable by default. You can use `parse(payload, { virtualsEnumerable = true` })`
+   * to change this behavior.
+   */
+
+  const she = await User.parse({
     firstName: 'Olivia',
     lastName: 'Isabel'
+  }, {
+    virtualsEnumerable: true
   })
 
-  t.false(Object.hasOwnProperty.call(she, 'address'))
+  t.deepEqual(Object.keys(she), ['firstName', 'lastName', 'fullName'])
 })

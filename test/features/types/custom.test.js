@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers } from '../../../.'
 
-test('Custom', t => {
+test('Custom', async t => {
   /**
    * Custom transformers are great to implement custom logic that may be required by multiple entities of the ecosystem.
    */
@@ -16,7 +16,7 @@ test('Custom', t => {
     }
   })
 
-  let error = t.throws(() => customTransformer.parse({
+  let error = await t.throwsAsync(() => customTransformer.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
   }))
@@ -46,7 +46,7 @@ test('Custom', t => {
     }
   }
 
-  error = t.throws(() => customTransformer.parse({
+  error = await t.throwsAsync(() => customTransformer.parse({
     name: 'Martin',
     email: 123
   }))
@@ -54,7 +54,7 @@ test('Custom', t => {
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid string') // From the String transformer
 
-  error = t.throws(() => customTransformer.parse({
+  error = await t.throwsAsync(() => customTransformer.parse({
     name: 'Martin',
     email: 'martin'
   }))
@@ -62,7 +62,7 @@ test('Custom', t => {
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-  error = t.throws(() => customTransformer.parse({
+  error = await t.throwsAsync(() => customTransformer.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
   }))
@@ -70,7 +70,7 @@ test('Custom', t => {
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Only gmail accounts')
 
-  t.notThrows(() => customTransformer.parse({
+  await t.notThrowsAsync(() => customTransformer.parse({
     name: 'Martin',
     email: 'marting.dc@gmail.com'
   }))

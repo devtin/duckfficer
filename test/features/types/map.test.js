@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Map', t => {
+test('Map', async t => {
   /**
    * Validates [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) values
    */
@@ -11,16 +11,16 @@ test('Map', t => {
     autoCast: false
   })
 
-  const error = t.throws(() => MapSchema.parse({ hello: true }))
+  const error = await t.throwsAsync(() => MapSchema.parse({ hello: true }))
   t.is(error.message, 'Invalid map')
 })
 
-test('autoCast (default `true`)', t => {
+test('autoCast (default `true`)', async t => {
   const MapSchema = new Schema({
     type: Map
   })
 
-  const parsed = MapSchema.parse({ hello: true })
+  const parsed = await MapSchema.parse({ hello: true })
   t.true(parsed instanceof Map)
   t.true(parsed.get('hello'))
   t.false(Object.hasOwnProperty.call(parsed, 'hello'))

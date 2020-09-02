@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Transformers, ValidationError } from '../../'
 
-test('Validating and sanitizing arbitrary objects', t => {
+test('Validating and sanitizing arbitrary objects', async t => {
   const UserSchema = new Schema({
     name: String,
     birthday: Date,
@@ -35,7 +35,7 @@ test('Validating and sanitizing arbitrary objects', t => {
    * payload's schema structure doest not match the provided one.
    */
 
-  let error = t.throws(() => UserSchema.parse(arbitraryObject))
+  let error = await t.throwsAsync(() => UserSchema.parse(arbitraryObject))
 
   t.true(error instanceof ValidationError)
   t.true(error instanceof Error)
@@ -50,7 +50,7 @@ test('Validating and sanitizing arbitrary objects', t => {
    * then proceed with further validations...
    */
 
-  error = t.throws(() => UserSchema.parse({
+  error = await t.throwsAsync(() => UserSchema.parse({
     birthday: '11/11/1999',
     description: ['monkey', 'developer', 'arepa lover']
   }))
@@ -85,7 +85,7 @@ test('Validating and sanitizing arbitrary objects', t => {
     }
   })
 
-  error = t.throws(() => AnotherUserSchema.parse({
+  error = await t.throwsAsync(() => AnotherUserSchema.parse({
     name: 'Martin Rafael',
     level: 'admin'
   }))
@@ -93,7 +93,7 @@ test('Validating and sanitizing arbitrary objects', t => {
   t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
   t.is(error.errors[0].field.fullPath, 'level')
 
-  error = t.throws(() => AnotherUserSchema.parse({
+  error = await t.throwsAsync(() => AnotherUserSchema.parse({
     name: 'Martin Rafael',
     level: 'admin'
   }, {
@@ -137,13 +137,12 @@ test('Built-in validation (provided by types or transformers)', t => {
     'Map',
     'Number',
     'Object',
-    'Promise',
     'Set',
     'String'
   ])
 })
 
-test('Custom property validation hook (provided at schema-setting level)', t => {
+test('Custom property validation hook (provided at schema-setting level)', async t => {
   /**
    * The [validate](/api.md#Caster) hook can be use within a [SchemaSetting](/api.md#Schema..SchemaSettings) to provide
    * extra validation logic.
@@ -171,7 +170,7 @@ test('Custom property validation hook (provided at schema-setting level)', t => 
     name: 'Kombucha'
   }, { state: givenState }))
 
-  const error = t.throws(() => ProductSchema.parse({
+  const error = await t.throwsAsync(() => ProductSchema.parse({
     id: 123,
     created: '2018/12/1',
     name: 'Kombucha'
@@ -181,7 +180,7 @@ test('Custom property validation hook (provided at schema-setting level)', t => 
   t.is(error.errors[0].field.fullPath, 'created')
 })
 
-test('Custom value validation hook (provided at schema level)', t => {
+test('Custom value validation hook (provided at schema level)', async t => {
   const ProductSchema = new Schema({
     id: Number,
     name: String,
@@ -198,7 +197,7 @@ test('Custom value validation hook (provided at schema level)', t => {
 
   const givenState = { someState: true }
 
-  const error = t.throws(() => ProductSchema.parse({
+  const error = await t.throwsAsync(() => ProductSchema.parse({
     id: 123,
     name: 'Kombucha Green',
     price: 3

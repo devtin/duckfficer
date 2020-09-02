@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema, Utils, Transformers, ValidationError } from '../'
 
-test('Validates the schema of the payload matches the defined schema', t => {
+test('Validates the schema of the payload matches the defined schema', async t => {
   const address = new Schema({
     line1: String,
     zip: Number
@@ -12,7 +12,7 @@ test('Validates the schema of the payload matches the defined schema', t => {
     address
   })
 
-  const err = t.throws(() => user.parse({
+  const err = await t.throwsAsync(() => user.parse({
     name: 'Martin',
     address: {
       line2: 'unit #1111'
@@ -36,7 +36,7 @@ test('Validates the provided types against the defined schema', async t => {
     description: Array
   })
 
-  const Martin = UserSchema.parse({
+  const Martin = await UserSchema.parse({
     name: 'Martin Rafael',
     birthday: new Date('11/11/1999'),
     description: ['monkey', 'developer', 'arepa lover']
@@ -46,7 +46,7 @@ test('Validates the provided types against the defined schema', async t => {
   t.is(Martin.birthday.getFullYear(), 1999)
   t.is(Martin.description.length, 3)
 
-  const error = t.throws(() => UserSchema.parse({
+  const error = await t.throwsAsync(() => UserSchema.parse({
     name: 123,
     birthday: 'Don\'t know...',
     description: 'I like bananas'
@@ -70,17 +70,17 @@ test('Default value helper', async t => {
     default: 1
   })
 
-  t.is(quantityValidator.parse(), 1)
+  t.is(await quantityValidator.parse(), 1)
 })
 
-test('Default value helper (function)', t => {
+test('Default value helper (function)', async t => {
   const quantityValidator = new Schema({
     name: 'date',
     type: Date,
     default: Date.now
   })
 
-  t.true(quantityValidator.parse() instanceof Date)
+  t.true(await quantityValidator.parse() instanceof Date)
 
   /**
    * You can also access the state passed via the `parse` method through the default function
@@ -91,16 +91,18 @@ test('Default value helper (function)', t => {
     level: {
       type: String,
       default ({ state }) {
-        return state?.user?.level || 'user'
+        return new Promise((resolve) => {
+          setTimeout(() => resolve(state?.user?.level || 'user'), 10)
+        })
       }
     }
   })
 
-  t.is(user.parse({
+  t.is((await user.parse({
     username: 'devtin'
-  }).level, 'user')
+  })).level, 'user')
 
-  t.is(user.parse({
+  t.is((await user.parse({
     username: 'devtin'
   }, {
     state: {
@@ -108,21 +110,21 @@ test('Default value helper (function)', t => {
         level: 'admin'
       }
     }
-  }).level, 'admin')
+  })).level, 'admin')
 })
 
 /**
  * Each transformer provides its own custom message
  */
 
-test('Custom error messages with optional rendering', t => {
+test('Custom error messages with optional rendering', async t => {
   const Title = new Schema({
     name: 'title',
     type: String,
     required: [true, 'A post requires a title']
   })
 
-  let error = t.throws(() => Title.parse())
+  let error = await t.throwsAsync(() => Title.parse())
   t.is(error.message, 'A post requires a title')
 
   const Email = new Schema({
@@ -131,7 +133,7 @@ test('Custom error messages with optional rendering', t => {
     regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
   })
 
-  error = t.throws(() => Email.parse('martin'))
+  error = await t.throwsAsync(() => Email.parse('martin'))
   t.is(error.message, 'martin is not a valid e-mail address')
 })
 
@@ -139,13 +141,13 @@ test('Custom error messages with optional rendering', t => {
  * `autoCasting` is a cool feature to have since it prevents you from doing extra casting.
  */
 
-test('autoCasting', t => {
+test('autoCasting', async t => {
   const DOB = new Schema({
     name: 'title',
     type: Date
   })
 
-  t.true(DOB.parse('11/11/1999') instanceof Date)
+  t.true(await DOB.parse('11/11/1999') instanceof Date)
 
   const qtty = new Schema({
     name: 'quantity',
@@ -154,7 +156,7 @@ test('autoCasting', t => {
   })
 
   // Auto-casting is nice
-  t.true(Number.isInteger(qtty.parse('20')))
+  t.true(Number.isInteger(await qtty.parse('20')))
 
   // Though sometimes may be required for proper validation
   // as mentioned [here](https://github.com/devtin/duckfficer/issues/6)
@@ -164,7 +166,7 @@ test('autoCasting', t => {
     autoCast: false
   })
 
-  let error = t.throws(() => BooleanSchema.parse(5))
+  let error = await t.throwsAsync(() => BooleanSchema.parse(5))
   t.is(error.message, 'Invalid boolean') // => Invalid boolean
 
   const DateSchema = new Schema({
@@ -172,9 +174,9 @@ test('autoCasting', t => {
     autoCast: false
   })
 
-  t.notThrows(() => DateSchema.parse(new Date('11/11/1999 23:11 GMT-0400')))
+  await t.notThrowsAsync(() => DateSchema.parse(new Date('11/11/1999 23:11 GMT-0400')))
 
-  error = t.throws(() => DateSchema.parse('11/11/1999'))
+  error = await t.throwsAsync(() => DateSchema.parse('11/11/1999'))
   t.is(error.message, 'Invalid date')
 })
 
@@ -201,7 +203,7 @@ test('Validates an object schema in terms of contained properties', t => {
   t.false(Utils.propertiesRestricted(user, ['name', 'email', 'address.city', 'address.zip', 'address.line1', 'address.line2'], { strict: true })) // => false
 })
 
-test('Validates and sanitizes schemas', t => {
+test('Validates and sanitizes schemas', async t => {
   const PostValidator = new Schema({
     title: {
       type: String,
@@ -214,7 +216,7 @@ test('Validates and sanitizes schemas', t => {
     }
   })
 
-  const error = t.throws(() => PostValidator.parse({
+  const error = await t.throwsAsync(() => PostValidator.parse({
     title: 'Beware while selling your stuffs online',
     body: 'Do never share your phone number',
     category: 'shopping'
@@ -223,23 +225,24 @@ test('Validates and sanitizes schemas', t => {
   t.is(error.message, 'Invalid object schema')
 
   let post
-  t.notThrows(() => {
-    post = PostValidator.parse({
+  await t.notThrowsAsync(async () => {
+    post = await PostValidator.parse({
       title: 'Beware while selling your stuffs online',
       body: 'Do never share your phone number'
     })
   })
 
   t.truthy(post)
-  t.true(post.hasOwnProperty('title'))
-  t.true(post.hasOwnProperty('body'))
-  t.true(post.hasOwnProperty('published'))
+  t.true(typeof post === 'object')
+  t.true(Object.hasOwnProperty.call(post, 'title'))
+  t.true(Object.hasOwnProperty.call(post, 'body'))
+  t.true(Object.hasOwnProperty.call(post, 'published'))
   t.true(typeof post.title === 'string')
   t.true(typeof post.body === 'string')
   t.true(post.published instanceof Date)
 })
 
-test('Validates full nested schemas', t => {
+test('Validates full nested schemas', async t => {
   // console.log(`AddressValidator.paths`, AddressValidator.paths)
   const UserValidator = new Schema({
     name: String,
@@ -262,7 +265,7 @@ test('Validates full nested schemas', t => {
     }
   })
 
-  const err = t.throws(() => UserValidator.parse({
+  const err = await t.throwsAsync(() => UserValidator.parse({
     name: 'Martin',
     email: 'marting.dc@gmail.com'
   }))
@@ -273,7 +276,7 @@ test('Validates full nested schemas', t => {
   t.is(err.errors[1].message, 'Property address.zip is required')
   t.is(err.errors[2].message, 'Property address.line1 is required')
 
-  t.notThrows(() => UserValidator.parse({
+  await t.notThrowsAsync(() => UserValidator.parse({
     name: 'Martin',
     email: 'marting.dc@gmail.com',
     birthday: '11/11/1999',
@@ -285,7 +288,7 @@ test('Validates full nested schemas', t => {
   }))
 })
 
-test('Handles custom data-types', t => {
+test('Handles custom data-types', async t => {
   const customType = new Schema({
     name: {
       type: String,
@@ -297,7 +300,7 @@ test('Handles custom data-types', t => {
     }
   })
 
-  let error = t.throws(() => customType.parse({
+  let error = await t.throwsAsync(() => customType.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
   }))
@@ -320,7 +323,7 @@ test('Handles custom data-types', t => {
     }
   }
 
-  error = t.throws(() => customType.parse({
+  error = await t.throwsAsync(() => customType.parse({
     name: 'Martin',
     email: 123
   }))
@@ -328,7 +331,7 @@ test('Handles custom data-types', t => {
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid string')
 
-  error = t.throws(() => customType.parse({
+  error = await t.throwsAsync(() => customType.parse({
     name: 'Martin',
     email: 'martin'
   }))
@@ -336,7 +339,7 @@ test('Handles custom data-types', t => {
   t.is(error.message, 'Data is not valid')
   t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-  error = t.throws(() => customType.parse({
+  error = await t.throwsAsync(() => customType.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
   }))
@@ -363,29 +366,29 @@ test('Checks whether contains a field or not', t => {
   t.false(SampleSchema.hasField('anObj.unExistentProp', true))
 })
 
-test('parseProperty', t => {
+test('parseProperty', async t => {
   const user = new Schema({
     type: 'String'
   })
-  t.is(user.parseProperty('String', 'Hello'), 'Hello')
+  t.is(await user.parseProperty('String', 'Hello'), 'Hello')
 })
 
-test('runChildren', t => {
-  t.deepEqual(new Schema({
+test('runChildren', async t => {
+  t.deepEqual(await new Schema({
     type: 'String'
   }).runChildren('Hello'), {})
 
-  t.deepEqual(new Schema({
+  t.deepEqual(await new Schema({
     type: 'String'
   }).runChildren('Hello', { method: 'unknown' }), {})
 })
 
-test('multiple types with only one item', t => {
+test('multiple types with only one item', async t => {
   const singleSchema = new Schema([String])
-  t.is(singleSchema.parse('Martin'), 'Martin')
+  t.is(await singleSchema.parse('Martin'), 'Martin')
 })
 
-test('performs fullCast of a schema with nested schemas', t => {
+test('performs fullCast of a schema with nested schemas', async t => {
   const address = new Schema({
     street: String,
     zip: {
@@ -406,7 +409,7 @@ test('performs fullCast of a schema with nested schemas', t => {
     name: String,
     address
   })
-  t.deepEqual(user.fullCast({
+  t.deepEqual(await user.fullCast({
     name: 'Martin',
     address: 'Brickell ave'
   }, {}), {

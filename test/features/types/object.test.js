@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Object', t => {
+test('Object', async t => {
   const Transaction = new Schema({
     created: {
       type: Date,
@@ -22,13 +22,13 @@ test('Object', t => {
     }
   }
 
-  const product = Transaction.parse({
+  const product = await Transaction.parse({
     payload
   })
 
   t.is(product.payload, payload) // remains untouched
 
-  const error = t.throws(() => Transaction.parse({
+  const error = await t.throwsAsync(() => Transaction.parse({
     payload: 'none'
   }))
 
@@ -37,7 +37,7 @@ test('Object', t => {
   t.is(error.errors[0].field.fullPath, 'payload')
 })
 
-test('mapSchema', t => {
+test('mapSchema', async t => {
   /**
    * We can optionally define the schema of the properties of an object.
    */
@@ -47,7 +47,7 @@ test('mapSchema', t => {
     mapSchema: Number
   })
 
-  const error = t.throws(() => ObjectWith.parse({
+  const error = await t.throwsAsync(() => ObjectWith.parse({
     papo: 123,
     papilla: '123'
   }))
@@ -74,7 +74,7 @@ test('mapSchema', t => {
     }
   })
 
-  const error2 = t.throws(() => Contact.parse({
+  const error2 = await t.throwsAsync(() => Contact.parse({
     name: 'Martin',
     email: {
       work: 'tin@devtin.io',
@@ -86,7 +86,7 @@ test('mapSchema', t => {
   t.is(error2.errors[0].message, 'Invalid e-mail address')
   t.is(error2.errors[0].field.fullPath, 'email.home')
 
-  t.notThrows(() => Contact.parse({
+  await t.notThrowsAsync(() => Contact.parse({
     name: 'Martin',
     email: {
       work: 'tin@devtin.io',

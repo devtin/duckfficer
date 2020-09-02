@@ -1,5 +1,7 @@
 import { castThrowable } from 'utils/cast-throwable.js'
 import { isNotNullObj } from 'utils/is-not-null-obj'
+import { PromiseEach } from 'utils/promise-each'
+import { PromiseMap } from 'utils/promise-map'
 /**
  * @typedef {Function} Validator
  * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
@@ -64,9 +66,9 @@ export const Transformers = {
     settings: {
       typeError: 'Invalid array'
     },
-    parse (value) {
+    async parse (value) {
       if (this.settings.arraySchema) {
-        value = value.map((value, name) => {
+        return PromiseMap(value, (item, name) => {
           const schema = this.constructor.castSchema(this.settings.arraySchema)
           const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
             schema,
@@ -77,7 +79,7 @@ export const Transformers = {
             name,
             parent: this
           }))
-          return parser.parse(value)
+          return parser.parse(item)
         })
       }
       return value
@@ -286,10 +288,10 @@ export const Transformers = {
     settings: {
       typeError: 'Invalid object'
     },
-    parse (value) {
+    async parse (value) {
       if (this.settings.mapSchema !== undefined) {
         const newVal = {}
-        Object.keys(value).forEach(name => {
+        await PromiseEach(Object.keys(value), async name => {
           const obj = value[name]
           const schema = this.constructor.castSchema(this.settings.mapSchema)
           const parser = this.constructor.guessType(schema) === 'Schema'
@@ -304,7 +306,7 @@ export const Transformers = {
               parent: this
             }))
 
-          newVal[name] = parser.parse(obj)
+          newVal[name] = await parser.parse(obj)
         })
         return newVal
       }

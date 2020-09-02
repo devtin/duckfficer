@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Boolean', t => {
+test('Boolean', async t => {
   /**
    * Validates `Boolean`s.
    */
@@ -14,7 +14,7 @@ test('Boolean', t => {
     }
   })
 
-  const error = t.throws(() => ProductSchema.parse({
+  const error = await t.throwsAsync(() => ProductSchema.parse({
     name: 'Kombucha',
     active: 'no'
   }))
@@ -23,8 +23,8 @@ test('Boolean', t => {
   t.is(error.errors[0].message, 'Invalid boolean')
 
   let product1
-  t.notThrows(() => {
-    product1 = ProductSchema.parse({
+  await t.notThrowsAsync(async () => {
+    product1 = await ProductSchema.parse({
       name: 'Kombucha',
       active: true
     })
@@ -34,8 +34,8 @@ test('Boolean', t => {
   t.true(product1.active)
 
   let product2
-  t.notThrows(() => {
-    product2 = ProductSchema.parse({
+  await t.notThrowsAsync(async () => {
+    product2 = await ProductSchema.parse({
       name: 'tin'
     })
   })
@@ -44,7 +44,7 @@ test('Boolean', t => {
   t.false(product2.active)
 })
 
-test('autoCast (default `false`)', t => {
+test('autoCast (default `false`)', async t => {
   /**
    * `Boolean`'s have a built-in auto-casting function that would transform any truthy value into `true`,
    * falsy values into `false`, when enabled. This setting is `false` by default.
@@ -66,8 +66,8 @@ test('autoCast (default `false`)', t => {
   })
 
   let product
-  t.notThrows(() => {
-    product = ProductType.parse({
+  await t.notThrowsAsync(async () => {
+    product = await ProductType.parse({
       name: 'Kombucha',
       active: 'sure!'
     })
@@ -75,5 +75,5 @@ test('autoCast (default `false`)', t => {
 
   t.true(product.active)
 
-  t.false(ProductType.parse({ name: 'kombucha', active: 'no' }).active)
+  t.false((await ProductType.parse({ name: 'kombucha', active: 'no' })).active)
 })

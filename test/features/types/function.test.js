@@ -1,13 +1,13 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Function', t => {
+test('Function', async t => {
   const ProductType = new Schema({
     user: String,
     save: Function
   })
 
-  const product = ProductType.parse({
+  const product = await ProductType.parse({
     user: 'tin',
     save () {
       return 'yeah!'
@@ -17,7 +17,7 @@ test('Function', t => {
   t.true(typeof product.save === 'function')
   t.is(product.save(), 'yeah!')
 
-  const error = t.throws(() => ProductType.parse({
+  const error = await t.throwsAsync(() => ProductType.parse({
     user: 'tin',
     save: false
   }))
