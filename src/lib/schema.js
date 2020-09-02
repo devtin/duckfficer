@@ -573,7 +573,7 @@ export class Schema {
         } catch (err) {
           // shh...
         }
-      })
+      }, true)
       if (!parsed) {
         this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v })
       }

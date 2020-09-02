@@ -508,7 +508,7 @@ test('Multiple types', async t => {
 
   const UserSchema = new Schema({
     name: String,
-    age: [String, Number]
+    age: [String, Number, Date]
   })
 
   const martin = await UserSchema.parse({
@@ -525,12 +525,19 @@ test('Multiple types', async t => {
 
   t.is(olivia.age, 0.9)
 
+  const juana = await UserSchema.parse({
+    name: 'Olivia',
+    age: new Date('01/01/1990')
+  })
+
+  t.true(juana.age instanceof Date)
+
   error = await t.throwsAsync(() => UserSchema.parse({
     name: 'Ana',
-    age: new Date('6/18/2020')
+    age: new Set(['status a', 'status b'])
   }))
   t.is(error.message, 'Data is not valid')
-  t.is(error.errors[0].message, 'Could not resolve given value type in property age. Allowed types are String and Number')
+  t.is(error.errors[0].message, 'Could not resolve given value type in property age. Allowed types are String, Number and Date')
 })
 
 test('Auto-casting', async t => {
