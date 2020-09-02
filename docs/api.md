@@ -17,6 +17,18 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#PromiseEach">PromiseEach(arr, fn, [breakOnFalse])</a> ⇒ <code>Promise.&lt;void&gt;</code></dt>
+<dd><p>Loops through given <code>arr</code> of functions, awaiting for each result, alternatively breaking the loop when <code>breakOnFalse</code>
+equals <code>true</code> and one of the functions returns <code>false</code> explicitly.</p>
+</dd>
+<dt><a href="#PromiseMap">PromiseMap(arr, fn, [breakOnFalse])</a> ⇒ <code>Promise.&lt;Array&gt;</code></dt>
+<dd><p>Loops through given <code>arr</code> of functions, awaiting for each result.</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
@@ -619,6 +631,34 @@ key map object that holds the available Transformer's (types) that can be valida
 | [settings.uppercase] | <code>Boolean</code> |  | Optionally convert input string into uppercase |
 | cast | [<code>Caster</code>](#Caster) |  | Basically checks if a value is an object and this object has the method `toString`. If so, calls the method and checks returning value does not look like `[object Object]`; if so, returns whatever value was returned by the method. |
 | validate | [<code>Validator</code>](#Validator) |  | Validates given value is a `String`. Additionally, performs built-in validations: minlength, maxlength and regex. |
+
+<a name="PromiseEach"></a>
+
+## PromiseEach(arr, fn, [breakOnFalse]) ⇒ <code>Promise.&lt;void&gt;</code>
+Loops through given `arr` of functions, awaiting for each result, alternatively breaking the loop when `breakOnFalse`
+equals `true` and one of the functions returns `false` explicitly.
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| arr | <code>Array.&lt;function()&gt;</code> |  |  |
+| fn | <code>function</code> |  | callback function to pass iterated items |
+| [breakOnFalse] | <code>Boolean</code> | <code>false</code> | whether to stop the loop when false (explicitly) returned |
+
+<a name="PromiseMap"></a>
+
+## PromiseMap(arr, fn, [breakOnFalse]) ⇒ <code>Promise.&lt;Array&gt;</code>
+Loops through given `arr` of functions, awaiting for each result.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;Array&gt;</code> - - array of results  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| arr | <code>Array.&lt;function()&gt;</code> |  |  |
+| fn | <code>function</code> |  | callback function to pass iterated items |
+| [breakOnFalse] | <code>Boolean</code> | <code>false</code> | whether to stop the loop when false (explicitly) returned |
 
 <a name="ValueError"></a>
 

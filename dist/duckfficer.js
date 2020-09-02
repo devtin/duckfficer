@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.0.0
+ * duckfficer v2.1.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -221,8 +221,40 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
   return valid
 }
 
-const PromiseEach = async function (arr, fn) {
-  for (const item of arr) await fn(item);
+/**
+ * Loops through given `arr` of functions, awaiting for each result, alternatively breaking the loop when `breakOnFalse`
+ * equals `true` and one of the functions returns `false` explicitly.
+ *
+ * @param {Function[]} arr
+ * @param {Function} fn - callback function to pass iterated items
+ * @param {Boolean} [breakOnFalse=false] - whether to stop the loop when false (explicitly) returned
+ * @return {Promise<void>}
+ */
+
+const PromiseEach = async function (arr, fn, breakOnFalse = false) {
+  for (const item of arr) {
+    if (await fn(item) === false && breakOnFalse) {
+      break
+    }
+  }
+};
+
+/**
+ * Loops through given `arr` of functions, awaiting for each result.
+ *
+ * @param {Function[]} arr
+ * @param {Function} fn - callback function to pass iterated items
+ * @param {Boolean} [breakOnFalse=false] - whether to stop the loop when false (explicitly) returned
+ * @return {Promise<Array>} - array of results
+ */
+
+const PromiseMap = async function (arr, fn, breakOnFalse) {
+  const newArr = [];
+  let index = 0;
+  await PromiseEach(arr, async (item) => {
+    newArr.push(await fn(item, index++));
+  }, breakOnFalse);
+  return newArr
 };
 
 var index = /*#__PURE__*/Object.freeze({
@@ -233,7 +265,8 @@ var index = /*#__PURE__*/Object.freeze({
   forEach: forEach,
   render: render,
   propertiesRestricted: propertiesRestricted,
-  PromiseEach: PromiseEach
+  PromiseEach: PromiseEach,
+  PromiseMap: PromiseMap
 });
 
 /**
@@ -268,15 +301,6 @@ function castThrowable (value, error) {
 
   return [value, error]
 }
-
-const PromiseMap = async function (arr, fn) {
-  const newArr = [];
-  let index = 0;
-  await PromiseEach(arr, async (item) => {
-    newArr.push(await fn(item, index++));
-  });
-  return newArr
-};
 
 /**
  * @typedef {Function} Validator
@@ -1317,7 +1341,7 @@ class Schema {
         } catch (err) {
           // shh...
         }
-      });
+      }, true);
       if (!parsed) {
         this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v });
       }

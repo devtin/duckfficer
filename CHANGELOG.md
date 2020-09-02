@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/devtin/duckfficer/compare/v2.0.0...v2.1.0) (2020-09-02)
+
+
+### Features
+
+* **utils:** export PromiseEach ([4af66de](https://github.com/devtin/duckfficer/commit/4af66def4917f54181f174295c28919644a614d6))
+
+
+### Bug Fixes
+
+* multiple transformers order ([b702a65](https://github.com/devtin/duckfficer/commit/b702a6543173410c15bd7d5700748926f7bb9790))
+
+
+### Docs
+
+* **utils:** add missing descriptions ([b1d9606](https://github.com/devtin/duckfficer/commit/b1d9606050994955c3e5d9a2e6c7cca1968bdd57))
+
 ## [2.0.0](https://github.com/devtin/duckfficer/compare/v1.2.0...v2.0.0) (2020-09-02)
 
 
