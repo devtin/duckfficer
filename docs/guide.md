@@ -49,8 +49,8 @@ const arbitraryObject = {
 }
 
 let safeObject
-t.notThrows(() => {
-  safeObject = UserSchema.parse(arbitraryObject)
+await t.notThrowsAsync(async () => {
+  safeObject = await UserSchema.parse(arbitraryObject)
 })
 
 t.truthy(safeObject)
@@ -134,7 +134,7 @@ arbitraryObject = {
   phoneNumber: '123'
 }
 
-error = t.throws(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+error = await t.throwsAsync(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 
 t.is(error.message, 'Invalid object schema')
 t.is(error.errors.length, 1)
@@ -153,7 +153,7 @@ lifeCycle.length = 0
 Throws an error when missing required values.
 
 ```js
-error = t.throws(() => UserSchema.parse({
+error = await t.throwsAsync(() => UserSchema.parse({
   // name: 'Martin',
   birthday: '11/11/1999',
   phoneNumber: '123'
@@ -205,7 +205,7 @@ arbitraryObject = {
 // resetting lifecycle trace
 lifeCycle.length = 0
 
-t.notThrows(() => UserSchema.parse(arbitraryObject, { state: passedState }))
+await t.notThrowsAsync(() => UserSchema.parse(arbitraryObject, { state: passedState }))
 ```
 
 Below we can clearly see the life-cycle of the validation process.
@@ -243,7 +243,7 @@ const AddressSchema = new Schema({
 Whenever a required property is missing, an error is thrown.
 
 ```js
-let error = t.throws(() => AddressSchema.parse({
+let error = await t.throwsAsync(() => AddressSchema.parse({
   line1: 'Brickell',
   line2: 'Ave'
 }))
@@ -274,33 +274,33 @@ const ContactSchema = Schema.cloneSchema({ schema: ContactSchemaO })
 Arbitrary objects can now be validated missing the property `age` as long as they match the rest of the schema.
 
 ```js
-t.notThrows(() => {
+await t.notThrowsAsync(() =>
   ContactSchema.parse({
     name: 'Martin',
     email: 'tin@devtin.io'
   })
-})
+)
 
-t.notThrows(() => {
+await t.notThrowsAsync(() =>
   ContactSchema.parse({
     name: 'Martin',
     email: 'tin@devtin.io',
     age: undefined,
     address: undefined
   })
-})
+)
 ```
 
 Whenever `age` is present, the validation will ensure it is a `Number`, though.
 
 ```js
-error = t.throws(() => {
+error = await t.throwsAsync(() =>
   ContactSchema.parse({
     name: 'Papo',
     email: 'sandy@papo.com',
     age: 'I don\'t know.'
   })
-})
+)
 
 t.is(error.message, 'Data is not valid')
 t.is(error.errors.length, 1)
@@ -309,8 +309,8 @@ t.is(error.errors[0].field.fullPath, 'age')
 
 let contact2
 
-t.notThrows(() => {
-  contact2 = ContactSchema.parse({
+await t.notThrowsAsync(async () => {
+  contact2 = await ContactSchema.parse({
     name: 'Papo',
     email: 'sandy@papo.com',
     age: 36
@@ -356,8 +356,9 @@ const error = t.throws(() => new Schema({
 t.is(error.message, 'Remove either the \'required\' or the \'default\' option for property state.')
 
 let sanitized
-t.notThrows(() => {
-  sanitized = ContactSchema.parse({
+
+await t.notThrowsAsync(async () => {
+  sanitized = await ContactSchema.parse({
     name: 'Martin'
   })
 })
@@ -381,8 +382,8 @@ const UserSchema = new Schema({
 })
 
 let Martin
-t.notThrows(() => {
-  Martin = UserSchema.parse({
+await t.notThrowsAsync(async () => {
+  Martin = await UserSchema.parse({
     name: 'Martin'
   })
 })
@@ -412,7 +413,7 @@ const SomeSchema = new Schema({
   subscribe: Boolean
 }, { defaultValues })
 
-const parsed = SomeSchema.parse({
+const parsed = await SomeSchema.parse({
   name: 'Martin',
   address: {
     street: 'Brickell ave'
@@ -436,7 +437,7 @@ Property-setting `allowNull` allows you to do so.
 const RegularSchema = new Schema({
   type: String
 })
-const error = t.throws(() => RegularSchema.parse(null))
+const error = await t.throwsAsync(() => RegularSchema.parse(null))
 t.is(error.message, 'Invalid string')
 
 const NullSchema = new Schema({
@@ -444,7 +445,7 @@ const NullSchema = new Schema({
   // allowing null values!
   allowNull: true
 })
-t.is(NullSchema.parse(null), null)
+t.is(await NullSchema.parse(null), null)
 ```
 
 ## Nesting schemas
@@ -478,14 +479,14 @@ const UserSchema = new Schema({
   address: AddressSchema
 })
 
-const user = UserSchema.parse({
+const user = await UserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999'
 })
 
 t.truthy(user)
 
-const error1 = t.throws(() => UserSchema.parse({
+const error1 = await t.throwsAsync(() => UserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999',
   address: null
@@ -494,7 +495,7 @@ const error1 = t.throws(() => UserSchema.parse({
 t.is(error1.errors[0].message, 'Property address.line1 is required')
 t.is(error1.errors[0].field.fullPath, 'address.line1')
 
-const error2 = t.throws(() => UserSchema.parse({
+const error2 = await t.throwsAsync(() => UserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999',
   address: {
@@ -507,7 +508,7 @@ t.is(error2.errors[0].field.fullPath, 'address.line1')
 
 t.deepEqual(UserSchema.paths, ['name', 'birthday', 'address', 'address.line1', 'address.line2', 'address.zip'])
 
-t.notThrows(() => UserSchema.parse({
+await t.notThrowsAsync(() => UserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999',
   address: {
@@ -521,34 +522,36 @@ t.notThrows(() => UserSchema.parse({
 
 ```js
 let error
-const FnSchema = new Schema([Function, Promise])
+const FnSchema = new Schema([Function, Object])
 
-t.notThrows(() => FnSchema.parse(() => {}))
-t.notThrows(() => FnSchema.parse(new Promise(resolve => resolve('this'))))
+await t.notThrowsAsync(() => FnSchema.parse(() => {}))
+await t.notThrowsAsync(() => FnSchema.parse(new Promise(resolve => {
+  resolve({ obj: 'some-obj' })
+})))
 
-error = t.throws(() => FnSchema.parse('some pic'))
-t.is(error.message, 'Could not resolve given value type. Allowed types are Function and Promise')
+error = await t.throwsAsync(() => FnSchema.parse('some pic'))
+t.is(error.message, 'Could not resolve given value type. Allowed types are Function and Object')
 
 const UserSchema = new Schema({
   name: String,
   age: [String, Number]
 })
 
-const martin = UserSchema.parse({
+const martin = await UserSchema.parse({
   name: 'Martin',
   age: '12'
 })
 
 t.is(martin.age, '12')
 
-const olivia = UserSchema.parse({
+const olivia = await UserSchema.parse({
   name: 'Olivia',
   age: 0.9
 })
 
 t.is(olivia.age, 0.9)
 
-error = t.throws(() => UserSchema.parse({
+error = await t.throwsAsync(() => UserSchema.parse({
   name: 'Ana',
   age: new Date('6/18/2020')
 }))
@@ -579,8 +582,8 @@ const UserSchema = new Schema({
 
 let Olivia
 
-t.notThrows(() => {
-  Olivia = UserSchema.parse({
+await t.notThrowsAsync(async () => {
+  Olivia = await UserSchema.parse({
     name: 'Olivia',
     birthday: '8/31/2019',
     kids: '0'
@@ -608,7 +611,7 @@ const StrictUserSchema = new Schema({
   }
 })
 
-const error = t.throws(() => StrictUserSchema.parse({
+const error = await t.throwsAsync(() => StrictUserSchema.parse({
   name: 'Martin',
   birthday: '11/11/1999',
   kids: '1'
@@ -640,7 +643,7 @@ const User = new Schema({
   name: String
 })
 
-const error = t.throws(() => User.parse({
+const error = await t.throwsAsync(() => User.parse({
   id: '123',
   name: 'Kombucha'
 }))
@@ -648,8 +651,8 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid number')
 
 let product
-t.notThrows(() => {
-  product = User.parse({
+await t.notThrowsAsync(async () => {
+  product = await User.parse({
     id: 123,
     name: 'Kombucha'
   })
@@ -665,7 +668,7 @@ const SomeSchema = new Schema({
   name: String
 })
 
-const error1 = t.throws(() => SomeSchema.parse(undefined))
+const error1 = await t.throwsAsync(() => SomeSchema.parse(undefined))
 t.is(error1.message, 'Data is not valid')
 t.is(error1.errors[0].message, 'Property name is required')
 ```
@@ -682,8 +685,8 @@ const SomeOptionalSchema = new Schema({
   }
 })
 
-t.notThrows(() => SomeOptionalSchema.parse(undefined))
-const error2 = t.throws(() => SomeOptionalSchema.parse({}))
+await t.notThrowsAsync(() => SomeOptionalSchema.parse(undefined))
+const error2 = await t.throwsAsync(() => SomeOptionalSchema.parse({}))
 t.is(error2.message, 'Data is not valid')
 t.is(error2.errors[0].message, 'Property name is required')
 ```

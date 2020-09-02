@@ -47,8 +47,8 @@ app.use(async (ctx, next) => {
   }
 })
 
-router.post('/user', (ctx, next) => {
-  const payload = User.parse(ctx.request.body)
+router.post('/user', async (ctx, next) => {
+  const payload = await User.parse(ctx.request.body)
   console.log(payload.dob instanceof Date) // => true
   // our object is valid, we may go perform some business logic...
   ctx.body = payload

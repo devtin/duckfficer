@@ -10,7 +10,7 @@ const ProductType = new Schema({
   category: Array
 })
 
-const product = ProductType.parse({
+const product = await ProductType.parse({
   name: 'Kombucha',
   category: ['Beverages', 'Tea', 'Health']
 })
@@ -23,7 +23,7 @@ t.is(product.category[1], 'Tea')
 Given an invalid `Array` it will throw a `ValidationError`
 
 ```js
-const error = t.throws(() => ProductType.parse({
+const error = await t.throwsAsync(() => ProductType.parse({
   name: 'Kombucha',
   category: 'none' // < not an array
 }))
@@ -52,7 +52,7 @@ const Log = new Schema({
   }
 })
 
-const tinLog = Log.parse({
+const tinLog = await Log.parse({
   user: 'tin',
   lastAccess: ['6/10/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
 })
@@ -62,7 +62,7 @@ t.is(tinLog.lastAccess.length, 2)
 t.true(tinLog.lastAccess[0] instanceof Date)
 t.true(tinLog.lastAccess[1] instanceof Date)
 
-const error = t.throws(() => Log.parse({
+const error = await t.throwsAsync(() => Log.parse({
   user: 'tin',
   lastAccess: ['11/11/1999', 'What is love?']
 }))
@@ -90,7 +90,7 @@ const Contact = new Schema({
   }
 })
 
-const error2 = t.throws(() => Contact.parse({
+const error2 = await t.throwsAsync(() => Contact.parse({
   name: 'Martin',
   emails: ['tin@devtin.io', 'gmail.com']
 }))
@@ -117,7 +117,7 @@ const UserSchema = new Schema({
   id: BigInt
 })
 
-const error = t.throws(() => UserSchema.parse({
+const error = await t.throwsAsync(() => UserSchema.parse({
   user: 'tin',
   id: 1
 }))
@@ -127,8 +127,8 @@ t.is(error.errors[0].message, 'Invalid bigint')
 t.is(error.errors[0].field.fullPath, 'id')
 
 let contact
-t.notThrows(() => {
-  contact = UserSchema.parse({
+await t.notThrowsAsync(async () => {
+  contact = await UserSchema.parse({
     user: 'tin',
     id: 1n
   })
@@ -151,7 +151,7 @@ const UserSchema = new Schema({
   id: BigInt
 })
 
-t.throws(() => UserSchema.parse({
+await t.throwsAsync(() => UserSchema.parse({
   user: 'tin',
   id: '1'
 }))
@@ -169,8 +169,8 @@ const UserSchema2 = new Schema({
 })
 
 let contact
-t.notThrows(() => {
-  contact = UserSchema2.parse({
+await t.notThrowsAsync(async () => {
+  contact = await UserSchema2.parse({
     user: 'tin',
     id: '1' // < numeric string
   })
@@ -179,7 +179,7 @@ t.notThrows(() => {
 t.is(contact.user, 'tin')
 t.is(contact.id, 1n)
 
-const error = t.throws(() => UserSchema2.parse({
+const error = await t.throwsAsync(() => UserSchema2.parse({
   user: 'tin',
   id: 'some huge integer'
 }))
@@ -204,7 +204,7 @@ const ProductSchema = new Schema({
   }
 })
 
-const error = t.throws(() => ProductSchema.parse({
+const error = await t.throwsAsync(() => ProductSchema.parse({
   name: 'Kombucha',
   active: 'no'
 }))
@@ -213,8 +213,8 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid boolean')
 
 let product1
-t.notThrows(() => {
-  product1 = ProductSchema.parse({
+await t.notThrowsAsync(async () => {
+  product1 = await ProductSchema.parse({
     name: 'Kombucha',
     active: true
   })
@@ -224,8 +224,8 @@ t.truthy(product1)
 t.true(product1.active)
 
 let product2
-t.notThrows(() => {
-  product2 = ProductSchema.parse({
+await t.notThrowsAsync(async () => {
+  product2 = await ProductSchema.parse({
     name: 'tin'
   })
 })
@@ -258,8 +258,8 @@ const ProductType = new Schema({
 })
 
 let product
-t.notThrows(() => {
-  product = ProductType.parse({
+await t.notThrowsAsync(async () => {
+  product = await ProductType.parse({
     name: 'Kombucha',
     active: 'sure!'
   })
@@ -267,7 +267,7 @@ t.notThrows(() => {
 
 t.true(product.active)
 
-t.false(ProductType.parse({ name: 'kombucha', active: 'no' }).active)
+t.false((await ProductType.parse({ name: 'kombucha', active: 'no' })).active)
 ```
 
 ## Date
@@ -282,15 +282,12 @@ const dateValidator = new Schema({
   birthday: Date
 })
 
-let contact
-t.notThrows(() => {
-  contact = dateValidator.parse({
-    name: 'Martin',
-    birthday: new Date('11/11/1999')
-  })
-})
+await t.notThrowsAsync(() => dateValidator.parse({
+  name: 'Martin',
+  birthday: new Date('11/11/1999')
+}))
 
-const error = t.throws(() => dateValidator.parse({
+const error = await t.throwsAsync(() => dateValidator.parse({
   name: 'Martin',
   birthday: 'Somewhere in the 80s'
 }))
@@ -312,8 +309,8 @@ const dateValidator = new Schema({
 })
 
 let contact
-t.notThrows(() => {
-  contact = dateValidator.parse({
+await t.notThrowsAsync(async () => {
+  contact = await dateValidator.parse({
     name: 'Martin',
     birthday: '11/11/1999' // this is a string originally
   })
@@ -325,7 +322,7 @@ t.true(contact.birthday instanceof Date)
 `String`'s that can not be guessed as `Date`'s would result in an error.
 
 ```js
-const error = t.throws(() => dateValidator.parse({
+const error = await t.throwsAsync(() => dateValidator.parse({
   name: 'Martin',
   birthday: 'Somewhere in the 80s'
 }))
@@ -345,7 +342,7 @@ const dateValidator2 = new Schema({
     autoCast: false
   }
 })
-const error2 = t.throws(() => dateValidator2.parse({
+const error2 = await t.throwsAsync(() => dateValidator2.parse({
   name: 'Martin',
   birthday: '11/11/1999'
 }))
@@ -363,7 +360,7 @@ const ProductType = new Schema({
   save: Function
 })
 
-const product = ProductType.parse({
+const product = await ProductType.parse({
   user: 'tin',
   save () {
     return 'yeah!'
@@ -373,7 +370,7 @@ const product = ProductType.parse({
 t.true(typeof product.save === 'function')
 t.is(product.save(), 'yeah!')
 
-const error = t.throws(() => ProductType.parse({
+const error = await t.throwsAsync(() => ProductType.parse({
   user: 'tin',
   save: false
 }))
@@ -395,7 +392,7 @@ const MapSchema = new Schema({
   autoCast: false
 })
 
-const error = t.throws(() => MapSchema.parse({ hello: true }))
+const error = await t.throwsAsync(() => MapSchema.parse({ hello: true }))
 t.is(error.message, 'Invalid map')
 ```
 
@@ -406,7 +403,7 @@ const MapSchema = new Schema({
   type: Map
 })
 
-const parsed = MapSchema.parse({ hello: true })
+const parsed = await MapSchema.parse({ hello: true })
 t.true(parsed instanceof Map)
 t.true(parsed.get('hello'))
 t.false(Object.hasOwnProperty.call(parsed, 'hello'))
@@ -424,7 +421,7 @@ const ProductType = new Schema({
   age: Number
 })
 
-const error = t.throws(() => ProductType.parse({
+const error = await t.throwsAsync(() => ProductType.parse({
   user: 'tin',
   age: '36'
 }))
@@ -434,8 +431,8 @@ t.is(error.errors[0].message, 'Invalid number')
 t.is(error.errors[0].field.fullPath, 'age')
 
 let contact
-t.notThrows(() => {
-  contact = ProductType.parse({
+await t.notThrowsAsync(async () => {
+  contact = await ProductType.parse({
     user: 'tin',
     age: 36
   })
@@ -453,10 +450,10 @@ const NewNumber = new Schema({
   min: 0
 })
 
-const err = t.throws(() => NewNumber.parse(-0.1))
+const err = await t.throwsAsync(() => NewNumber.parse(-0.1))
 t.is(err.message, 'minimum accepted value is 0')
 
-t.is(NewNumber.parse(0), 0)
+t.is(await NewNumber.parse(0), 0)
 ```
 
 ### max (maximum value)
@@ -467,9 +464,9 @@ const NewNumber = new Schema({
   max: 100
 })
 
-const err = t.throws(() => NewNumber.parse(100.1))
+const err = await t.throwsAsync(() => NewNumber.parse(100.1))
 t.is(err.message, 'maximum accepted value is 100')
-t.is(NewNumber.parse(100), 100)
+t.is(await NewNumber.parse(100), 100)
 ```
 
 ### decimalPlaces (maximum number of decimal places)
@@ -480,8 +477,8 @@ const NewNumber = new Schema({
   decimalPlaces: 2
 })
 
-t.is(NewNumber.parse(11.123), 11.12)
-t.is(NewNumber.parse(12.345), 12.35)
+t.is(await NewNumber.parse(11.123), 11.12)
+t.is(await NewNumber.parse(12.345), 12.35)
 ```
 
 ### integer (accepts only integers)
@@ -492,10 +489,10 @@ const NewNumber = new Schema({
   integer: true
 })
 
-const error = t.throws(() => NewNumber.parse(11.123))
+const error = await t.throwsAsync(() => NewNumber.parse(11.123))
 t.is(error.message, 'Invalid integer')
 
-t.is(NewNumber.parse(11), 11)
+t.is(await NewNumber.parse(11), 11)
 ```
 
 ### autoCast (default `false`)
@@ -511,7 +508,7 @@ const UserSchema = new Schema({
   age: Number
 })
 
-t.throws(() => UserSchema.parse({
+await t.throwsAsync(() => UserSchema.parse({
   user: 'tin',
   age: '36'
 }))
@@ -529,8 +526,8 @@ const UserSchema2 = new Schema({
 })
 
 let contact
-t.notThrows(() => {
-  contact = UserSchema2.parse({
+await t.notThrowsAsync(async () => {
+  contact = await UserSchema2.parse({
     user: 'tin',
     age: '36' // < numeric string
   })
@@ -539,7 +536,7 @@ t.notThrows(() => {
 t.is(contact.user, 'tin')
 t.is(contact.age, 36)
 
-const error = t.throws(() => UserSchema2.parse({
+const error = await t.throwsAsync(() => UserSchema2.parse({
   user: 'tin',
   age: 'thirty six'
 }))
@@ -572,13 +569,13 @@ const payload = {
   }
 }
 
-const product = Transaction.parse({
+const product = await Transaction.parse({
   payload
 })
 
 t.is(product.payload, payload) // remains untouched
 
-const error = t.throws(() => Transaction.parse({
+const error = await t.throwsAsync(() => Transaction.parse({
   payload: 'none'
 }))
 
@@ -599,7 +596,7 @@ const ObjectWith = new Schema({
   mapSchema: Number
 })
 
-const error = t.throws(() => ObjectWith.parse({
+const error = await t.throwsAsync(() => ObjectWith.parse({
   papo: 123,
   papilla: '123'
 }))
@@ -626,7 +623,7 @@ const Contact = new Schema({
   }
 })
 
-const error2 = t.throws(() => Contact.parse({
+const error2 = await t.throwsAsync(() => Contact.parse({
   name: 'Martin',
   email: {
     work: 'tin@devtin.io',
@@ -638,80 +635,12 @@ t.is(error2.message, 'Data is not valid')
 t.is(error2.errors[0].message, 'Invalid e-mail address')
 t.is(error2.errors[0].field.fullPath, 'email.home')
 
-t.notThrows(() => Contact.parse({
+await t.notThrowsAsync(() => Contact.parse({
   name: 'Martin',
   email: {
     work: 'tin@devtin.io',
     home: 'martin@gmail.com'
   }
-}))
-```
-
-## Promise
-
-```js
-const UserType = new Schema({
-  user: String,
-  picture: Promise
-})
-
-t.notThrows(() => UserType.parse({
-  user: 'tin',
-  picture: new Promise((resolve) => {
-    setTimeout(() => resolve('that'), 3000)
-  })
-}))
-
-const error = t.throws(() => UserType.parse({
-  user: 'tin',
-  async picture () {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve('nah'), 3000)
-    })
-  }
-}))
-
-t.is(error.message, 'Data is not valid')
-t.is(error.errors.length, 1)
-t.is(error.errors[0].message, 'Invalid Promise')
-t.is(error.errors[0].field.fullPath, 'picture')
-```
-
-### autoCast (default `false`)
-
-```js
-const UserType = new Schema({
-  user: String,
-  picture: {
-    type: Promise,
-    autoCast: true
-  }
-})
-
-t.notThrows(() => UserType.parse({
-  user: 'tin',
-  async picture () {
-    return `Something`
-  }
-}))
-
-t.notThrows(() => UserType.parse({
-  user: 'tin',
-  picture () {
-    return `Something`
-  }
-}))
-
-t.notThrows(() => UserType.parse({
-  user: 'tin',
-  picture: 'Something'
-}))
-
-t.notThrows(() => UserType.parse({
-  user: 'tin',
-  picture: new Promise(resolve => {
-    resolve('Something')
-  })
 }))
 ```
 
@@ -723,7 +652,7 @@ const ProductType = new Schema({
   category: Set
 })
 
-const product = ProductType.parse({
+const product = await ProductType.parse({
   name: 'Kombucha',
   category: ['Beverages', 'Health', 'Tea', 'Health']
 })
@@ -732,7 +661,7 @@ t.false(Array.isArray(product.category))
 t.is(product.category.size, 3)
 t.true(product.category.has('Health'))
 
-const error = t.throws(() => ProductType.parse({
+const error = await t.throwsAsync(() => ProductType.parse({
   name: 'Kombucha',
   category: 'none'
 }))
@@ -753,7 +682,7 @@ const ProductType = new Schema({
   }
 })
 
-const product = ProductType.parse({
+const product = await ProductType.parse({
   name: 'Kombucha',
   category: new Set(['Beverages', 'Health', 'Tea', 'Health'])
 })
@@ -762,7 +691,7 @@ t.false(Array.isArray(product.category))
 t.is(product.category.size, 3)
 t.true(product.category.has('Health'))
 
-const error = t.throws(() => ProductType.parse({
+const error = await t.throwsAsync(() => ProductType.parse({
   name: 'Kombucha',
   category: ['Beverages', 'Health', 'Tea', 'Health']
 }))
@@ -782,7 +711,7 @@ const stringSchema = new Schema({
   name: String
 })
 
-const error = t.throws(() => stringSchema.parse({ name: 123 }))
+const error = await t.throwsAsync(() => stringSchema.parse({ name: 123 }))
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid string')
 t.is(error.errors[0].field.fullPath, 'name')
@@ -803,7 +732,7 @@ const nameSchema = new Schema({
   }
 })
 
-const user = nameSchema.parse({
+const user = await nameSchema.parse({
   name: {
     toString () {
       return `Some name`
@@ -828,7 +757,7 @@ const nameSchema = new Schema({
   }
 })
 
-const error = t.throws(() => nameSchema.parse({ name: 'Tin' }))
+const error = await t.throwsAsync(() => nameSchema.parse({ name: 'Tin' }))
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid minlength')
 // t.is(error.errors[0].message, `Looking for a custom error message?`)
@@ -852,12 +781,12 @@ const lastNameSchema = new Schema({
   }
 })
 
-const error = t.throws(() => lastNameSchema.parse({ lastName: 'Schwarzenegger' }))
+const error = await t.throwsAsync(() => lastNameSchema.parse({ lastName: 'Schwarzenegger' }))
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid maxlength')
 // t.is(error.errors[0].message, `Looking for a custom error message?`)
 
-t.notThrows(() => lastNameSchema.parse({ lastName: 'Rafael' }))
+await t.notThrowsAsync(() => lastNameSchema.parse({ lastName: 'Rafael' }))
 ```
 
 ### regex
@@ -874,11 +803,11 @@ const nameSchema = new Schema({
   }
 })
 
-const error = t.throws(() => nameSchema.parse({ name: 'Tin Rafael' }))
+const error = await t.throwsAsync(() => nameSchema.parse({ name: 'Tin Rafael' }))
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid regex')
 
-t.notThrows(() => nameSchema.parse({ name: 'Martin' }))
+await t.notThrowsAsync(() => nameSchema.parse({ name: 'Martin' }))
 ```
 
 Custom error
@@ -891,7 +820,7 @@ const nameSchema2 = new Schema({
   }
 })
 
-const error2 = t.throws(() => nameSchema2.parse({ name: 'Tin Rafael' }))
+const error2 = await t.throwsAsync(() => nameSchema2.parse({ name: 'Tin Rafael' }))
 t.is(error2.message, 'Data is not valid')
 t.is(error2.errors[0].message, 'lowercase only')
 ```
@@ -905,9 +834,9 @@ const mySchema = new Schema({
     enum: ['cheese', 'ham', 'tomatoes']
   }
 })
-const error = t.throws(() => mySchema.parse({ topping: 'potatoes' }))
+const error = await t.throwsAsync(() => mySchema.parse({ topping: 'potatoes' }))
 t.is(error.errors[0].message, 'Unknown enum option potatoes')
-t.notThrows(() => mySchema.parse({ topping: 'ham' }))
+await t.notThrowsAsync(() => mySchema.parse({ topping: 'ham' }))
 ```
 
 ### lowercase
@@ -921,7 +850,7 @@ const mySchema = new Schema({
   type: String,
   lowercase: true
 })
-t.is(mySchema.parse('ADMIN'), 'admin')
+t.is(await mySchema.parse('ADMIN'), 'admin')
 ```
 
 ### uppercase
@@ -935,7 +864,7 @@ const mySchema = new Schema({
   type: String,
   uppercase: true
 })
-t.is(mySchema.parse('en'), 'EN')
+t.is(await mySchema.parse('en'), 'EN')
 ```
 
 ## Custom
@@ -956,7 +885,7 @@ const customTransformer = new Schema({
   }
 })
 
-let error = t.throws(() => customTransformer.parse({
+let error = await t.throwsAsync(() => customTransformer.parse({
   name: 'Martin',
   email: 'tin@devtin.io'
 }))
@@ -986,7 +915,7 @@ Transformers.Email = {
   }
 }
 
-error = t.throws(() => customTransformer.parse({
+error = await t.throwsAsync(() => customTransformer.parse({
   name: 'Martin',
   email: 123
 }))
@@ -994,7 +923,7 @@ error = t.throws(() => customTransformer.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid string') // From the String transformer
 
-error = t.throws(() => customTransformer.parse({
+error = await t.throwsAsync(() => customTransformer.parse({
   name: 'Martin',
   email: 'martin'
 }))
@@ -1002,7 +931,7 @@ error = t.throws(() => customTransformer.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid e-mail address martin for field email')
 
-error = t.throws(() => customTransformer.parse({
+error = await t.throwsAsync(() => customTransformer.parse({
   name: 'Martin',
   email: 'tin@devtin.io'
 }))
@@ -1010,7 +939,7 @@ error = t.throws(() => customTransformer.parse({
 t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Only gmail accounts')
 
-t.notThrows(() => customTransformer.parse({
+await t.notThrowsAsync(() => customTransformer.parse({
   name: 'Martin',
   email: 'marting.dc@gmail.com'
 }))

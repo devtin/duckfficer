@@ -1,4 +1,4 @@
-const { Schema } = require('duckfficer')
+const { Schema } = require('../../../')
 
 const User = new Schema({
   firstName: String,

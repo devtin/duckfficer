@@ -41,7 +41,7 @@ Even when the property `name` (expected by the defined schema) is also missing, 
 payload's schema structure doest not match the provided one.
 
 ```js
-let error = t.throws(() => UserSchema.parse(arbitraryObject))
+let error = await t.throwsAsync(() => UserSchema.parse(arbitraryObject))
 
 t.true(error instanceof ValidationError)
 t.true(error instanceof Error)
@@ -56,7 +56,7 @@ When the payload's structure matches the schema (all of the payload properties a
 then proceed with further validations...
 
 ```js
-error = t.throws(() => UserSchema.parse({
+error = await t.throwsAsync(() => UserSchema.parse({
   birthday: '11/11/1999',
   description: ['monkey', 'developer', 'arepa lover']
 }))
@@ -91,7 +91,7 @@ const AnotherUserSchema = new Schema({
   }
 })
 
-error = t.throws(() => AnotherUserSchema.parse({
+error = await t.throwsAsync(() => AnotherUserSchema.parse({
   name: 'Martin Rafael',
   level: 'admin'
 }))
@@ -99,7 +99,7 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Only authenticated users can set the level to admin')
 t.is(error.errors[0].field.fullPath, 'level')
 
-error = t.throws(() => AnotherUserSchema.parse({
+error = await t.throwsAsync(() => AnotherUserSchema.parse({
   name: 'Martin Rafael',
   level: 'admin'
 }, {
@@ -145,7 +145,6 @@ t.deepEqual(Object.keys(Transformers), [
   'Map',
   'Number',
   'Object',
-  'Promise',
   'Set',
   'String'
 ])
@@ -181,7 +180,7 @@ t.notThrows(() => ProductSchema.parse({
   name: 'Kombucha'
 }, { state: givenState }))
 
-const error = t.throws(() => ProductSchema.parse({
+const error = await t.throwsAsync(() => ProductSchema.parse({
   id: 123,
   created: '2018/12/1',
   name: 'Kombucha'
@@ -210,7 +209,7 @@ const ProductSchema = new Schema({
 
 const givenState = { someState: true }
 
-const error = t.throws(() => ProductSchema.parse({
+const error = await t.throwsAsync(() => ProductSchema.parse({
   id: 123,
   name: 'Kombucha Green',
   price: 3

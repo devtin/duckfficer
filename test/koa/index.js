@@ -20,8 +20,8 @@ app.use(async (ctx, next) => {
   }
 })
 
-router.post('/user', (ctx, next) => {
-  const payload = User.parse(ctx.request.body)
+router.post('/user', async (ctx, next) => {
+  const payload = await User.parse(ctx.request.body)
   // some business logic...
   ctx.body = payload
 })

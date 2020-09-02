@@ -1,7 +1,7 @@
 import test from 'ava'
 import { Schema } from '../../../.'
 
-test('Array', t => {
+test('Array', async t => {
   /**
    * Initializes `Array` types
    */
@@ -10,7 +10,7 @@ test('Array', t => {
     category: Array
   })
 
-  const product = ProductType.parse({
+  const product = await ProductType.parse({
     name: 'Kombucha',
     category: ['Beverages', 'Tea', 'Health']
   })
@@ -23,7 +23,7 @@ test('Array', t => {
    * Given an invalid `Array` it will throw a `ValidationError`
    */
 
-  const error = t.throws(() => ProductType.parse({
+  const error = await t.throwsAsync(() => ProductType.parse({
     name: 'Kombucha',
     category: 'none' // < not an array
   }))
@@ -33,7 +33,7 @@ test('Array', t => {
   t.is(error.errors[0].field.fullPath, 'category')
 })
 
-test('arraySchema', t => {
+test('arraySchema', async t => {
   /**
    * The Array transformer can initialize the items in the array by passing them through the transformer specified in
    * the `arraySchema` setting.
@@ -49,7 +49,7 @@ test('arraySchema', t => {
     }
   })
 
-  const tinLog = Log.parse({
+  const tinLog = await Log.parse({
     user: 'tin',
     lastAccess: ['6/10/2019', 'Sat Jan 11 2020 17:06:31 GMT-0500 (Eastern Standard Time)']
   })
@@ -59,7 +59,7 @@ test('arraySchema', t => {
   t.true(tinLog.lastAccess[0] instanceof Date)
   t.true(tinLog.lastAccess[1] instanceof Date)
 
-  const error = t.throws(() => Log.parse({
+  const error = await t.throwsAsync(() => Log.parse({
     user: 'tin',
     lastAccess: ['11/11/1999', 'What is love?']
   }))
@@ -86,7 +86,7 @@ test('arraySchema', t => {
     }
   })
 
-  const error2 = t.throws(() => Contact.parse({
+  const error2 = await t.throwsAsync(() => Contact.parse({
     name: 'Martin',
     emails: ['tin@devtin.io', 'gmail.com']
   }))

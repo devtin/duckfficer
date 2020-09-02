@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/devtin/duckfficer/compare/v1.2.0...v2.0.0) (2020-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* make library asynchronous
+* remove Promise type as of new async flow
+
+### Features
+
+* make library asynchronous ([9721132](https://github.com/devtin/duckfficer/commit/972113220a7569f649ed20f20ad60765c0109f4e))
+
+
+### Bug Fixes
+
+* remove Promise type as of new async flow ([56d63f3](https://github.com/devtin/duckfficer/commit/56d63f30d0597e0158f28d11d854b983fc4aa1c6))
+
 ## [1.2.0](https://github.com/devtin/duckfficer/compare/v1.1.1...v1.2.0) (2020-08-24)
 
 

@@ -19,7 +19,6 @@ t.deepEqual(Object.keys(Transformers).filter(transformerName => {
   'Date',
   'Map',
   'Number',
-  'Promise',
   'Set',
   'String'
 ])
@@ -48,7 +47,7 @@ const ProductSchema = new Schema({
 
 const givenState = { someState: true }
 
-const error = t.throws(() => {
+const error = await t.throwsAsync(() => {
   return ProductSchema.parse({
     id: '123',
     name: 'Kombucha'
@@ -60,8 +59,8 @@ t.is(error.message, 'Data is not valid')
 t.is(error.errors[0].message, 'Invalid number')
 
 let product
-t.notThrows(() => {
-  product = ProductSchema.parse({
+await t.notThrowsAsync(async () => {
+  product = await ProductSchema.parse({
     id: '#123',
     name: 'Kombucha'
   }, {
@@ -101,8 +100,8 @@ const ProductSchema = new Schema({
 
 const givenState = { someState: true }
 let product
-t.notThrows(() => {
-  product = ProductSchema.parse({
+await t.notThrowsAsync(async () => {
+  product = await ProductSchema.parse({
     id: 321,
     name: 'Hass Avocados',
     price: 3.99

@@ -27,7 +27,7 @@ const User = new Schema({
   }
 })
 
-const me = User.parse({
+const me = await User.parse({
   firstName: 'Martin',
   lastName: 'Rafael',
   address: {
@@ -50,11 +50,19 @@ const error = t.throws(() => {
 })
 
 t.is(error.message, 'Cannot set property fullAddress of #<Object> which has only a getter')
+t.deepEqual(Object.keys(me), ['firstName', 'lastName', 'address'])
+```
 
-const she = User.parse({
+Once parsed, virtuals are non-enumerable by default. You can use `parse(payload, { virtualsEnumerable = true` })`
+to change this behavior.
+
+```js
+const she = await User.parse({
   firstName: 'Olivia',
   lastName: 'Isabel'
+}, {
+  virtualsEnumerable: true
 })
 
-t.false(Object.hasOwnProperty.call(she, 'address'))
+t.deepEqual(Object.keys(she), ['firstName', 'lastName', 'fullName'])
 ```

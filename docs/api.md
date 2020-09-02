@@ -24,14 +24,14 @@
 <dd><p>Used as value in certain settings to alternatively customize error messages</p>
 </dd>
 <dt><a href="#Validator">Validator</a> ⇒ <code>void</code></dt>
-<dd><p>Synchronous function that validates that given value is of the expected kind. Throws a <a href="#Schema..ValidationError">ValidationError</a> when not.</p>
+<dd><p>function (async permitted) that validates that given value is of the expected kind. Throws a <a href="#Schema..ValidationError">ValidationError</a> when not.</p>
 </dd>
 <dt><a href="#Parser">Parser</a> ⇒ <code>*</code></dt>
-<dd><p>Synchronous function that performs custom logic possibly customized via settings that could transform given
+<dd><p>function (async permitted) that performs custom logic possibly customized via settings that could transform given
 value, throwing a {Schema~ValidationError} when error.</p>
 </dd>
 <dt><a href="#Caster">Caster</a> ⇒ <code>*</code></dt>
-<dd><p>Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
+<dd><p>function (async permitted) that performs some logic attempting to cast given value into expected one. Returns the
 original value in case it could not be guessed.</p>
 </dd>
 <dt><a href="#Transformer">Transformer</a> : <code>Object</code></dt>
@@ -456,7 +456,6 @@ key map object that holds the available Transformer's (types) that can be valida
     * [.Map](#Transformers.Map) : [<code>Transformer</code>](#Transformer)
     * [.Number](#Transformers.Number) : [<code>Transformer</code>](#Transformer)
     * [.Object](#Transformers.Object) : [<code>Transformer</code>](#Transformer)
-    * [.Promise](#Transformers.Promise) : [<code>Transformer</code>](#Transformer)
     * [.Set](#Transformers.Set) : [<code>Transformer</code>](#Transformer)
     * [.String](#Transformers.String) : [<code>Transformer</code>](#Transformer)
 
@@ -584,25 +583,6 @@ key map object that holds the available Transformer's (types) that can be valida
 | [settings.mapSchema] | <code>String</code> \| [<code>Schema</code>](#Schema) |  | When available, parses given object's properties with the given schema or transformer. |
 | validate | [<code>Validator</code>](#Validator) |  | Confirms given value is an object |
 
-<a name="Transformers.Promise"></a>
-
-### Transformers.Promise : [<code>Transformer</code>](#Transformer)
-**Kind**: static constant of [<code>Transformers</code>](#Transformers)  
-**See**
-
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-- https://stackoverflow.com/a/27746324/1064165
-
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| settings | <code>Object</code> |  | Default transformer settings |
-| [settings.typeError] | <code>String</code> | <code>Invalid Promise</code> | Default error message thrown |
-| [settings.autoCast] | <code>Boolean</code> | <code>false</code> | Whether to auto-cast values into Promises. |
-| [settings.isPromise] | <code>function</code> |  | Checks whether given value is or not a Promise |
-| validate | [<code>Validator</code>](#Validator) |  | Validates given values is a `Promise` |
-
 <a name="Transformers.Set"></a>
 
 ### Transformers.Set : [<code>Transformer</code>](#Transformer)
@@ -666,7 +646,7 @@ const mySchema = new Schema({
 <a name="Validator"></a>
 
 ## Validator ⇒ <code>void</code>
-Synchronous function that validates that given value is of the expected kind. Throws a [ValidationError](#Schema..ValidationError) when not.
+function (async permitted) that validates that given value is of the expected kind. Throws a [ValidationError](#Schema..ValidationError) when not.
 
 **Kind**: global typedef  
 **Throws**:
@@ -684,7 +664,7 @@ Synchronous function that validates that given value is of the expected kind. Th
 <a name="Parser"></a>
 
 ## Parser ⇒ <code>\*</code>
-Synchronous function that performs custom logic possibly customized via settings that could transform given
+function (async permitted) that performs custom logic possibly customized via settings that could transform given
 value, throwing a {Schema~ValidationError} when error.
 
 **Kind**: global typedef  
@@ -704,7 +684,7 @@ value, throwing a {Schema~ValidationError} when error.
 <a name="Caster"></a>
 
 ## Caster ⇒ <code>\*</code>
-Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
+function (async permitted) that performs some logic attempting to cast given value into expected one. Returns the
 original value in case it could not be guessed.
 
 **Kind**: global typedef  

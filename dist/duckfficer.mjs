@@ -1,5 +1,5 @@
 /*!
- * duckfficer v1.2.0
+ * duckfficer v2.0.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -217,6 +217,10 @@ function propertiesRestricted (obj, properties, { strict = false } = {}) {
   return valid
 }
 
+const PromiseEach = async function (arr, fn) {
+  for (const item of arr) await fn(item);
+};
+
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   castArray: castArray,
@@ -224,7 +228,8 @@ var index = /*#__PURE__*/Object.freeze({
   find: find,
   forEach: forEach,
   render: render,
-  propertiesRestricted: propertiesRestricted
+  propertiesRestricted: propertiesRestricted,
+  PromiseEach: PromiseEach
 });
 
 /**
@@ -260,9 +265,18 @@ function castThrowable (value, error) {
   return [value, error]
 }
 
+const PromiseMap = async function (arr, fn) {
+  const newArr = [];
+  let index = 0;
+  await PromiseEach(arr, async (item) => {
+    newArr.push(await fn(item, index++));
+  });
+  return newArr
+};
+
 /**
  * @typedef {Function} Validator
- * @desc Synchronous function that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
+ * @desc function (async permitted) that validates that given value is of the expected kind. Throws a {@link Schema~ValidationError} when not.
  * @param {*} value - The value being validated
  * @param {Object} [options]
  * @param {*} [options.state] - The state passed via the parse function
@@ -273,7 +287,7 @@ function castThrowable (value, error) {
 
 /**
  * @typedef {Function} Parser
- * @desc Synchronous function that performs custom logic possibly customized via settings that could transform given
+ * @desc function (async permitted) that performs custom logic possibly customized via settings that could transform given
  * value, throwing a {Schema~ValidationError} when error.
  * @param {*} value - The value being validated
  * @param {Object} [options]
@@ -285,7 +299,7 @@ function castThrowable (value, error) {
 
 /**
  * @typedef {Function} Caster
- * @desc Synchronous function that performs some logic attempting to cast given value into expected one. Returns the
+ * @desc function (async permitted) that performs some logic attempting to cast given value into expected one. Returns the
  * original value in case it could not be guessed.
  * @param {*} value - The value being casted
  * @param {Object} [options]
@@ -324,9 +338,9 @@ const Transformers = {
     settings: {
       typeError: 'Invalid array'
     },
-    parse (value) {
+    async parse (value) {
       if (this.settings.arraySchema) {
-        value = value.map((value, name) => {
+        return PromiseMap(value, (item, name) => {
           const schema = this.constructor.castSchema(this.settings.arraySchema);
           const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
             schema,
@@ -337,8 +351,8 @@ const Transformers = {
             name,
             parent: this
           }));
-          return parser.parse(value)
-        });
+          return parser.parse(item)
+        })
       }
       return value
     },
@@ -546,10 +560,10 @@ const Transformers = {
     settings: {
       typeError: 'Invalid object'
     },
-    parse (value) {
+    async parse (value) {
       if (this.settings.mapSchema !== undefined) {
         const newVal = {};
-        Object.keys(value).forEach(name => {
+        await PromiseEach(Object.keys(value), async name => {
           const obj = value[name];
           const schema = this.constructor.castSchema(this.settings.mapSchema);
           const parser = this.constructor.guessType(schema) === 'Schema'
@@ -564,7 +578,7 @@ const Transformers = {
               parent: this
             }));
 
-          newVal[name] = parser.parse(obj);
+          newVal[name] = await parser.parse(obj);
         });
         return newVal
       }
@@ -573,41 +587,6 @@ const Transformers = {
     },
     validate (value) {
       if (!isNotNullObj(value)) {
-        this.throwError(this.settings.typeError, { value });
-      }
-    }
-  },
-  /**
-   * @constant {Transformer} Transformers.Promise
-   * @property {Object} settings - Default transformer settings
-   * @property {String} [settings.typeError=Invalid Promise] - Default error message thrown
-   * @property {Boolean} [settings.autoCast=false] - Whether to auto-cast values into Promises.
-   * @property {Function} [settings.isPromise] - Checks whether given value is or not a Promise
-   * @property {Validator} validate - Validates given values is a `Promise`
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-   * @see https://stackoverflow.com/a/27746324/1064165
-   */
-  Promise: {
-    settings: {
-      typeError: 'Invalid Promise',
-      autoCast: false,
-      isPromise (v) {
-        return isNotNullObj(v) && typeof v.then === 'function'
-      }
-    },
-    cast (value) {
-      if (Transformers.Promise.settings.isPromise(value)) {
-        return value
-      }
-
-      if (typeof value === 'function') {
-        return Promise.resolve(value())
-      }
-
-      return Promise.resolve(value)
-    },
-    validate (value) {
-      if (!Transformers.Promise.settings.isPromise(value)) {
         this.throwError(this.settings.typeError, { value });
       }
     }
@@ -772,7 +751,7 @@ class MethodError extends Error {
   }
 }
 
-const fnProxyStub = v => v;
+const fnProxyStub = async v => Promise.resolve(v);
 
 /**
  * @typedef {Object} Schema~TheSchema
@@ -947,9 +926,9 @@ class Schema {
    * @param obj
    * @return {Boolean} whether the obj is valid or not
    */
-  isValid (obj) {
+  async isValid (obj) {
     try {
-      this.parse(obj);
+      await this.parse(obj);
       return true
     } catch (err) {
       return false
@@ -1137,13 +1116,13 @@ class Schema {
     }
   }
 
-  fullCast (v, { state }) {
-    v = this.cast(v, { state });
+  async fullCast (v, { state }) {
+    v = await this.cast(v, { state });
     if (typeof v === 'object' && v && this.hasChildren) {
-      this.children.forEach(child => {
-        const parsedValue = child.fullCast(v[child.name], { state });
+      await PromiseEach(this.children, async child => {
+        const parsedValue = await child.fullCast(v[child.name], { state });
         if (parsedValue !== undefined) {
-          v[child.name] = child.fullCast(v[child.name], { state });
+          v[child.name] = await child.fullCast(v[child.name], { state });
         }
       });
     }
@@ -1163,20 +1142,20 @@ class Schema {
    * @return {Object} The sanitized object
    * @throws {ValidationError} when given object does not meet the schema
    */
-  parse (v, { state = {}, virtualsEnumerable = false } = {}) {
+  async parse (v, { state = {}, virtualsEnumerable = false } = {}) {
     // schema-level casting
     // todo: cast children schemas
-    v = this.fullCast(v, { state });
+    v = await this.fullCast(v, { state });
 
     if (!this.parent) {
       this.structureValidation(v);
     }
 
     if (this.hasChildren) {
-      v = this.runChildren(v, { state });
+      v = await this.runChildren(v, { state });
     } else {
       // console.log(this)
-      v = this.parseProperty(this.type, v, { state });
+      v = await this.parseProperty(this.type, v, { state });
 
       /*
       Value here would be:
@@ -1187,7 +1166,7 @@ class Schema {
     }
 
     // schema-level validation
-    this.validate(v, { state });
+    await this.validate(v, { state });
 
     // append virtuals
     if (isNotNullObj(v)) {
@@ -1217,24 +1196,24 @@ class Schema {
         const methodEvents = this._methods[methodName].events;
         const methodErrors = this._methods[methodName].errors;
 
-        const methodFn = (...arg) => {
+        const methodFn = async (...arg) => {
           if (inputValidation) {
             try {
-              arg = Schema.ensureSchema(inputValidation).parse(arg.length === 1 ? arg[0] : arg);
+              arg = await Schema.ensureSchema(inputValidation).parse(arg.length === 1 ? arg[0] : arg);
             } catch (err) {
               throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
             }
           }
 
           const thisArg = {
-            $emit (eventName, payload) {
+            async $emit (eventName, payload) {
               if (methodEvents) {
                 if (!methodEvents[eventName]) {
                   throw new Error(`Unknown event ${eventName}`)
                 }
 
                 try {
-                  payload = Schema.ensureSchema(methodEvents[eventName]).parse(payload);
+                  payload = await Schema.ensureSchema(methodEvents[eventName]).parse(payload);
                 } catch (err) {
                   throw new ValidationError(`Invalid payload for event ${eventName}`, {
                     errors: err.errors.length > 0 ? err.errors : [err]
@@ -1243,14 +1222,14 @@ class Schema {
               }
               emitter.emit(eventName, payload);
             },
-            $throw (errorName, payload) {
+            async $throw (errorName, payload) {
               if (methodErrors) {
                 if (!methodErrors[errorName]) {
                   throw new MethodError(`Unknown error ${errorName}`)
                 }
 
                 try {
-                  payload = methodErrors[errorName] ? Schema.ensureSchema(methodErrors[errorName]).parse(payload) : payload;
+                  payload = methodErrors[errorName] ? await Schema.ensureSchema(methodErrors[errorName]).parse(payload) : payload;
                 } catch (err) {
                   throw new ValidationError(`Invalid payload for error ${errorName}`, {
                     errors: err.errors.length > 0 ? err.errors : [err]
@@ -1261,11 +1240,11 @@ class Schema {
             },
             $field: v
           };
-          const result = (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, arg.length > 1 ? [arg] : arg);
+          const result = await (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, Array.isArray(arg) ? arg : [arg]);
 
           if (outputValidation) {
             try {
-              return Schema.ensureSchema(outputValidation).parse(result)
+              return await Schema.ensureSchema(outputValidation).parse(result)
             } catch (err) {
               throw new ValidationError(`Invalid output at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
             }
@@ -1292,9 +1271,9 @@ class Schema {
    * @param {*} state
    * @return {*}
    */
-  processLoaders (v, { loaders, state }) {
+  async processLoaders (v, { loaders, state }) {
     // throw new Error(`uya!`)
-    forEach(castArray(loaders), loaderSchema => {
+    await PromiseEach(castArray(loaders), async loaderSchema => {
       // console.log({ loaderSchema })
       if (typeof loaderSchema !== 'object') {
         loaderSchema = { type: loaderSchema };
@@ -1311,13 +1290,13 @@ class Schema {
         });
       }
 
-      v = clone.parseProperty(type, v, { state });
+      v = await clone.parseProperty(type, v, { state });
     });
 
     return v
   }
 
-  parseProperty (type, v, { state = {} } = {}) {
+  async parseProperty (type, v, { state = {} } = {}) {
     if (v === null && this.settings.allowNull) {
       return v
     }
@@ -1325,10 +1304,10 @@ class Schema {
     if (Array.isArray(type)) {
       let parsed = false;
       let result;
-      forEach(type, t => {
+      await PromiseEach(type, async t => {
         try {
           this.currentType = t;
-          result = this.parseProperty(t, v, { state });
+          result = await this.parseProperty(t, v, { state });
           parsed = true;
           return false
         } catch (err) {
@@ -1347,7 +1326,7 @@ class Schema {
     }
 
     if (this.settings.default !== undefined && v === undefined) {
-      v = typeof this.settings.default === 'function' ? this.settings.default.call(this, { state }) : this.settings.default;
+      v = typeof this.settings.default === 'function' ? await this.settings.default.call(this, { state }) : this.settings.default;
     }
 
     if (v === undefined && !this.settings.required) {
@@ -1361,30 +1340,30 @@ class Schema {
 
     // run user-level loaders (inception transformers)
     if (this.settings.loaders) {
-      v = this.processLoaders(v, { loaders: this.settings.loaders, state }); // infinite loop
+      v = await this.processLoaders(v, { loaders: this.settings.loaders, state }); // infinite loop
     }
 
     // run transformer-level loaders
     if (transformer.loaders) {
-      v = this.processLoaders(v, { loaders: transformer.loaders, state });
+      v = await this.processLoaders(v, { loaders: transformer.loaders, state });
     }
 
-    v = this.runTransformer({ method: 'cast', transformer: this.settings, payload: v, state });
+    v = await this.runTransformer({ method: 'cast', transformer: this.settings, payload: v, state });
 
     // run transformer caster
     if (this.settings.autoCast) {
-      v = this.runTransformer({ method: 'cast', transformer, payload: v, state });
+      v = await this.runTransformer({ method: 'cast', transformer, payload: v, state });
     }
 
     // run transformer validator
-    this.runTransformer({ method: 'validate', transformer, payload: v, state });
-    this.runTransformer({ method: 'validate', transformer: this.settings, payload: v, state });
+    await this.runTransformer({ method: 'validate', transformer, payload: v, state });
+    await this.runTransformer({ method: 'validate', transformer: this.settings, payload: v, state });
 
     // run transformer parser
     return this.runTransformer({ method: 'parse', transformer, payload: v, state })
   }
 
-  runChildren (obj, { method = 'parse', state = {} } = {}) {
+  async runChildren (obj, { method = 'parse', state = {} } = {}) {
     if (!this.settings.required && obj === undefined) {
       return
     }
@@ -1392,9 +1371,9 @@ class Schema {
     const errors = [];
 
     // error trapper
-    const sandbox = (fn) => {
+    const sandbox = async (fn) => {
       try {
-        fn();
+        await fn();
       } catch (err) {
         if (err instanceof ValidationError) {
           if (err instanceof ValidationError && err.errors.length > 0) {
@@ -1408,12 +1387,12 @@ class Schema {
       }
     };
 
-    this.ownPaths.forEach(pathName => {
+    await PromiseEach(this.ownPaths, async pathName => {
       const schema = this.schemaAtPath(pathName.replace(/\..*$/));
       const input = isNotNullObj(obj) ? obj[schema.name] : undefined;
 
-      sandbox(() => {
-        const val = schema[method](input, { state });
+      await sandbox(async () => {
+        const val = await schema[method](input, { state });
         if (val !== undefined) {
           Object.assign(resultingObject, { [schema.name]: val });
         }
