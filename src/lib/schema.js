@@ -290,7 +290,7 @@ export class Schema {
       _validate: (validate || validate === false ? validate : schema._validate),
       parent,
       cloned: true,
-      _defaultValues: defaultValues || schema._defaulValues,
+      _defaultValues: defaultValues || schema._defaultValues,
       _settings: Object.assign({}, schema._settings, settings)
     })
     if (clonedSchema.children) {
