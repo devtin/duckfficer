@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.1.0
+ * duckfficer v2.1.1
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -1058,7 +1058,7 @@ class Schema {
       _validate: (validate || validate === false ? validate : schema._validate),
       parent,
       cloned: true,
-      _defaultValues: defaultValues || schema._defaulValues,
+      _defaultValues: defaultValues || schema._defaultValues,
       _settings: Object.assign({}, schema._settings, settings)
     });
     if (clonedSchema.children) {
