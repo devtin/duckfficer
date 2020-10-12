@@ -107,7 +107,7 @@ export class Schema {
     this.name = name || ''
     this.originalName = this.name
     this.type = Schema.guessType(schema)
-    this.currentType = castArray(this.type)[0]
+    this.resetCurrentType()
     this.children = []
     this._defaultSettings = {
       required: true,
@@ -140,6 +140,10 @@ export class Schema {
     }
 
     this._defaultSettings.default = this.getDefault()
+  }
+
+  resetCurrentType () {
+    this.currentType = castArray(this.type)[0]
   }
 
   get hasChildren () {
@@ -574,8 +578,11 @@ export class Schema {
           // shh...
         }
       }, true)
+
+      this.resetCurrentType()
+
       if (!parsed) {
-        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v })
+        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type[type.length - 1]}`, { value: v })
       }
       return result
     }
@@ -684,6 +691,7 @@ export class Schema {
   }
 
   throwError (message, { errors, value } = {}) {
+    this.resetCurrentType()
     throw new ValidationError(message, { errors, value, field: this })
   }
 
