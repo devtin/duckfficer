@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.1.1
+ * duckfficer v2.2.0
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -668,9 +668,11 @@ const Transformers = {
   String: {
     settings: {
       typeError: 'Invalid string',
+      emptyError: 'Value can not be empty',
       enumError: 'Unknown enum option { value }',
       enum: [],
       autoCast: false,
+      allowEmpty: true,
       lowercase: false,
       uppercase: false
     },
@@ -687,6 +689,10 @@ const Transformers = {
 
       if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
         this.throwError(this.settings.enumError, { value });
+      }
+
+      if (!this.settings.allowEmpty && /^[\s]*$/ms.test(value)) {
+        this.throwError(this.settings.emptyError, { value });
       }
 
       if (this.settings.minlength) {
@@ -752,17 +758,12 @@ class ValidationError extends Error {
    * @return {PlainValidationError}
    */
   toJSON () {
-    const { message, value } = this;
-    const res = {
+    const { message, value, field: { fullPath: field } } = this;
+    return {
       message,
-      value
-    };
-    if (this.field) {
-      Object.assign(res, {
-        field: this.field.fullPath
-      });
+      value,
+      field
     }
-    return res
   }
 }
 
@@ -875,7 +876,7 @@ class Schema {
     this.name = name || '';
     this.originalName = this.name;
     this.type = Schema.guessType(schema);
-    this.currentType = castArray(this.type)[0];
+    this.resetCurrentType();
     this.children = [];
     this._defaultSettings = {
       required: true,
@@ -908,6 +909,10 @@ class Schema {
     }
 
     this._defaultSettings.default = this.getDefault();
+  }
+
+  resetCurrentType () {
+    this.currentType = castArray(this.type)[0];
   }
 
   get hasChildren () {
@@ -1342,8 +1347,11 @@ class Schema {
           // shh...
         }
       }, true);
+
+      this.resetCurrentType();
+
       if (!parsed) {
-        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type.pop()}`, { value: v });
+        this.throwError(`Could not resolve given value type${this.fullPath ? ' in property ' + this.fullPath : ''}. Allowed types are ${type.slice(0, -1).join(', ') + ' and ' + type[type.length - 1]}`, { value: v });
       }
       return result
     }
@@ -1452,6 +1460,7 @@ class Schema {
   }
 
   throwError (message, { errors, value } = {}) {
+    this.resetCurrentType();
     throw new ValidationError(message, { errors, value, field: this })
   }
 

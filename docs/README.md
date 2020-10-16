@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-Zero-dependencies, light-weight library (~4.4KB minified + gzipped)<br>
+Zero-dependencies, light-weight library (~4.5KB minified + gzipped)<br>
 for modeling, validating & sanitizing data
 </p>
 
@@ -26,7 +26,7 @@ $ yarn add duckfficer
 ## About
 
 Validating & sanitizing data coming from untrusted sources in JavaScript could be a tedious task. This
-zero-dependencies, light-weight library (~4.4KB min+gz) was initially built as a helper for a RESTful API
+zero-dependencies, light-weight library (~4.5KB min+gz) was initially built as a helper for a RESTful API
 environment and the browser.
 
 ## At-a-glance

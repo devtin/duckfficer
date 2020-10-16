@@ -867,6 +867,27 @@ const mySchema = new Schema({
 t.is(await mySchema.parse('en'), 'EN')
 ```
 
+### allowEmpty (default `true`)
+
+
+
+Optionally transforms input string into uppercase
+
+```js
+const emptyString = new Schema({
+  type: String
+})
+t.is(await emptyString.parse(''), '')
+
+const nonEmptyString = new Schema({
+  type: String,
+  allowEmpty: false
+})
+const error = await t.throwsAsync(nonEmptyString.parse(''))
+
+t.is(error.message, 'Value can not be empty')
+```
+
 ## Custom
 
 

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/devtin/duckfficer/compare/v2.1.1...v2.2.0) (2020-10-16)
+
+
+### Features
+
+* **String:** allowEmpty ([6bd1593](https://github.com/devtin/duckfficer/commit/6bd159337e21daa5d5e0869fe319e4c072980c8f))
+
+
+### Bug Fixes
+
+* multiple types issue where the validation (solves [#47](https://github.com/devtin/duckfficer/issues/47)) ([119eafb](https://github.com/devtin/duckfficer/commit/119eafbb38bf7de850f90515f47bd207a5e9276f))
+
+
+### Chore
+
+* **devDependencies:** update ([9f6bc88](https://github.com/devtin/duckfficer/commit/9f6bc8851b73a65499e051cbe88f4352c06423c4))
+
 ### [2.1.1](https://github.com/devtin/duckfficer/compare/v2.1.0...v2.1.1) (2020-09-15)
 
 
