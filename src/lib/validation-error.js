@@ -32,11 +32,5 @@ export class ValidationError extends Error {
       message,
       value
     }
-    if (this.field) {
-      Object.assign(res, {
-        field: this.field.fullPath
-      })
-    }
-    return res
   }
 }
