@@ -27,10 +27,11 @@ export class ValidationError extends Error {
    * @return {PlainValidationError}
    */
   toJSON () {
-    const { message, value } = this
-    const res = {
+    const { message, value, field: { fullPath: field } } = this
+    return {
       message,
-      value
+      value,
+      field
     }
   }
 }

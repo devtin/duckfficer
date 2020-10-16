@@ -143,3 +143,21 @@ test('uppercase', async t => {
   })
   t.is(await mySchema.parse('en'), 'EN')
 })
+
+test('allowEmpty (default `true`)', async t => {
+  /**
+   * Optionally transforms input string into uppercase
+   */
+  const emptyString = new Schema({
+    type: String
+  })
+  t.is(await emptyString.parse(''), '')
+
+  const nonEmptyString = new Schema({
+    type: String,
+    allowEmpty: false
+  })
+  const error = await t.throwsAsync(nonEmptyString.parse(''))
+
+  t.is(error.message, 'Value can not be empty')
+})

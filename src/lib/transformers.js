@@ -368,9 +368,11 @@ export const Transformers = {
   String: {
     settings: {
       typeError: 'Invalid string',
+      emptyError: 'Value can not be empty',
       enumError: 'Unknown enum option { value }',
       enum: [],
       autoCast: false,
+      allowEmpty: true,
       lowercase: false,
       uppercase: false
     },
@@ -387,6 +389,10 @@ export const Transformers = {
 
       if (Array.isArray(this.settings.enum) && this.settings.enum.length > 0 && this.settings.enum.indexOf(value) < 0) {
         this.throwError(this.settings.enumError, { value })
+      }
+
+      if (!this.settings.allowEmpty && /^[\s]*$/ms.test(value)) {
+        this.throwError(this.settings.emptyError, { value })
       }
 
       if (this.settings.minlength) {
