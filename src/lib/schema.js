@@ -596,15 +596,6 @@ export class Schema {
       v = typeof this.settings.default === 'function' ? await this.settings.default.call(this, { state }) : this.settings.default
     }
 
-    if (v === undefined && !this.settings.required) {
-      return
-    }
-
-    if (v === undefined && this.settings.required) {
-      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`)
-      required && this.throwError(error, { value: v })
-    }
-
     // run user-level loaders (inception transformers)
     if (this.settings.loaders) {
       v = await this.processLoaders(v, { loaders: this.settings.loaders, state }) // infinite loop
@@ -620,6 +611,15 @@ export class Schema {
     // run transformer caster
     if (this.settings.autoCast) {
       v = await this.runTransformer({ method: 'cast', transformer, payload: v, state })
+    }
+
+    if (v === undefined && !this.settings.required) {
+      return
+    }
+
+    if (v === undefined && this.settings.required) {
+      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`)
+      required && this.throwError(error, { value: v })
     }
 
     // run transformer validator

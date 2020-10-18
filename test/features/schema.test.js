@@ -165,6 +165,7 @@ test('Error-handling and LifeCycle', async t => {
 
   t.deepEqual(lifeCycle, [
     'schema-level cast hook',
+    '->name(property-level) cast hook',
     '->phoneNumber(property-level) cast hook'
   ])
 
