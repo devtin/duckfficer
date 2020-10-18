@@ -146,7 +146,7 @@ test('uppercase', async t => {
 
 test('allowEmpty (default `true`)', async t => {
   /**
-   * Optionally transforms input string into uppercase
+   * Optionally allow empty values
    */
   const emptyString = new Schema({
     type: String

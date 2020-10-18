@@ -33,6 +33,7 @@ test('Custom property-cast hook (provided at schema-setting level)', async t => 
         if (typeof v === 'string' && /^#/.test(v)) {
           return parseInt(v.replace(/^#/, ''))
         }
+        return v
       }
     },
     name: String
