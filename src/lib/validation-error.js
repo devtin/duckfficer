@@ -27,11 +27,12 @@ export class ValidationError extends Error {
    * @return {PlainValidationError}
    */
   toJSON () {
-    const { message, value, field: { fullPath: field } } = this
+    const { message, value, field, errors } = this
     return {
       message,
       value,
-      field
+      errors: errors ? errors.map(ValidationError.prototype.toJSON.call) : undefined,
+      field: field ? field.field.fullPath : field
     }
   }
 }
