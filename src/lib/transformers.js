@@ -69,16 +69,24 @@ export const Transformers = {
     async parse (value) {
       if (this.settings.arraySchema) {
         return PromiseMap(value, (item, name) => {
-          const schema = this.constructor.castSchema(this.settings.arraySchema)
-          const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
-            schema,
-            name,
-            parent: this,
-            settings: schema.settings
-          }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
-            name,
-            parent: this
-          }))
+          const { constructor } = this
+          const schema = constructor.castSchema(this.settings.arraySchema)
+          const getParser = () => {
+            if (constructor.guessType(schema) === 'Schema') {
+              return constructor.cloneSchema({
+                schema,
+                name,
+                parent: this,
+                settings: schema.settings
+              })
+            }
+
+            return new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
+              name,
+              parent: this
+            }))
+          }
+          const parser = getParser()
           return parser.parse(item)
         })
       }
@@ -296,11 +304,11 @@ export const Transformers = {
           const schema = this.constructor.castSchema(this.settings.mapSchema)
           const parser = this.constructor.guessType(schema) === 'Schema'
             ? this.constructor.cloneSchema({
-              schema,
-              name,
-              settings: schema.settings,
-              parent: this
-            })
+                schema,
+                name,
+                settings: schema.settings,
+                parent: this
+              })
             : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
               name,
               parent: this

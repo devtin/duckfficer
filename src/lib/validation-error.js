@@ -32,7 +32,7 @@ export class ValidationError extends Error {
       message,
       value,
       errors: errors ? errors.map(ValidationError.prototype.toJSON.call) : undefined,
-      field: field ? field.field.fullPath : field
+      field: field ? field.fullPath : field
     }
   }
 }
