@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.2.0
+ * duckfficer v2.2.1
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -365,16 +365,24 @@ const Transformers = {
     async parse (value) {
       if (this.settings.arraySchema) {
         return PromiseMap(value, (item, name) => {
-          const schema = this.constructor.castSchema(this.settings.arraySchema);
-          const parser = this.constructor.guessType(schema) === 'Schema' ? this.constructor.cloneSchema({
-            schema,
-            name,
-            parent: this,
-            settings: schema.settings
-          }) : new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
-            name,
-            parent: this
-          }));
+          const { constructor } = this;
+          const schema = constructor.castSchema(this.settings.arraySchema);
+          const getParser = () => {
+            if (constructor.guessType(schema) === 'Schema') {
+              return constructor.cloneSchema({
+                schema,
+                name,
+                parent: this,
+                settings: schema.settings
+              })
+            }
+
+            return new this.constructor(this.settings.arraySchema, Object.assign({}, this.settings.arraySchema, {
+              name,
+              parent: this
+            }))
+          };
+          const parser = getParser();
           return parser.parse(item)
         })
       }
@@ -592,11 +600,11 @@ const Transformers = {
           const schema = this.constructor.castSchema(this.settings.mapSchema);
           const parser = this.constructor.guessType(schema) === 'Schema'
             ? this.constructor.cloneSchema({
-              schema,
-              name,
-              settings: schema.settings,
-              parent: this
-            })
+                schema,
+                name,
+                settings: schema.settings,
+                parent: this
+              })
             : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
               name,
               parent: this
@@ -754,11 +762,12 @@ class ValidationError extends Error {
    * @return {PlainValidationError}
    */
   toJSON () {
-    const { message, value, field: { fullPath: field } } = this;
+    const { message, value, field, errors } = this;
     return {
       message,
       value,
-      field
+      errors: errors ? errors.map(ValidationError.prototype.toJSON.call) : undefined,
+      field: field ? field.fullPath : field
     }
   }
 }
@@ -1361,15 +1370,6 @@ class Schema {
       v = typeof this.settings.default === 'function' ? await this.settings.default.call(this, { state }) : this.settings.default;
     }
 
-    if (v === undefined && !this.settings.required) {
-      return
-    }
-
-    if (v === undefined && this.settings.required) {
-      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`);
-      required && this.throwError(error, { value: v });
-    }
-
     // run user-level loaders (inception transformers)
     if (this.settings.loaders) {
       v = await this.processLoaders(v, { loaders: this.settings.loaders, state }); // infinite loop
@@ -1385,6 +1385,15 @@ class Schema {
     // run transformer caster
     if (this.settings.autoCast) {
       v = await this.runTransformer({ method: 'cast', transformer, payload: v, state });
+    }
+
+    if (v === undefined && !this.settings.required) {
+      return
+    }
+
+    if (v === undefined && this.settings.required) {
+      const [required, error] = castThrowable(this.settings.required, `Property ${this.fullPath} is required`);
+      required && this.throwError(error, { value: v });
     }
 
     // run transformer validator

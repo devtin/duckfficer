@@ -1,3 +1,3 @@
-{"total": {"lines":{"total":398,"covered":393,"skipped":0,"pct":98.74},"statements":{"total":404,"covered":399,"skipped":0,"pct":98.76},"functions":{"total":95,"covered":94,"skipped":0,"pct":98.95},"branches":{"total":371,"covered":353,"skipped":0,"pct":95.15}}
-,"/Users/tin/projects/duckfficer/dist/duckfficer.js": {"lines":{"total":398,"covered":393,"skipped":0,"pct":98.74},"functions":{"total":95,"covered":94,"skipped":0,"pct":98.95},"statements":{"total":404,"covered":399,"skipped":0,"pct":98.76},"branches":{"total":371,"covered":353,"skipped":0,"pct":95.15}}
+{"total": {"lines":{"total":403,"covered":398,"skipped":0,"pct":98.76},"statements":{"total":409,"covered":404,"skipped":0,"pct":98.78},"functions":{"total":96,"covered":95,"skipped":0,"pct":98.96},"branches":{"total":375,"covered":355,"skipped":0,"pct":94.67}}
+,"/Users/tin/projects/duckfficer/dist/duckfficer.js": {"lines":{"total":403,"covered":398,"skipped":0,"pct":98.76},"functions":{"total":96,"covered":95,"skipped":0,"pct":98.96},"statements":{"total":409,"covered":404,"skipped":0,"pct":98.78},"branches":{"total":375,"covered":355,"skipped":0,"pct":94.67}}
 }

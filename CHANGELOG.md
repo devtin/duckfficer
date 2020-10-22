@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/devtin/duckfficer/compare/v2.2.0...v2.2.1) (2020-10-22)
+
+
+### Bug Fixes
+
+* **ValidationError.toJSON:** export field and errors ([d53c23f](https://github.com/devtin/duckfficer/commit/d53c23f9bc20638374c43b5390309b157f0be7e4))
+* run cast hook even when the value is undefined ([687afc6](https://github.com/devtin/duckfficer/commit/687afc6e28322f9f61f242796b2026bc246258e7))
+
+
+### Chore
+
+* update devDependencies ([0b5ec4b](https://github.com/devtin/duckfficer/commit/0b5ec4b1ffe2dcf843ae8720727eee9a804c63a8))
+
 ## [2.2.0](https://github.com/devtin/duckfficer/compare/v2.1.1...v2.2.0) (2020-10-16)
 
 

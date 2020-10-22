@@ -871,7 +871,7 @@ t.is(await mySchema.parse('en'), 'EN')
 
 
 
-Optionally transforms input string into uppercase
+Optionally allow empty values
 
 ```js
 const emptyString = new Schema({

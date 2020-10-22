@@ -178,6 +178,7 @@ t.is(error.errors[2].field.fullPath, 'phoneNumber')
 
 t.deepEqual(lifeCycle, [
   'schema-level cast hook',
+  '->name(property-level) cast hook',
   '->phoneNumber(property-level) cast hook'
 ])
 ```

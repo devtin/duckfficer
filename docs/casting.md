@@ -40,6 +40,7 @@ const ProductSchema = new Schema({
       if (typeof v === 'string' && /^#/.test(v)) {
         return parseInt(v.replace(/^#/, ''))
       }
+      return v
     }
   },
   name: String
