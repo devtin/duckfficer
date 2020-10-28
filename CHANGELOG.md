@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/devtin/duckfficer/compare/v2.2.1...v2.2.2) (2020-10-28)
+
+
+### Bug Fixes
+
+* **methods:** proper payload / state mapping ([08661dd](https://github.com/devtin/duckfficer/commit/08661ddca01a0fd1b6f2d6665949921864041461))
+* **Number:** cast only when the result is a number ([8471990](https://github.com/devtin/duckfficer/commit/8471990269626c0371bc411d8fc6e85097ecd4e9))
+
+
+### Chore
+
+* update devDependencies ([b2a5e7a](https://github.com/devtin/duckfficer/commit/b2a5e7a39060a678b8ed2179041b2c8096d5cbe2))
+
 ### [2.2.1](https://github.com/devtin/duckfficer/compare/v2.2.0...v2.2.1) (2020-10-22)
 
 

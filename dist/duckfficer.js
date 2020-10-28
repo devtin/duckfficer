@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.2.1
+ * duckfficer v2.2.2
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -556,7 +556,14 @@ const Transformers = {
       autoCast: false
     },
     cast (value) {
-      return Number(value)
+      if (typeof value !== 'number') {
+        const altValue = Number(value);
+
+        if (!isNaN(altValue)) {
+          return altValue
+        }
+      }
+      return value
     },
     validate (value) {
       if (typeof value !== 'number' || isNaN(value)) {
@@ -1238,12 +1245,12 @@ class Schema {
         const methodEvents = this._methods[methodName].events;
         const methodErrors = this._methods[methodName].errors;
 
-        const methodFn = async (...arg) => {
+        const methodFn = async (...args) => {
           if (inputValidation) {
             try {
-              arg = await Schema.ensureSchema(inputValidation).parse(arg.length === 1 ? arg[0] : arg);
+              args[0] = await Schema.ensureSchema(inputValidation).parse(args[0]);
             } catch (err) {
-              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err] })
+              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err], value: args[0] })
             }
           }
 
@@ -1282,7 +1289,7 @@ class Schema {
             },
             $field: v
           };
-          const result = await (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, Array.isArray(arg) ? arg : [arg]);
+          const result = await (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, args);
 
           if (outputValidation) {
             try {
