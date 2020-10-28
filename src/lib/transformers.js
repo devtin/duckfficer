@@ -256,7 +256,14 @@ export const Transformers = {
       autoCast: false
     },
     cast (value) {
-      return Number(value)
+      if (typeof value !== 'number') {
+        const altValue = Number(value)
+
+        if (!isNaN(altValue)) {
+          return altValue
+        }
+      }
+      return value
     },
     validate (value) {
       if (typeof value !== 'number' || isNaN(value)) {
