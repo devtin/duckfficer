@@ -386,7 +386,7 @@ export class Schema {
       await PromiseEach(this.children, async child => {
         const parsedValue = await child.fullCast(v[child.name], { state })
         if (parsedValue !== undefined) {
-          v[child.name] = await child.fullCast(v[child.name], { state })
+          v[child.name] = parsedValue
         }
       })
     }
