@@ -547,11 +547,11 @@ export class Schema {
       const clone = Schema.cloneSchema({ schema: this, type, currentType: type, cast: false, validate: false })
 
       if (type !== 'Schema') {
-        clone._settings = Object.assign({}, clone._settings, loaderSchema, {
+        clone._settings = Object.assign({}, clone._settings, {
           loaders: undefined,
           cast: undefined,
           validate: undefined
-        })
+        }, loaderSchema)
       }
 
       v = await clone.parseProperty(type, v, { state })
