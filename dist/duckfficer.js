@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.2.2
+ * duckfficer v2.2.3
  * (c) 2019-2020 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -1171,7 +1171,7 @@ class Schema {
       await PromiseEach(this.children, async child => {
         const parsedValue = await child.fullCast(v[child.name], { state });
         if (parsedValue !== undefined) {
-          v[child.name] = await child.fullCast(v[child.name], { state });
+          v[child.name] = parsedValue;
         }
       });
     }
@@ -1332,11 +1332,11 @@ class Schema {
       const clone = Schema.cloneSchema({ schema: this, type, currentType: type, cast: false, validate: false });
 
       if (type !== 'Schema') {
-        clone._settings = Object.assign({}, clone._settings, loaderSchema, {
+        clone._settings = Object.assign({}, clone._settings, {
           loaders: undefined,
           cast: undefined,
           validate: undefined
-        });
+        }, loaderSchema);
       }
 
       v = await clone.parseProperty(type, v, { state });
