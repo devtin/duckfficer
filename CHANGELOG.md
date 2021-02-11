@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.4](https://github.com/devtin/duckfficer/compare/v2.2.3...v2.2.4) (2021-02-11)
+
+
+### Bug Fixes
+
+* solve index issue for arrayMap ([d4eda38](https://github.com/devtin/duckfficer/commit/d4eda386308d2d4dbb43448c6a304b33dc908f31))
+
+
+### Docs
+
+* improve ([9730550](https://github.com/devtin/duckfficer/commit/97305500e25ced3d8d34e013dfb6ca964acf18ca))
+
+
+### Chore
+
+* **dependencies:** update ([4decc7a](https://github.com/devtin/duckfficer/commit/4decc7a57d6095ccaa0267e75a5ae576a08a7147))
+
 ### [2.2.3](https://github.com/devtin/duckfficer/compare/v2.2.2...v2.2.3) (2020-11-08)
 
 

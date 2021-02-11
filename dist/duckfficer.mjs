@@ -1,6 +1,6 @@
 /*!
- * duckfficer v2.2.3
- * (c) 2019-2020 Martin Rafael <tin@devtin.io>
+ * duckfficer v2.2.4
+ * (c) 2019-2021 Martin Rafael <tin@devtin.io>
  * MIT
  */
 import { EventEmitter } from 'events';
@@ -607,11 +607,11 @@ const Transformers = {
           const schema = this.constructor.castSchema(this.settings.mapSchema);
           const parser = this.constructor.guessType(schema) === 'Schema'
             ? this.constructor.cloneSchema({
-                schema,
-                name,
-                settings: schema.settings,
-                parent: this
-              })
+              schema,
+              name,
+              settings: schema.settings,
+              parent: this
+            })
             : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
               name,
               parent: this
@@ -871,7 +871,7 @@ class Schema {
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
+  constructor (schema, { name = '', defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings;
 
     if (Array.isArray(schema) && schema.length === 1) {
@@ -885,7 +885,7 @@ class Schema {
     this._validate = validate;
     // schema level c: validates using the entire value (object) of this path
     this._cast = cast;
-    this.name = name || '';
+    this.name = name;
     this.originalName = this.name;
     this.type = Schema.guessType(schema);
     this.resetCurrentType();
@@ -990,6 +990,7 @@ class Schema {
           getter: objDesc.get,
           setter: objDesc.set
         });
+        /* eslint-disable-next-line */
         return
       }
 
@@ -1068,7 +1069,7 @@ class Schema {
 
   static cloneSchema ({ schema, name, parent, settings = {}, defaultValues, type, cast, validate, currentType }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
-      name: name || schema.name,
+      name: name !== undefined ? name : schema.name,
       type: type || schema.type,
       currentType: currentType || schema.currentType,
       _cast: (cast || cast === false ? cast : schema._cast),
