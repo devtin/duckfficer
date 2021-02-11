@@ -1,6 +1,6 @@
 # Requirements
 
-Always rebase from `remote/dev`
+Please, always rebase from `remote/dev`
 
 - node.js >= 10
 - yarn
@@ -24,5 +24,5 @@ $ yarn build:live
 Using `ava` to run tests in folder [test](./test)
 
 ```sh
-$ yarn test:all
+$ yarn test
 ```
