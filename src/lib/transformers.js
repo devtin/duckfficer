@@ -311,11 +311,11 @@ export const Transformers = {
           const schema = this.constructor.castSchema(this.settings.mapSchema)
           const parser = this.constructor.guessType(schema) === 'Schema'
             ? this.constructor.cloneSchema({
-                schema,
-                name,
-                settings: schema.settings,
-                parent: this
-              })
+              schema,
+              name,
+              settings: schema.settings,
+              parent: this
+            })
             : value[name] = new this.constructor(this.settings.mapSchema, Object.assign({}, this.settings.mapSchema, {
               name,
               parent: this

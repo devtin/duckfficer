@@ -209,6 +209,7 @@ export class Schema {
           getter: objDesc.get,
           setter: objDesc.set
         })
+        /* eslint-disable-next-line */
         return
       }
 
