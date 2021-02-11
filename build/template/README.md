@@ -13,6 +13,25 @@ Zero-dependencies, light-weight library (~{{{ libSize }}} minified + gzipped)<br
 for modeling, validating & sanitizing data
 </p>
 
+## Manifesto
+
+Performing duck-type validation and data sanitation is not what I came to this world for... I want a utility helping me
+simplify that task.
+
+This utility must:
+
+- Check whether certain value has the shape of a predefined schema-type
+- When a given value does not match the schema, it must offer a full report of what is wrong with the given
+  value vs what the schema is expecting! (see: [https://duckfficer.js.org/#/guide?id=error-handling-and-lifecycle](https://duckfficer.js.org/#/guide?id=error-handling-and-lifecycle))
+- Be easy to extend and share schemas within each other (see: [https://duckfficer.js.org/#/guide?id=nesting-schemas](https://duckfficer.js.org/#/guide?id=nesting-schemas))
+- Provide a built-in set of types for most common usages (see: [https://duckfficer.js.org/#/types](https://duckfficer.js.org/#/types))
+- Allow custom types as well as a cast and transform hooks (see: [https://duckfficer.js.org/#/types?id=custom](https://duckfficer.js.org/#/types?id=custom))
+
+
+Let's put hands on it!
+
+**Index**
+
 {{#readme}}
 - [Installation](#installation)
 - [About](#about)
@@ -27,12 +46,6 @@ $ npm i duckfficer
 # or
 $ yarn add duckfficer
 ```
-
-## About
-
-Validating & sanitizing data coming from untrusted sources in JavaScript could be a tedious task. This
-zero-dependencies, light-weight library (~{{{ libSize }}} min+gz) was initially built as a helper for a RESTful API
-environment and the browser.
 
 ## At-a-glance
 

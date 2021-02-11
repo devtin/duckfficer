@@ -1,7 +1,3 @@
-/**
- * *schemas/user.js*
- */
-
 const { Schema } = require('duckfficer')
 
 // lets create a schema first
@@ -11,83 +7,69 @@ const User = new Schema({
   get fullName () {
     return this.firstName + ' ' + this.lastName
   },
-  email: {
-    type: String,
-    regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
-  },
-  dob: Date
-})
-
-module.exports = { User }
-
-/**
- * *index.js*
- */
-
-const Koa = require('koa')
-const koaBody = require('koa-body')
-const Router = require('koa-router')
-
-// lets import our custom schema
-const { User } = require('./schemas/user')
-
-const app = new Koa()
-const router = new Router()
-
-app.use(koaBody())
-
-app.use(async (ctx, next) => {
-  try {
-    await next()
-  } catch (err) {
-    ctx.body = {
-      error: err.message,
-      errors: err.errors
+  dob: Date,
+  contact: {
+    phoneNumber: {
+      type: Number,
+      autoCast: true // transforms String that look like a number into a Number
+    },
+    emails: {
+      default () {
+        return []
+      },
+      type: Array,
+      arraySchema: {
+        type: String,
+        regex: [/^[a-z0-9._]+@[a-z0-9-]+\.[a-z]{2,}$/, '{ value } is not a valid e-mail address']
+      }
     }
   }
 })
 
-router.post('/user', async (ctx, next) => {
-  const payload = await User.parse(ctx.request.body)
-  console.log(payload.dob instanceof Date) // => true
-  // our object is valid, we may go perform some business logic...
-  ctx.body = payload
+User.parse({
+  firstName: 'Fulano de Tal',
+  contact: {
+    emails: ['fulanito']
+  }
 })
+  .catch(err => {
+    console.log(err.message) // => Data is not valid
+    console.log(err.errors.length) // => 4
+    console.log(err.errors[0].message) // => Property lastName is required
+    console.log(err.errors[0].field.fullPath) // => lastName
+    console.log(err.errors[1].message) // => Property dob is required
+    console.log(err.errors[1].field.fullPath) // => dob
+    console.log(err.errors[2].message) // => Property contact.phoneNumber is required
+    console.log(err.errors[2].field.fullPath) // => contact.phoneNumber
+    console.log(err.errors[3].message) // => fulanito is not a valid e-mail address
+    console.log(err.errors[3].field.fullPath) // => contact.emails.0
+  })
 
-app
-  .use(router.routes())
-  .use(router.allowedMethods())
-  .listen(3000)
-
-/**
- * Now, start the script:
- *
- * ```sh
- * $ node index.js
- * ```
- *
- * On another terminal window:
- *
- * ```sh
- * $ curl -d "firstName=John&lastName=Doe&email=john&dob=october" http://localhost:3000/user
- * ```
- * Should output:
- *
- * ```json
- * {
- *   "error": "Data is not valid",
- *   "errors": [
- *     {
- *       "message": "john is not a valid e-mail address",
- *       "value": "john",
- *       "field": "email"
- *     },
- *     {
- *       "message": "Invalid date",
- *       "value": "october",
- *       "field": "dob"
- *     }
- *   ]
- * }
- * ```
- */
+User.parse({
+  firstName: 'Fulano',
+  lastName: 'de Tal',
+  dob: '1/1/2020',
+  contact: {
+    phoneNumber: '3051234567',
+    emails: [
+      'personal@email.com',
+      'work@email.com'
+    ]
+  }
+})
+  .then(obj => {
+    console.log(obj.dob instanceof Date) // => true
+    console.log(typeof obj.contact.phoneNumber === 'number') // => true
+    console.log(obj)
+    /*
+      {
+        firstName: 'Fulano',
+        lastName: 'de Tal',
+        dob: 2020-01-01T05:00:00.000Z,
+        contact: {
+          phoneNumber: 3051234567,
+          emails: [ 'personal@email.com', 'work@email.com' ]
+        }
+      }
+    */
+  })
