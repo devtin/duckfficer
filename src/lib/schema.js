@@ -90,7 +90,7 @@ export class Schema {
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
    */
-  constructor (schema, { name, defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
+  constructor (schema, { name = '', defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
     this._settings = settings
 
     if (Array.isArray(schema) && schema.length === 1) {
@@ -104,7 +104,7 @@ export class Schema {
     this._validate = validate
     // schema level c: validates using the entire value (object) of this path
     this._cast = cast
-    this.name = name || ''
+    this.name = name
     this.originalName = this.name
     this.type = Schema.guessType(schema)
     this.resetCurrentType()
@@ -287,7 +287,7 @@ export class Schema {
 
   static cloneSchema ({ schema, name, parent, settings = {}, defaultValues, type, cast, validate, currentType }) {
     const clonedSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema, {
-      name: name || schema.name,
+      name: name !== undefined ? name : schema.name,
       type: type || schema.type,
       currentType: currentType || schema.currentType,
       _cast: (cast || cast === false ? cast : schema._cast),

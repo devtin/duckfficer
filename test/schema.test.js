@@ -373,6 +373,19 @@ test('parseProperty', async t => {
   t.is(await user.parseProperty('String', 'Hello'), 'Hello')
 })
 
+test('error throwing deep path report', async t => {
+  const myStringArray = new Schema({
+    type: Array,
+    arraySchema: String
+  })
+
+  const error = await t.throwsAsync(() => myStringArray.parse([1]), {
+    message: 'Invalid string'
+  })
+
+  t.is(error.field.name, 0)
+})
+
 test('runChildren', async t => {
   t.deepEqual(await new Schema({
     type: 'String'
