@@ -401,6 +401,36 @@ test('multiple types with only one item', async t => {
   t.is(await singleSchema.parse('Martin'), 'Martin')
 })
 
+test('allows a property called type', async t => {
+  const product = new Schema({
+    name: String,
+    type: {
+      type: String,
+      enum: ['drink', 'food', 'snack']
+    }
+  })
+
+  const customer = new Schema({
+    name: String,
+    products: {
+      type: Array,
+      arraySchema: product
+    }
+  })
+
+  const kombucha = {
+    name: 'Kombucha',
+    type: 'drink'
+  }
+  t.deepEqual(await customer.parse({
+    name: 'Martin',
+    products: [kombucha]
+  }), {
+    name: 'Martin',
+    products: [kombucha]
+  })
+})
+
 test('performs fullCast of a schema with nested schemas', async t => {
   const address = new Schema({
     street: String,

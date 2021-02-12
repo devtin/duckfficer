@@ -232,7 +232,11 @@ export class Schema {
    * @return {boolean}
    */
   static isNested (obj) {
-    return Schema.guessType(obj) === 'Object' && !obj.type
+    return Schema.guessType(obj) === 'Object' && (!obj.type || Schema.isDeepType(obj.type))
+  }
+
+  static isDeepType (schemaType) {
+    return !(schemaType instanceof Schema) && typeof schemaType === 'object' && schemaType.type
   }
 
   static guessType (value) {
@@ -244,7 +248,7 @@ export class Schema {
       return value.name
     }
 
-    if (typeof value === 'object' && value.type) {
+    if (typeof value === 'object' && value.type && !Schema.isDeepType(value.type)) {
       return Schema.guessType(value.type)
     }
 
