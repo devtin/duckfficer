@@ -54,7 +54,8 @@ export default [
       {
         file: 'dist/duckfficer.js',
         format: 'cjs',
-        banner
+        banner,
+        preferConst: true
       }
     ],
     plugins
@@ -65,7 +66,8 @@ export default [
       {
         file: 'dist/duckfficer.mjs',
         format: 'esm',
-        banner
+        banner,
+        preferConst: true
       }
     ],
     plugins
@@ -78,7 +80,8 @@ export default [
         format: 'umd',
         extend: true,
         name: 'default',
-        banner
+        banner,
+        preferConst: true
       }
     ],
     plugins: plugins.concat(terser())
