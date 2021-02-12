@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/devtin/duckfficer/compare/v2.2.4...v2.3.0) (2021-02-12)
+
+
+### Features
+
+* allow using a property called type ([f1f7c45](https://github.com/devtin/duckfficer/commit/f1f7c45fb8a7995f5a928d832f0ded0acf6d8d6a))
+
+
+### Docs
+
+* refactor ([23b409b](https://github.com/devtin/duckfficer/commit/23b409b019e7d2b9bd353d480175806cf37ddb16))
+
+
+### Chore
+
+* improve keywords ([6663cc5](https://github.com/devtin/duckfficer/commit/6663cc5908fe40238b34d8c31fda59ad98a2a2d5))
+* **build:** prefer constants ([8337997](https://github.com/devtin/duckfficer/commit/8337997049ac78b45e3086091bff934b6003609f))
+
 ### [2.2.4](https://github.com/devtin/duckfficer/compare/v2.2.3...v2.2.4) (2021-02-11)
 
 

@@ -32,11 +32,12 @@ test('All error throwing transformers must throw a ValidationError', async t => 
 test('Type errors are configured via the `typeError` setting', async t => {
   await PromiseEach(Object.keys(Transformers), async typeName => {
     const typeError = `some custom error for ${typeName}`
-    const error = await t.throwsAsync(() => (new Schema({
+    await t.throwsAsync(() => (new Schema({
       type: typeName,
       typeError
-    })).parse(null))
-    t.is(error.message, typeError)
+    })).parse(null), {
+      message: typeError
+    })
   })
 })
 

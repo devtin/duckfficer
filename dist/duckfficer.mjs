@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.2.4
+ * duckfficer v2.3.0
  * (c) 2019-2021 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -253,7 +253,7 @@ const PromiseMap = async function (arr, fn, breakOnFalse) {
   return newArr
 };
 
-var index = /*#__PURE__*/Object.freeze({
+const index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   castArray: castArray,
   obj2dot: obj2dot,
@@ -1013,7 +1013,11 @@ class Schema {
    * @return {boolean}
    */
   static isNested (obj) {
-    return Schema.guessType(obj) === 'Object' && !obj.type
+    return Schema.guessType(obj) === 'Object' && (!obj.type || Schema.isDeepType(obj.type))
+  }
+
+  static isDeepType (schemaType) {
+    return !(schemaType instanceof Schema) && typeof schemaType === 'object' && schemaType.type
   }
 
   static guessType (value) {
@@ -1025,7 +1029,7 @@ class Schema {
       return value.name
     }
 
-    if (typeof value === 'object' && value.type) {
+    if (typeof value === 'object' && value.type && !Schema.isDeepType(value.type)) {
       return Schema.guessType(value.type)
     }
 

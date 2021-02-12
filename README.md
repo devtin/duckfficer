@@ -110,8 +110,8 @@ User.parse({
 })
   .then(obj => {
     console.log(obj.dob instanceof Date) // => true
-    console.log(typeof obj.contact.phoneNumber === 'number') // => true
-    console.log(obj)
+    console.log(typeof obj.contact.phoneNumber) // => number
+    console.log(obj) // =>
     /*
       {
         firstName: 'Fulano',
