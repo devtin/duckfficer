@@ -5,6 +5,8 @@
   "description": "Zero-dependencies, light-weight library for modeling, validating & sanitizing data",
   "keywords": [
     "json",
+    "value",
+    "object",
     "duck",
     "sanitize",
     "type",
