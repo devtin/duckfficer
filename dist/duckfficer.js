@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.3.0
+ * duckfficer v2.4.0
  * (c) 2019-2021 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -366,7 +366,7 @@ const Transformers = {
     settings: {
       typeError: 'Invalid array'
     },
-    async parse (value) {
+    async parse (value, opts) {
       if (this.settings.arraySchema) {
         return PromiseMap(value, (item, name) => {
           const { constructor } = this;
@@ -387,7 +387,7 @@ const Transformers = {
             }))
           };
           const parser = getParser();
-          return parser.parse(item)
+          return parser.parse(item, opts)
         })
       }
       return value

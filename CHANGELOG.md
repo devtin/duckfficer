@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/devtin/duckfficer/compare/v2.3.0...v2.4.0) (2021-08-05)
+
+
+### Features
+
+* passes options at parse to schemaArrays ([765810d](https://github.com/devtin/duckfficer/commit/765810dbc5775e444d70d58c3567c65873d23fd0))
+
+
+### Chore
+
+* improve ci ([72383c5](https://github.com/devtin/duckfficer/commit/72383c57c9e9f2dc452489dc96677bc82322bda0))
+
 ## [2.3.0](https://github.com/devtin/duckfficer/compare/v2.2.4...v2.3.0) (2021-02-12)
 
 
