@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.4.0
+ * duckfficer v2.4.1
  * (c) 2019-2021 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -1246,12 +1246,12 @@ class Schema {
         const methodEvents = this._methods[methodName].events;
         const methodErrors = this._methods[methodName].errors;
 
-        const methodFn = async (...args) => {
+        const methodFn = async (payload, options = {}) => {
           if (inputValidation) {
             try {
-              args[0] = await Schema.ensureSchema(inputValidation).parse(args[0]);
+              await Schema.ensureSchema(inputValidation).parse(payload, options);
             } catch (err) {
-              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err], value: args[0] })
+              throw new ValidationError(`Invalid input at method ${methodName}`, { errors: err.errors.length > 0 ? err.errors : [err], value: payload })
             }
           }
 
@@ -1279,7 +1279,7 @@ class Schema {
                 }
 
                 try {
-                  payload = methodErrors[errorName] ? await Schema.ensureSchema(methodErrors[errorName]).parse(payload) : payload;
+                  payload = methodErrors[errorName] ? await Schema.ensureSchema(methodErrors[errorName]).parse(payload, options) : payload;
                 } catch (err) {
                   throw new ValidationError(`Invalid payload for error ${errorName}`, {
                     errors: err.errors.length > 0 ? err.errors : [err]
@@ -1290,7 +1290,8 @@ class Schema {
             },
             $field: v
           };
-          const result = await (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, args);
+
+          const result = await (this._methods[methodName].handler || this._methods[methodName]).apply(thisArg, [payload]);
 
           if (outputValidation) {
             try {

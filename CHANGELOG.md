@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.1](https://github.com/devtin/duckfficer/compare/v2.4.0...v2.4.1) (2021-08-07)
+
+
+### Bug Fixes
+
+* provides options and state to methods input ([659b854](https://github.com/devtin/duckfficer/commit/659b8541fa9fc77849ad88a06addd0eb3593b875))
+
 ## [2.4.0](https://github.com/devtin/duckfficer/compare/v2.3.0...v2.4.0) (2021-08-05)
 
 
