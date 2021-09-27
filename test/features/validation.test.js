@@ -6,6 +6,8 @@ test('Validating and sanitizing arbitrary objects', async t => {
     name: String,
     birthday: Date,
     description: Array
+  }, {
+    stripUnknown: false
   })
 
   /**

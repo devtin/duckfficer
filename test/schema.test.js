@@ -10,6 +10,8 @@ test('Validates the schema of the payload matches the defined schema', async t =
   const user = new Schema({
     name: String,
     address
+  }, {
+    stripUnknown: false
   })
 
   const err = await t.throwsAsync(() => user.parse({
@@ -214,6 +216,8 @@ test('Validates and sanitizes schemas', async t => {
       type: Date,
       default: Date.now
     }
+  }, {
+    stripUnknown: false
   })
 
   const error = await t.throwsAsync(() => PostValidator.parse({

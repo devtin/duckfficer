@@ -1,6 +1,5 @@
 import test from 'ava'
-import { Schema, ValidationError, Transformers } from '../../'
-import crypto from 'crypto'
+import { Schema, Transformers } from '../../'
 
 test('Creating a schema', async t => {
   /**
@@ -112,7 +111,9 @@ test('Error-handling and LifeCycle', async t => {
     // schema-level cast hook (optional)
     cast: hook({ levelName: 'schema', hookName: 'cast' }),
     // schema-level validate hook (optional)
-    validate: hook({ levelName: 'schema', hookName: 'validate' })
+    validate: hook({ levelName: 'schema', hookName: 'validate' }),
+    // do not remove unknown properties
+    stripUnknown: false
   })
 
   arbitraryObject = {
