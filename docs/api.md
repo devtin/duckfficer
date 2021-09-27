@@ -250,17 +250,18 @@ Sets the environment up:
 - Guesses the type of the schema
 
 
-| Param | Type | Description |
-| --- | --- | --- |
-| schema | [<code>TheSchema</code>](#Schema..TheSchema) \| <code>Object</code> \| <code>Array</code> |  |
-| [options] | <code>Object</code> |  |
-| [options.name] | <code>String</code> | Alternative name of the object |
-| [options.defaultValues] | <code>Object</code> | Default values to override the schema with |
-| [options.methods] | [<code>Method</code>](#Method) |  |
-| [options.parent] | [<code>Schema</code>](#Schema) |  |
-| [options.cast] | [<code>Caster</code>](#Caster) | Schema caster |
-| [options.settings] | <code>Object</code> | Initial settings |
-| [options.validate] | [<code>Validator</code>](#Validator) | Final validation |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| schema | [<code>TheSchema</code>](#Schema..TheSchema) \| <code>Object</code> \| <code>Array</code> |  |  |
+| [options] | <code>Object</code> |  |  |
+| [options.name] | <code>String</code> |  | Alternative name of the object |
+| [options.defaultValues] | <code>Object</code> |  | Default values to override the schema with |
+| [options.methods] | [<code>Method</code>](#Method) |  |  |
+| [options.parent] | [<code>Schema</code>](#Schema) |  |  |
+| [options.cast] | [<code>Caster</code>](#Caster) |  | Schema caster |
+| [options.settings] | <code>Object</code> |  | Initial settings |
+| [options.validate] | [<code>Validator</code>](#Validator) |  | Final validation |
+| [options.stripUnknown] | <code>Boolean</code> | <code>false</code> | Removes unknown properties at parse |
 
 <a name="Schema+paths"></a>
 

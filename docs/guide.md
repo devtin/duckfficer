@@ -125,7 +125,9 @@ const UserSchema = new Schema({
   // schema-level cast hook (optional)
   cast: hook({ levelName: 'schema', hookName: 'cast' }),
   // schema-level validate hook (optional)
-  validate: hook({ levelName: 'schema', hookName: 'validate' })
+  validate: hook({ levelName: 'schema', hookName: 'validate' }),
+  // do not remove unknown properties
+  stripUnknown: false
 })
 
 arbitraryObject = {

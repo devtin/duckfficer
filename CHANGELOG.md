@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/devtin/duckfficer/compare/v2.4.1...v2.5.0) (2021-09-27)
+
+
+### Features
+
+* stripUnknown ([8165bf3](https://github.com/devtin/duckfficer/commit/8165bf3314dff61fdde994c726806fcc8133d08d))
+
 ### [2.4.1](https://github.com/devtin/duckfficer/compare/v2.4.0...v2.4.1) (2021-08-07)
 
 

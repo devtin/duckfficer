@@ -1,5 +1,5 @@
 /*!
- * duckfficer v2.4.1
+ * duckfficer v2.5.0
  * (c) 2019-2021 Martin Rafael <tin@devtin.io>
  * MIT
  */
@@ -874,8 +874,18 @@ class Schema {
    * @param {Caster} [options.cast] - Schema caster
    * @param {Object} [options.settings] - Initial settings
    * @param {Validator} [options.validate] - Final validation
+   * @param {Boolean} [options.stripUnknown=false] - Removes unknown properties at parse
    */
-  constructor (schema, { name = '', defaultValues = {}, methods = {}, parent, validate, cast, settings = {} } = {}) {
+  constructor (schema, {
+    name = '',
+    defaultValues = {},
+    methods = {},
+    parent,
+    validate,
+    cast,
+    settings = {},
+    stripUnknown = false
+  } = {}) {
     this._settings = settings;
 
     if (Array.isArray(schema) && schema.length === 1) {
@@ -897,7 +907,8 @@ class Schema {
     this._defaultSettings = {
       required: true,
       allowNull: false,
-      default: undefined
+      default: undefined,
+      stripUnknown
     };
     this._defaultValues = defaultValues;
     /**
@@ -1142,10 +1153,7 @@ class Schema {
     if (!propertiesRestricted(obj, this.ownPaths)) {
       if (obj) {
         obj2dot(obj).forEach(field => {
-          if (
-            this.hasChildren &&
-            !this.hasField(field)
-          ) {
+          if (!this.hasField(field)) {
             unknownFields.push(new Error(`Unknown property ${this.name ? this.name + '.' : ''}${field}`));
           }
         });
@@ -1201,7 +1209,7 @@ class Schema {
     // todo: cast children schemas
     v = await this.fullCast(v, { state });
 
-    if (!this.parent) {
+    if (!this.parent && !this.settings.stripUnknown) {
       this.structureValidation(v);
     }
 

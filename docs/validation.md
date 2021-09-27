@@ -12,6 +12,8 @@ const UserSchema = new Schema({
   name: String,
   birthday: Date,
   description: Array
+}, {
+  stripUnknown: false
 })
 ```
 
